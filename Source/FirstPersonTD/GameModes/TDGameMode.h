@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "GameFramework/GameMode.h"
 
 #include "TDGameMode.generated.h"
 

@@ -20,24 +20,20 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-// #pragma region Movement
-// 	void MoveForward(const float Value);
-// 	void MoveBackwards(const float Value);
-// 	void MoveLeft(const float Value);
-// 	void MoveRight(const float Value);
-// 	void LookAround(const float Value);
-//
-// 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Input")
-// 	UInputAction* WalkForwardAction;
-// 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Input")
-// 	UInputAction* WalkBackwardsAction;
-// 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Input")
-// 	UInputAction* WalkLeftAction;
-// 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Input")
-// 	UInputAction* WalkRightAction;
-// 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Input")
-// 	UInputAction* LookAroundAction;
-// #pragma endregion
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	
+	UPROPERTY(EditDefaultsOnly, Category = "Config")
+	TArray<TSubclassOf<class ABaseWeapon>> DefaultWeapons;
+
+	UFUNCTION()
+	virtual void OnRep_CurrentWeapon(const class ABaseWeapon* LastWeapon);
+
+	UFUNCTION(BlueprintCallable)
+	void EquipWeapon(const int32 Index);
+
+	UFUNCTION(Server, Reliable)
+	void Server_SetCurrentWeapon(class ABaseWeapon* Weapon);
+	virtual void Server_SetCurrentWeapon_Implementation(class ABaseWeapon* NewWeapon);
 	
 public:
 	
@@ -47,4 +43,16 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	class UCameraComponent* Camera;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
+	TArray<class ABaseWeapon*> Weapons;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
+	int32 CurrentWeaponIndex = 0;
+
+	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_CurrentWeapon, Category = "State")
+	class ABaseWeapon* CurrentWeapon;
+
+	UFUNCTION(BlueprintCallable)
+	void SwapWeapon();
 };

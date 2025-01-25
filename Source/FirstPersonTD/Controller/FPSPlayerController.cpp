@@ -6,8 +6,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "FirstPersonTD/Characters/MyFPSCharacter.h"
 #include "GameFramework/Character.h"
-
+#include "Engine/LocalPlayer.h"
 
 
 class UEnhancedInputLocalPlayerSubsystem;
@@ -76,6 +77,14 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 	}
 }
 
+void AFPSPlayerController::SwapWeapon()
+{
+	if (AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetPawn()))
+	{
+		PlayerCharacter->SwapWeapon();
+	}
+}
+
 // Called every frame
 void AFPSPlayerController::Tick(float DeltaTime)
 {
@@ -104,7 +113,7 @@ void AFPSPlayerController::SetupInputComponent()
 		EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveLeft), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveLeft);
 		EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveRight), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveRight);
 		EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Look), ETriggerEvent::Triggered, this, &AFPSPlayerController::LookAround);
-		
+		EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_SwapWeapon), ETriggerEvent::Triggered, this, &AFPSPlayerController::SwapWeapon);
 	}
 }
 

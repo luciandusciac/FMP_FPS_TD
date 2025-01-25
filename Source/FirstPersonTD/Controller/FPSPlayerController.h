@@ -23,7 +23,7 @@ enum class EInputActionKey : uint8
 	IAK_Look				UMETA(DisplayName = "Look"),
 	IAK_MoveRight			UMETA(DisplayName = "MoveRight"),
 	IAK_MoveLeft			UMETA(DisplayName = "MoveLeft"),
-	//IAK_Attack			UMETA(DisplayName = "Attack"),
+	IAK_SwapWeapon			UMETA(DisplayName = "SwapWeapon"),
 	//IAK_SwitchWeapon		UMETA(DisplayName = "SwitchWeapon"),
 	//IAK_SwitchExplosive 	UMETA(DisplayName = "SwitchExplosive"),
 	//IAK_LayExplosive		UMETA(DisplayName = "LayExplosive"),
@@ -50,6 +50,7 @@ protected:
 	void MoveLeft(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
 	void LookAround(const FInputActionValue& Value);
+	void SwapWeapon();
 
 	float MovementSpeed = 100.0f;
 	float RotationSpeed = 100.0f;

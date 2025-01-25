@@ -3,7 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "InputAction.h"
 #include "GameFramework/Character.h"
+#include "Camera/CameraComponent.h"
 
 #include "MyFPSCharacter.generated.h"
 
@@ -13,17 +15,36 @@ class FIRSTPERSONTD_API AMyFPSCharacter : public ACharacter
 	GENERATED_BODY()
 
 public:
-	// Sets default values for this character's properties
 	AMyFPSCharacter();
 
 protected:
-	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+// #pragma region Movement
+// 	void MoveForward(const float Value);
+// 	void MoveBackwards(const float Value);
+// 	void MoveLeft(const float Value);
+// 	void MoveRight(const float Value);
+// 	void LookAround(const float Value);
+//
+// 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Input")
+// 	UInputAction* WalkForwardAction;
+// 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Input")
+// 	UInputAction* WalkBackwardsAction;
+// 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Input")
+// 	UInputAction* WalkLeftAction;
+// 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Input")
+// 	UInputAction* WalkRightAction;
+// 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Input")
+// 	UInputAction* LookAroundAction;
+// #pragma endregion
+	
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	
+	//virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	class UCameraComponent* Camera;
 };

@@ -3,6 +3,7 @@
 
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
+#include "Components/StaticMeshComponent.h"
 #include "Components/SkeletalMeshComponent.h"
 #include "Engine/World.h"
 #include "GameFramework/Controller.h"
@@ -15,7 +16,7 @@ class ABaseWeapon;
 AMyFPSCharacter::AMyFPSCharacter()
 {
 	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = true;
@@ -33,7 +34,7 @@ void AMyFPSCharacter::BeginPlay()
 		{
 			if(!WeaponClass) continue;
 			FActorSpawnParameters SpawnParams;
-			SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+			//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
 			SpawnParams.Owner = this;
 			//SpawnParams.Instigator = this;
 			ABaseWeapon* Weapon;
@@ -69,11 +70,13 @@ void AMyFPSCharacter::OnRep_CurrentWeapon(const class ABaseWeapon* LastWeapon)
 		if(!CurrentWeapon->CurrentOwner)
 		{
 			const FTransform SocketTransform = CurrentWeapon->PlacementTransform * GetMesh()->GetSocketTransform(FName("WeaponSocket"));
-			CurrentWeapon->CurrentOwner = this;
 			CurrentWeapon->SetActorTransform(SocketTransform, false, nullptr, ETeleportType::TeleportPhysics);
 			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform, "WeaponSocket");
+
+			CurrentWeapon->CurrentOwner = this;
 		}
 		CurrentWeapon->Mesh->SetVisibility(true);
+		wprintf(TEXT("%d : Visible"), GetLocalRole());
 	}
 
 	if(LastWeapon)

@@ -3,7 +3,7 @@
 
 #include "BaseWeapon.h"
 
-#include "Components/SkeletalMeshComponent.h"
+#include "Components/StaticMeshComponent.h"
 
 
 
@@ -15,7 +15,7 @@ ABaseWeapon::ABaseWeapon()
 
 	//FSetActorReplicates Replicates = FSetActorReplicates(cast<AActor>(this), true);
 	bReplicates = true;
-	
+	bNetLoadOnClient = true;
 	
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
@@ -30,7 +30,7 @@ void ABaseWeapon::BeginPlay()
 	Super::BeginPlay();
 
 	if(!CurrentOwner)
-		Mesh->SetVisibility(false);
+		//Mesh->SetVisibility(false);
 }
 
 // Called every frame

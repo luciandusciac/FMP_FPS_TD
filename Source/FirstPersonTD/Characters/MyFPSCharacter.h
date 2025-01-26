@@ -28,9 +28,6 @@ protected:
 	UFUNCTION()
 	virtual void OnRep_CurrentWeapon(const class ABaseWeapon* LastWeapon);
 
-	UFUNCTION(BlueprintCallable)
-	void EquipWeapon(const int32 Index);
-
 	UFUNCTION(Server, Reliable)
 	void Server_SetCurrentWeapon(class ABaseWeapon* Weapon);
 	virtual void Server_SetCurrentWeapon_Implementation(class ABaseWeapon* NewWeapon);
@@ -54,5 +51,8 @@ public:
 	class ABaseWeapon* CurrentWeapon;
 
 	UFUNCTION(BlueprintCallable)
-	void SwapWeapon();
+	virtual void SwapWeapon();
+
+	UFUNCTION(BlueprintCallable)
+	void EquipWeapon(const int32 Index);
 };

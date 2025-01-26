@@ -36,7 +36,7 @@ void AFPSPlayerController::MoveForward(const FInputActionValue& Value)
 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(GetPawn()))
 	{
 		const FVector Direction = FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::X);
-		PlayerCharacter->AddMovementInput(Direction, Value.Get<float>() * MovementSpeed);
+		PlayerCharacter->AddMovementInput(Direction, Value.Get<float>());
 	}
 }
 
@@ -45,7 +45,7 @@ void AFPSPlayerController::MoveBackwards(const FInputActionValue& Value)
 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(GetPawn()))
 	{
 		const FVector Direction = FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::X);
-		PlayerCharacter->AddMovementInput(Direction, -Value.Get<float>() * MovementSpeed);
+		PlayerCharacter->AddMovementInput(Direction, -Value.Get<float>());
 	}
 }
 
@@ -54,7 +54,7 @@ void AFPSPlayerController::MoveLeft(const FInputActionValue& Value)
 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(GetPawn()))
 	{
 		const FVector Direction = FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y);
-		PlayerCharacter->AddMovementInput(Direction, Value.Get<float>() * -MovementSpeed);
+		PlayerCharacter->AddMovementInput(Direction, Value.Get<float>());
 	}
 }
 
@@ -63,7 +63,7 @@ void AFPSPlayerController::MoveRight(const FInputActionValue& Value)
 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(GetPawn()))
 	{
 		const FVector Direction = FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y);
-		PlayerCharacter->AddMovementInput(Direction, Value.Get<float>() * MovementSpeed);
+		PlayerCharacter->AddMovementInput(Direction, -Value.Get<float>());
 	}
 }
 
@@ -106,14 +106,17 @@ void AFPSPlayerController::SetupInputComponent()
 {
 	Super::SetupInputComponent();
 
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent.Get()))
+	if(InputComponent)
 	{
-		EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveForward), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveForward);
-		EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveBackwards), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveBackwards);
-		EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveLeft), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveLeft);
-		EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveRight), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveRight);
-		EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Look), ETriggerEvent::Triggered, this, &AFPSPlayerController::LookAround);
-		EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_SwapWeapon), ETriggerEvent::Triggered, this, &AFPSPlayerController::SwapWeapon);
+		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent.Get()))
+		{
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_SwitchWeapon), ETriggerEvent::Triggered, this, &AFPSPlayerController::SwapWeapon);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveForward), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveForward);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveBackwards), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveBackwards);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveLeft), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveLeft);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveRight), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveRight);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Look), ETriggerEvent::Triggered, this, &AFPSPlayerController::LookAround);
+		}
 	}
 }
 

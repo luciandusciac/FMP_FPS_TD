@@ -54,7 +54,7 @@ void AFPSPlayerController::MoveLeft(const FInputActionValue& Value)
 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(GetPawn()))
 	{
 		const FVector Direction = FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y);
-		PlayerCharacter->AddMovementInput(Direction, Value.Get<float>());
+		PlayerCharacter->AddMovementInput(Direction, -Value.Get<float>());
 	}
 }
 
@@ -63,7 +63,7 @@ void AFPSPlayerController::MoveRight(const FInputActionValue& Value)
 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(GetPawn()))
 	{
 		const FVector Direction = FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y);
-		PlayerCharacter->AddMovementInput(Direction, -Value.Get<float>());
+		PlayerCharacter->AddMovementInput(Direction, Value.Get<float>());
 	}
 }
 
@@ -79,10 +79,52 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 
 void AFPSPlayerController::SwapWeapon()
 {
-	if (AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetPawn()))
-	{
-		PlayerCharacter->SwapWeapon();
-	}
+	UE_LOG(LogTemp, Warning, TEXT("Swapping weapon"));
+	
+	// if (AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetPawn()))
+	// {
+	// 	PlayerCharacter->SwapWeapon();
+	// }
+}
+
+void AFPSPlayerController::Shoot()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Shooting"));
+}
+
+void AFPSPlayerController::Reload()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Reloading"));
+}
+
+void AFPSPlayerController::PeekRight()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Peeking right"));
+}
+
+void AFPSPlayerController::PeekLeft()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Peeking left"));
+}
+
+void AFPSPlayerController::Crouch()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Crouching"));
+}
+
+void AFPSPlayerController::Aim()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Aiming"));
+}
+
+void AFPSPlayerController::AimGrenade()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Aiming grenade"));
+}
+
+void AFPSPlayerController::ThrowGrenade()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Throwing grenade"));
 }
 
 // Called every frame
@@ -116,6 +158,14 @@ void AFPSPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveLeft), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveLeft);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveRight), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveRight);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Look), ETriggerEvent::Triggered, this, &AFPSPlayerController::LookAround);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Shoot), ETriggerEvent::Triggered, this, &AFPSPlayerController::Shoot);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Reload), ETriggerEvent::Triggered, this, &AFPSPlayerController::Reload);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_PeekRight), ETriggerEvent::Triggered, this, &AFPSPlayerController::PeekRight);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_PeekLeft), ETriggerEvent::Triggered, this, &AFPSPlayerController::PeekLeft);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Crouch), ETriggerEvent::Triggered, this, &AFPSPlayerController::Crouch);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Aim), ETriggerEvent::Triggered, this, &AFPSPlayerController::Aim);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_AimGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::AimGrenade);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_ThrowGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::ThrowGrenade);
 		}
 	}
 }

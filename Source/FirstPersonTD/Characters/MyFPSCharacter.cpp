@@ -28,94 +28,120 @@ void AMyFPSCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(HasAuthority())
-	{
-		for(const TSubclassOf<ABaseWeapon>& WeaponClass : DefaultWeapons)
-		{
-			if(!WeaponClass) continue;
-			FActorSpawnParameters SpawnParams;
-			//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-			SpawnParams.Owner = this;
-			//SpawnParams.Instigator = this;
-			ABaseWeapon* Weapon;
-			
-			if(WeaponClass && GetWorld())
-			{
-				Weapon = GetWorld()->SpawnActor<ABaseWeapon>(WeaponClass, SpawnParams);
-				
-			}
-
-			const int32 index = Weapons.Add(Weapon);
-			if(index == CurrentWeaponIndex)
-			{
-				CurrentWeapon = Weapon;
-				OnRep_CurrentWeapon(nullptr);
-			}
-		}
-	}
+	// if(HasAuthority())
+	// {
+	// 	for(const TSubclassOf<ABaseWeapon>& WeaponClass : DefaultWeapons)
+	// 	{
+	// 		if(!WeaponClass) continue;
+	// 		FActorSpawnParameters SpawnParams;
+	// 		//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
+	// 		SpawnParams.Owner = this;
+	// 		//SpawnParams.Instigator = this;
+	// 		ABaseWeapon* Weapon;
+	// 		
+	// 		if(WeaponClass && GetWorld())
+	// 		{
+	// 			Weapon = GetWorld()->SpawnActor<ABaseWeapon>(WeaponClass, SpawnParams);
+	// 			
+	// 		}
+	//
+	// 		const int32 index = Weapons.Add(Weapon);
+	// 		if(index == CurrentWeaponIndex)
+	// 		{
+	// 			CurrentWeapon = Weapon;
+	// 			OnRep_CurrentWeapon(nullptr);
+	// 		}
+	// 	}
+	// }
 }
 
 void AMyFPSCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME_CONDITION(AMyFPSCharacter, Weapons, COND_None);
-	DOREPLIFETIME_CONDITION(AMyFPSCharacter, CurrentWeapon, COND_None);
+	DOREPLIFETIME(AMyFPSCharacter, Weapons);
+	DOREPLIFETIME(AMyFPSCharacter, CurrentWeapon);
+	DOREPLIFETIME(AMyFPSCharacter, CurrentWeaponIndex);
 }
 
 void AMyFPSCharacter::OnRep_CurrentWeapon(const class ABaseWeapon* LastWeapon)
 {
-	if(CurrentWeapon)
-	{
-		if(!CurrentWeapon->CurrentOwner)
-		{
-			const FTransform SocketTransform = CurrentWeapon->PlacementTransform * GetMesh()->GetSocketTransform(FName("WeaponSocket"));
-			CurrentWeapon->SetActorTransform(SocketTransform, false, nullptr, ETeleportType::TeleportPhysics);
-			CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform, "WeaponSocket");
-
-			CurrentWeapon->CurrentOwner = this;
-		}
-		CurrentWeapon->Mesh->SetVisibility(true);
-		wprintf(TEXT("%d : Visible"), GetLocalRole());
-	}
-
-	if(LastWeapon)
-	{
-		LastWeapon->Mesh->SetVisibility(false);
-	}
+	// if(CurrentWeapon)
+	// {
+	// 	if(!CurrentWeapon->CurrentOwner)
+	// 	{
+	// 		const FTransform SocketTransform = CurrentWeapon->PlacementTransform * GetMesh()->GetSocketTransform(FName("WeaponSocket"));
+	// 		CurrentWeapon->SetActorTransform(SocketTransform, false, nullptr, ETeleportType::TeleportPhysics);
+	// 		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform, "WeaponSocket");
+	//
+	// 		CurrentWeapon->CurrentOwner = this;
+	// 		CurrentWeapon->SetOwner(this);
+	// 	}
+	// 	CurrentWeapon->Mesh->SetVisibility(true);
+	// 	wprintf(TEXT("%d : Visible"), GetLocalRole());
+	// }
+	//
+	// if(LastWeapon)
+	// {
+	// 	LastWeapon->Mesh->SetVisibility(false);
+	// }
 }
 
 void AMyFPSCharacter::EquipWeapon(const int32 Index)
 {
-	if(!Weapons.IsValidIndex(Index) || CurrentWeapon == Weapons[Index]) return;
-	
-	if(IsLocallyControlled())
-	{
-		CurrentWeaponIndex = Index;
+	// if(!Weapons.IsValidIndex(Index) || CurrentWeapon == Weapons[Index]) return;
+	//
+	// if(IsLocallyControlled())
+	// {
+	// 	CurrentWeaponIndex = Index;
+	// 	
+	// 	const ABaseWeapon* LastWeapon = CurrentWeapon;
+	// 	CurrentWeapon = Weapons[Index];
+	// 	OnRep_CurrentWeapon(LastWeapon);
+	// 	Server_SetCurrentWeapon(Weapons[Index]);
+	// }
+	// else if(!HasAuthority())
+	// {
+	// 	Server_SetCurrentWeapon(Weapons[Index]);	
+	// }
 
-		const ABaseWeapon* LastWeapon = CurrentWeapon;
-		CurrentWeapon = Weapons[Index];
-		OnRep_CurrentWeapon(LastWeapon);
-		Server_SetCurrentWeapon(Weapons[Index]);
-	}
-	else if(!HasAuthority())
-	{
-		Server_SetCurrentWeapon(Weapons[Index]);	
-	}
+	
+	// if (HasAuthority()) // Server
+	// {
+	// 	const ABaseWeapon* LastWeapon = CurrentWeapon;
+	// 	CurrentWeapon = Weapons[Index];
+	// 	CurrentWeaponIndex = Index;
+	// 	OnRep_CurrentWeapon(LastWeapon); // Update state
+	// }
+	// else if (IsLocallyControlled()) // Client
+	// {
+	// 	Server_SetCurrentWeapon(Weapons[Index]); // Notify server
+	// }
 	
 }
 
 void AMyFPSCharacter::SwapWeapon()
 {
-	const int32 Index = Weapons.IsValidIndex(CurrentWeaponIndex + 1) ? CurrentWeaponIndex + 1 : 0;
-	EquipWeapon(Index);
+	// const int32 Index = Weapons.IsValidIndex(CurrentWeaponIndex + 1) ? CurrentWeaponIndex + 1 : 0;
+	// EquipWeapon(Index);
 }
 
 void AMyFPSCharacter::Server_SetCurrentWeapon_Implementation(ABaseWeapon* NewWeapon)
 {
-	const ABaseWeapon* LastWeapon = CurrentWeapon;
-	CurrentWeapon = NewWeapon;
-	OnRep_CurrentWeapon(LastWeapon);
+	// const ABaseWeapon* LastWeapon = CurrentWeapon;
+	// CurrentWeapon = NewWeapon;
+	// OnRep_CurrentWeapon(LastWeapon);
+	
+	// if (Weapons.Contains(NewWeapon)) // Validate the weapon
+	// {
+	// 	const ABaseWeapon* LastWeapon = CurrentWeapon;
+	// 	CurrentWeapon = NewWeapon;
+	//
+	// 	// Update index for replication
+	// 	CurrentWeaponIndex = Weapons.IndexOfByKey(NewWeapon);
+	//
+	// 	OnRep_CurrentWeapon(LastWeapon);
+	// }
 }
 
 // Called to bind functionality to input

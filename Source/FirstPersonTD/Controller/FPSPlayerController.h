@@ -24,9 +24,14 @@ enum class EInputActionKey : uint8
 	IAK_MoveRight			UMETA(DisplayName = "MoveRight"),
 	IAK_MoveLeft			UMETA(DisplayName = "MoveLeft"),
 	IAK_SwitchWeapon		UMETA(DisplayName = "SwitchWeapon"),
-	//IAK_SwitchWeapon		UMETA(DisplayName = "SwitchWeapon"),
-	//IAK_SwitchExplosive 	UMETA(DisplayName = "SwitchExplosive"),
-	//IAK_LayExplosive		UMETA(DisplayName = "LayExplosive"),
+	IAK_Shoot				UMETA(DisplayName = "Shoot"),
+	IAK_Reload				UMETA(DisplayName = "Reload"),
+	IAK_PeekRight			UMETA(DisplayName = "PeekRight"),
+	IAK_PeekLeft			UMETA(DisplayName = "PeekLeft"),
+	IAK_Crouch				UMETA(DisplayName = "Crouch"),
+	IAK_Aim					UMETA(DisplayName = "Aim"),
+	IAK_AimGrenade			UMETA(DisplayName = "AimGrenade"),
+	IAK_ThrowGrenade		UMETA(DisplayName = "ThrowGrenade"),
 };
 
 
@@ -44,13 +49,23 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-#pragma region Movement
+#pragma region Movement and Actions
 	void MoveForward(const FInputActionValue& Value);
 	void MoveBackwards(const FInputActionValue& Value);
 	void MoveLeft(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
 	void LookAround(const FInputActionValue& Value);
-	virtual void SwapWeapon();
+	void SwapWeapon();
+
+	void Shoot();
+	void Reload();
+	void PeekRight();
+	void PeekLeft();
+	void Crouch();
+	void Aim();
+	void AimGrenade();
+	void ThrowGrenade();
+	
 
 	float MovementSpeed = 100.0f;
 	float RotationSpeed = 100.0f;

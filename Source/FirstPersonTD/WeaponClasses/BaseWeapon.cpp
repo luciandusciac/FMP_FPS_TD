@@ -16,6 +16,7 @@ ABaseWeapon::ABaseWeapon()
 	//FSetActorReplicates Replicates = FSetActorReplicates(cast<AActor>(this), true);
 	bReplicates = true;
 	bNetLoadOnClient = true;
+	SetReplicates(true);
 	
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
@@ -30,7 +31,7 @@ void ABaseWeapon::BeginPlay()
 	Super::BeginPlay();
 
 	if(!CurrentOwner)
-		//Mesh->SetVisibility(false);
+		Mesh->SetVisibility(false);
 }
 
 // Called every frame

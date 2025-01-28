@@ -41,6 +41,20 @@ void AFPSPlayerController::MoveForward(const FInputActionValue& Value)
 		const FVector Direction = FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::X);
 		PlayerCharacter->AddMovementInput(Direction, Value.Get<float>());
 	}
+
+	bIsWalking = true;
+	bStoppedWalkingVert = false;
+	
+	if(GetCharacter()->GetMesh())
+	{
+		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		{
+			AnimInstance->VerticalWalk = FMath::Lerp(AnimInstance->VerticalWalk, Value.Get<float>() * 100.f,  DeltaT * 2.f);
+			AnimInstance->VerticalWalk = FMath::Clamp(AnimInstance->VerticalWalk, 0.f, 100.f);
+			//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
+			
+		}
+	}
 }
 
 void AFPSPlayerController::MoveBackwards(const FInputActionValue& Value)
@@ -49,6 +63,20 @@ void AFPSPlayerController::MoveBackwards(const FInputActionValue& Value)
 	{
 		const FVector Direction = FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::X);
 		PlayerCharacter->AddMovementInput(Direction, -Value.Get<float>());
+	}
+
+	bIsWalking = true;
+	bStoppedWalkingVert = false;
+	
+	if(GetCharacter()->GetMesh())
+	{
+		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		{
+			AnimInstance->VerticalWalk = FMath::Lerp(AnimInstance->VerticalWalk, Value.Get<float>() * -100.f,  DeltaT * 2.f);
+			AnimInstance->VerticalWalk = FMath::Clamp(AnimInstance->VerticalWalk, -100.f, 0.f);
+			//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
+			
+		}
 	}
 }
 
@@ -59,6 +87,20 @@ void AFPSPlayerController::MoveLeft(const FInputActionValue& Value)
 		const FVector Direction = FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y);
 		PlayerCharacter->AddMovementInput(Direction, -Value.Get<float>());
 	}
+
+	bIsWalking = true;
+	bStoppedWalkingHoriz = false;
+	
+	if(GetCharacter()->GetMesh())
+	{
+		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		{
+			AnimInstance->HorizontalWalk = FMath::Lerp(AnimInstance->HorizontalWalk, Value.Get<float>() * 100.f,  DeltaT * 2.f);
+			AnimInstance->HorizontalWalk = FMath::Clamp(AnimInstance->HorizontalWalk, 0.f, 100.f);
+			//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
+			
+		}
+	}
 }
 
 void AFPSPlayerController::MoveRight(const FInputActionValue& Value)
@@ -67,6 +109,20 @@ void AFPSPlayerController::MoveRight(const FInputActionValue& Value)
 	{
 		const FVector Direction = FRotationMatrix(FRotator(0.f, GetControlRotation().Yaw, 0.f)).GetUnitAxis(EAxis::Y);
 		PlayerCharacter->AddMovementInput(Direction, Value.Get<float>());
+	}
+
+	bIsWalking = true;
+	bStoppedWalkingHoriz = false;
+	
+	if(GetCharacter()->GetMesh())
+	{
+		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		{
+			AnimInstance->HorizontalWalk = FMath::Lerp(AnimInstance->HorizontalWalk, Value.Get<float>() * -100.f,  DeltaT * 2.f);
+			AnimInstance->HorizontalWalk = FMath::Clamp(AnimInstance->HorizontalWalk, -100.f, 0.f);
+			//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
+			
+		}
 	}
 }
 
@@ -180,6 +236,21 @@ void AFPSPlayerController::ResetPeeking()
 	bIsPeeking = false;
 }
 
+void AFPSPlayerController::StopWalking()
+{
+	// if(GetCharacter()->GetMesh())
+	// {
+	// 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	// 	{
+	// 		AnimInstance->HorizontalWalk = FMath::Lerp(AnimInstance->HorizontalWalk, 0.f,  DeltaT * 2.f);
+	// 		AnimInstance->VerticalWalk = FMath::Lerp(AnimInstance->VerticalWalk, 0.f,  DeltaT * 2.f);
+	// 		//AnimInstance->HorizontalWalk = 0.f;
+	// 		//AnimInstance->VerticalWalk = 0.f;
+	// 	}
+	// }
+	bIsWalking = false;
+}
+
 // Called every frame
 void AFPSPlayerController::Tick(float DeltaTime)
 {
@@ -196,6 +267,34 @@ void AFPSPlayerController::Tick(float DeltaTime)
 				AnimInstance->HorizontalBend = FMath::Lerp(AnimInstance->HorizontalBend,0.f,  DeltaT * 10.f);
 				bPeekingCompleted = FMath::IsNearlyEqual(AnimInstance->HorizontalBend, 0.f, 0.01f);
 				//AnimInstance->HorizontalBend = FMath::Clamp(AnimInstance->HorizontalBend, 0.f, 50.f);
+			}
+		}
+	}
+
+	if(!bIsWalking && !bStoppedWalkingVert)
+	{
+		if(GetCharacter()->GetMesh())
+		{
+			if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+			{
+				AnimInstance->VerticalWalk = FMath::Lerp(AnimInstance->VerticalWalk, 0.f,  DeltaT * 10.f);
+				bStoppedWalkingVert = FMath::IsNearlyEqual(AnimInstance->VerticalWalk, 0.f, 0.1f);
+				//AnimInstance->HorizontalWalk = 0.f;
+				//AnimInstance->VerticalWalk = 0.f;
+			}
+		}
+	}
+
+	if(!bIsWalking && !bStoppedWalkingHoriz)
+	{
+		if(GetCharacter()->GetMesh())
+		{
+			if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+			{
+				AnimInstance->HorizontalWalk = FMath::Lerp(AnimInstance->HorizontalWalk, 0.f,  DeltaT * 10.f);
+				bStoppedWalkingHoriz = FMath::IsNearlyEqual(AnimInstance->HorizontalWalk, 0.f, 0.1f);
+				//AnimInstance->HorizontalWalk = 0.f;
+				//AnimInstance->VerticalWalk = 0.f;
 			}
 		}
 	}
@@ -236,6 +335,10 @@ void AFPSPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_ThrowGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::ThrowGrenade);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_PeekRight), ETriggerEvent::Completed, this, &AFPSPlayerController::ResetPeeking);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_PeekLeft), ETriggerEvent::Completed, this, &AFPSPlayerController::ResetPeeking);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveForward), ETriggerEvent::Completed, this, &AFPSPlayerController::StopWalking);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveBackwards), ETriggerEvent::Completed, this, &AFPSPlayerController::StopWalking);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveLeft), ETriggerEvent::Completed, this, &AFPSPlayerController::StopWalking);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveRight), ETriggerEvent::Completed, this, &AFPSPlayerController::StopWalking);
 		}
 	}
 }

@@ -71,6 +71,11 @@ protected:
 	void ResetPeeking();
 	bool bIsPeeking = false;
 	bool bPeekingCompleted = false;
+
+	void StopWalking();
+	bool bIsWalking = false;
+	bool bStoppedWalkingVert = false;
+	bool bStoppedWalkingHoriz = false;
 	
 
 	float MovementSpeed = 100.0f;

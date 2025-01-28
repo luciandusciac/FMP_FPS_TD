@@ -49,6 +49,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	float DeltaT;
+	
 #pragma region Movement and Actions
 	void MoveForward(const FInputActionValue& Value);
 	void MoveBackwards(const FInputActionValue& Value);
@@ -59,12 +61,16 @@ protected:
 
 	void Shoot();
 	void Reload();
-	void PeekRight();
-	void PeekLeft();
+	void PeekRight(const FInputActionValue& Value);
+	void PeekLeft(const FInputActionValue& Value);
 	void Crouch();
 	void Aim();
 	void AimGrenade();
 	void ThrowGrenade();
+
+	void ResetPeeking();
+	bool bIsPeeking = false;
+	bool bPeekingCompleted = false;
 	
 
 	float MovementSpeed = 100.0f;

@@ -26,4 +26,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Walking")
 	float VerticalWalk {0.0f};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Crouching")
+	bool bIsCrouching {false};
 };

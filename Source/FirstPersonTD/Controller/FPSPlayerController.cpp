@@ -205,7 +205,47 @@ void AFPSPlayerController::PeekLeft(const FInputActionValue& Value)
 
 void AFPSPlayerController::Crouch()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Crouching"));
+	
+	if(GetCharacter())
+	{
+		GetCharacter()->Crouch();
+		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		{
+			AnimInstance->bIsCrouching = true;
+			bIsCrouching = true;
+			UE_LOG(LogTemp, Warning, TEXT("Crouching"));
+		}
+	}
+	
+	// if(!bIsCrouching)
+	// {
+	// 	if(GetCharacter())
+	// 	{
+	// 		GetCharacter()->Crouch();
+	// 		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	// 		{
+	// 			AnimInstance->bIsCrouching = true;
+	// 			//bIsCrouching = true;
+	// 			UE_LOG(LogTemp, Warning, TEXT("Crouching"));
+	// 		}
+	// 	}
+	// }
+	// else if(bIsCrouching)
+	// {
+	// 	if(GetCharacter())
+	// 	{
+	// 		GetCharacter()->UnCrouch();
+	// 		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	// 		{
+	// 			AnimInstance->bIsCrouching = false;
+	// 			//bIsCrouching = false;
+	// 			UE_LOG(LogTemp, Warning, TEXT("Not Crouching"));
+	// 		}
+	// 	}
+	// }
+
+	//bIsCrouching = !bIsCrouching;
+	
 }
 
 void AFPSPlayerController::Aim()
@@ -249,6 +289,21 @@ void AFPSPlayerController::StopWalking()
 	// 	}
 	// }
 	bIsWalking = false;
+}
+
+void AFPSPlayerController::StopCrouching()
+{
+	if(GetCharacter())
+	{
+		GetCharacter()->Crouch();
+		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		{
+			AnimInstance->bIsCrouching = false;
+			bIsCrouching = false;
+			UE_LOG(LogTemp, Warning, TEXT("Crouching"));
+		}
+	}
+	//bIsCrouching = false;
 }
 
 // Called every frame
@@ -298,6 +353,23 @@ void AFPSPlayerController::Tick(float DeltaTime)
 			}
 		}
 	}
+
+	if(!bIsCrouching && !bCrouchingCompleted)
+	{
+		if(GetCharacter()->GetMesh())
+		{
+			if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+			{
+				//AnimInstance->HorizontalWalk = FMath::Lerp(AnimInstance->HorizontalWalk, 0.f,  DeltaT * 10.f);
+				bCrouchingCompleted = FMath::IsNearlyEqual(GetCharacter()->CrouchedEyeHeight, GetCharacter()->GetDefaultHalfHeight(), 0.1f);
+
+				if(bCrouchingCompleted)
+				{
+					AnimInstance->bIsCrouching = false;
+				}
+			}
+		}
+	}
 }
 
 void AFPSPlayerController::OnPossess(APawn* InPawn)
@@ -320,21 +392,31 @@ void AFPSPlayerController::SetupInputComponent()
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent.Get()))
 		{
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_SwitchWeapon), ETriggerEvent::Triggered, this, &AFPSPlayerController::SwapWeapon);
+
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveForward), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveForward);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveBackwards), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveBackwards);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveLeft), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveLeft);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveRight), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveRight);
+			
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Look), ETriggerEvent::Triggered, this, &AFPSPlayerController::LookAround);
+
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Shoot), ETriggerEvent::Triggered, this, &AFPSPlayerController::Shoot);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Reload), ETriggerEvent::Triggered, this, &AFPSPlayerController::Reload);
+
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_PeekRight), ETriggerEvent::Triggered, this, &AFPSPlayerController::PeekRight);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_PeekLeft), ETriggerEvent::Triggered, this, &AFPSPlayerController::PeekLeft);
-			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Crouch), ETriggerEvent::Triggered, this, &AFPSPlayerController::Crouch);
-			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Aim), ETriggerEvent::Triggered, this, &AFPSPlayerController::Aim);
-			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_AimGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::AimGrenade);
-			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_ThrowGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::ThrowGrenade);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_PeekRight), ETriggerEvent::Completed, this, &AFPSPlayerController::ResetPeeking);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_PeekLeft), ETriggerEvent::Completed, this, &AFPSPlayerController::ResetPeeking);
+
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Crouch), ETriggerEvent::Triggered, this, &AFPSPlayerController::Crouch);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Crouch), ETriggerEvent::Completed, this, &AFPSPlayerController::StopCrouching);
+
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Aim), ETriggerEvent::Triggered, this, &AFPSPlayerController::Aim);
+
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_AimGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::AimGrenade);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_ThrowGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::ThrowGrenade);
+
+			
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveForward), ETriggerEvent::Completed, this, &AFPSPlayerController::StopWalking);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveBackwards), ETriggerEvent::Completed, this, &AFPSPlayerController::StopWalking);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveLeft), ETriggerEvent::Completed, this, &AFPSPlayerController::StopWalking);

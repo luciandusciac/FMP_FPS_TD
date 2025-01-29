@@ -76,8 +76,11 @@ protected:
 	bool bIsWalking = false;
 	bool bStoppedWalkingVert = false;
 	bool bStoppedWalkingHoriz = false;
-	
 
+	void StopCrouching();
+	bool bIsCrouching = false;
+	bool bCrouchingCompleted = false;
+	
 	float MovementSpeed = 100.0f;
 	float RotationSpeed = 100.0f;
 #pragma endregion

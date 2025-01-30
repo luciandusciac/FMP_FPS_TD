@@ -27,6 +27,18 @@ public:
 	UPROPERTY(BlueprintReadWrite, Category = "Walking")
 	float VerticalWalk {0.0f};
 
-	UPROPERTY(BlueprintReadWrite, Category = "Crouching")
+	UPROPERTY(BlueprintReadWrite, Category = "Action Booleans")
 	bool bIsCrouching {false};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Action Booleans")
+	bool bIsReloading {false};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Action Booleans")
+	bool bIsShooting {false};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Action Booleans")
+	bool bDead {false};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Action Booleans")
+	bool bIsThrowingGrenade {false};
 };

@@ -20,17 +20,17 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
-	UPROPERTY(EditDefaultsOnly, Category = "Config")
-	TArray<TSubclassOf<class ABaseWeapon>> DefaultWeapons;
-
-	UFUNCTION()
-	virtual void OnRep_CurrentWeapon(const class ABaseWeapon* LastWeapon);
-
-	UFUNCTION(Server, Reliable)
-	void Server_SetCurrentWeapon(class ABaseWeapon* Weapon);
-	virtual void Server_SetCurrentWeapon_Implementation(class ABaseWeapon* NewWeapon);
+	// virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	//
+	// UPROPERTY(EditDefaultsOnly, Category = "Config")
+	// TArray<TSubclassOf<class ABaseWeapon>> DefaultWeapons;
+	//
+	// UFUNCTION()
+	// virtual void OnRep_CurrentWeapon(const class ABaseWeapon* LastWeapon);
+	//
+	// UFUNCTION(Server, Reliable)
+	// void Server_SetCurrentWeapon(class ABaseWeapon* Weapon);
+	// virtual void Server_SetCurrentWeapon_Implementation(class ABaseWeapon* NewWeapon);
 	
 public:
 	
@@ -38,21 +38,55 @@ public:
 
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
+	FTimerHandle AnimationTimerHandle;
+	
+	void ThrowGrenade();
+	float GrenadeThrowTime;
+	void OnGrenadeThrown();
+
+	void Shoot();
+	float ShootingTime;
+	void OnShoot();
+
+	void Aim();
+
+	void Die();
+	float DeathTime;
+	void OnDeath();
+
+	void Reload();
+	float ReloadingTime;
+	void OnReload();
+
+	
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	class UCameraComponent* Camera;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
-	TArray<class ABaseWeapon*> Weapons;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimationAsset* ShootingAnimation;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
-	int32 CurrentWeaponIndex = 0;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimationAsset* ReloadingAnimation;
 
-	UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_CurrentWeapon, Category = "State")
-	class ABaseWeapon* CurrentWeapon;
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimationAsset* DeathAnimation;
 
-	UFUNCTION(BlueprintCallable)
-	virtual void SwapWeapon();
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimationAsset* GrenadeThrowAnimation;
 
-	UFUNCTION(BlueprintCallable)
-	void EquipWeapon(const int32 Index);
+	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
+	// TArray<class ABaseWeapon*> Weapons;
+	//
+	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
+	// int32 CurrentWeaponIndex = 0;
+	//
+	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_CurrentWeapon, Category = "State")
+	// class ABaseWeapon* CurrentWeapon;
+	//
+	// UFUNCTION(BlueprintCallable)
+	// virtual void SwapWeapon();
+	//
+	// UFUNCTION(BlueprintCallable)
+	// void EquipWeapon(const int32 Index);
 };

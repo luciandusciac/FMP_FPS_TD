@@ -161,11 +161,37 @@ void AFPSPlayerController::SwapWeapon()
 void AFPSPlayerController::Shoot()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Shooting"));
+
+	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	{
+		if(AnimInstance->bIsShooting)
+		{
+			return;
+		}
+	}
+	
+	if(AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetCharacter()))
+	{
+		PlayerCharacter->Shoot();
+	}
 }
 
 void AFPSPlayerController::Reload()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Reloading"));
+
+	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	{
+		if(AnimInstance->bIsReloading)
+		{
+			return;
+		}
+	}
+	
+	if(AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetCharacter()))
+	{
+		PlayerCharacter->Reload();
+	}
 }
 
 void AFPSPlayerController::PeekRight(const FInputActionValue& Value)
@@ -261,33 +287,28 @@ void AFPSPlayerController::AimGrenade()
 void AFPSPlayerController::ThrowGrenade()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Throwing grenade"));
+
+	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	{
+		if(AnimInstance->bIsThrowingGrenade)
+		{
+			return;
+		}
+	}
+	
+	if(AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetCharacter()))
+	{
+		PlayerCharacter->ThrowGrenade();
+	}
 }
 
 void AFPSPlayerController::ResetPeeking()
 {
-	// if(GetCharacter()->GetMesh())
-	// {
-	// 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-	// 	{
-	// 		AnimInstance->HorizontalBend = FMath::Lerp(AnimInstance->HorizontalBend,0.f,  DeltaT * 10.f);
-	// 		//AnimInstance->HorizontalBend = FMath::Clamp(AnimInstance->HorizontalBend, 0.f, 50.f);
-	// 	}
-	// }
 	bIsPeeking = false;
 }
 
 void AFPSPlayerController::StopWalking()
 {
-	// if(GetCharacter()->GetMesh())
-	// {
-	// 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-	// 	{
-	// 		AnimInstance->HorizontalWalk = FMath::Lerp(AnimInstance->HorizontalWalk, 0.f,  DeltaT * 2.f);
-	// 		AnimInstance->VerticalWalk = FMath::Lerp(AnimInstance->VerticalWalk, 0.f,  DeltaT * 2.f);
-	// 		//AnimInstance->HorizontalWalk = 0.f;
-	// 		//AnimInstance->VerticalWalk = 0.f;
-	// 	}
-	// }
 	bIsWalking = false;
 }
 

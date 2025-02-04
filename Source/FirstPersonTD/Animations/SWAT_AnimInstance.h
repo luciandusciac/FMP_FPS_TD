@@ -41,4 +41,7 @@ public:
 
 	UPROPERTY(BlueprintReadWrite, Category = "Action Booleans")
 	bool bIsThrowingGrenade {false};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon Booleans")
+	bool bHasPistol {false};
 };

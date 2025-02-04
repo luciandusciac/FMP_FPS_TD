@@ -6,6 +6,7 @@
 #include "InputAction.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
+#include "Animation/AnimSequence.h"
 
 #include "MyFPSCharacter.generated.h"
 
@@ -36,7 +37,7 @@ public:
 	
 	//virtual void Tick(float DeltaTime) override;
 
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	FTimerHandle AnimationTimerHandle;
 	
@@ -46,6 +47,7 @@ public:
 
 	void Shoot();
 	float ShootingTime;
+	float PistolShootingTime;
 	void OnShoot();
 
 	void Aim();
@@ -64,16 +66,22 @@ public:
 	class UCameraComponent* Camera;
 
 	UPROPERTY(EditAnywhere, Category = "Animations")
-	UAnimationAsset* ShootingAnimation;
+	UAnimSequence* ShootingAnimation;
 
 	UPROPERTY(EditAnywhere, Category = "Animations")
-	UAnimationAsset* ReloadingAnimation;
+	UAnimSequence* ReloadingAnimation;
 
 	UPROPERTY(EditAnywhere, Category = "Animations")
-	UAnimationAsset* DeathAnimation;
+	UAnimSequence* DeathAnimation;
 
 	UPROPERTY(EditAnywhere, Category = "Animations")
-	UAnimationAsset* GrenadeThrowAnimation;
+	UAnimSequence* GrenadeThrowAnimation;
+	
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimSequence* PistolReloadingAnimation;
+
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimSequence* PistolShootingAnimation;
 
 	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
 	// TArray<class ABaseWeapon*> Weapons;

@@ -31,7 +31,7 @@ void AFPSPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetupInputComponent();
+	//SetupInputComponent();
 }
 
 void AFPSPlayerController::MoveForward(const FInputActionValue& Value)
@@ -150,12 +150,13 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 
 void AFPSPlayerController::SwapWeapon()
 {
+	if(!HasAuthority()) return;
 	UE_LOG(LogTemp, Warning, TEXT("Swapping weapon"));
 	
-	// if (AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetPawn()))
-	// {
-	// 	PlayerCharacter->SwapWeapon();
-	// }
+	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	{
+			AnimInstance->bHasPistol = !AnimInstance->bHasPistol;
+	}
 }
 
 void AFPSPlayerController::Shoot()
@@ -412,7 +413,7 @@ void AFPSPlayerController::SetupInputComponent()
 	{
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent.Get()))
 		{
-			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_SwitchWeapon), ETriggerEvent::Triggered, this, &AFPSPlayerController::SwapWeapon);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_SwitchWeapon), ETriggerEvent::Started, this, &AFPSPlayerController::SwapWeapon);
 
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveForward), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveForward);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveBackwards), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveBackwards);

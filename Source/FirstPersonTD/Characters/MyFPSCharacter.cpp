@@ -32,6 +32,7 @@ void AMyFPSCharacter::BeginPlay()
 
 	ReloadingTime = ReloadingAnimation->GetPlayLength();
 	ShootingTime = ShootingAnimation->GetPlayLength();
+	PistolShootingTime = PistolShootingAnimation->GetPlayLength();
 	//DeathTime = DeathAnimation->GetPlayLength();
 	GrenadeThrowTime = GrenadeThrowAnimation->GetPlayLength();
 	
@@ -152,11 +153,11 @@ void AMyFPSCharacter::BeginPlay()
 // }
 
 // Called to bind functionality to input
-void AMyFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-	
-}
+// void AMyFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+// {
+// 	Super::SetupPlayerInputComponent(PlayerInputComponent);
+// 	
+// }
 
 void AMyFPSCharacter::ThrowGrenade()
 {
@@ -182,12 +183,26 @@ void AMyFPSCharacter::OnGrenadeThrown()
 void AMyFPSCharacter::Shoot()
 {
 	//GetMesh()->PlayAnimation(ShootingAnimation, false);
-	GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, ShootingTime, false);
-	
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
+		if(AnimInstance->bHasPistol)
+		{
+			GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, PistolShootingTime, false);
+			
+		}
+		else
+		{
+			GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, ShootingTime, false);
+			
+		}
 		AnimInstance->bIsShooting = true;
 	}
+	// GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, ShootingTime, false);
+	//
+	// if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
+	// {
+	// 	AnimInstance->bIsShooting = true;
+	// }
 }
 
 void AMyFPSCharacter::OnShoot()
@@ -197,6 +212,17 @@ void AMyFPSCharacter::OnShoot()
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->bIsShooting = false;
+
+		// if(AnimInstance->bHasPistol)
+		// {
+		// 	//GetMesh()->PlayAnimation(PistolShootingAnimation, false);
+		// 	AnimInstance->PlaySlotAnimationAsDynamicMontage(PistolShootingAnimation, FName("Spine"));
+		// }
+		// else
+		// {
+		// 	//GetMesh()->PlayAnimation(ShootingAnimation, false);
+		// 	AnimInstance->PlaySlotAnimationAsDynamicMontage(ShootingAnimation, FName("Spine"));
+		// }
 	}
 }
 
@@ -221,6 +247,17 @@ void AMyFPSCharacter::Reload()
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->bIsReloading = true;
+
+		// if(AnimInstance->bHasPistol)
+		// {
+		// 	//GetMesh()->PlayAnimation(PistolReloadingAnimation, false);
+		// 	AnimInstance->PlaySlotAnimationAsDynamicMontage(PistolReloadingAnimation, FName("Spine"));
+		// }
+		// else
+		// {
+		// 	//GetMesh()->PlayAnimation(ReloadingAnimation, false);
+		// 	AnimInstance->PlaySlotAnimationAsDynamicMontage(ReloadingAnimation, FName("Spine"));
+		// }
 	}
 }
 

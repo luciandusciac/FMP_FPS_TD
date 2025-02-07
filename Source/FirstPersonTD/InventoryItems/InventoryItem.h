@@ -3,18 +3,18 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "FirstPersonTD/WeaponClasses/BaseWeapon.h"
+#include "GameFramework/Actor.h"
 
-#include "Rifle.generated.h"
+#include "InventoryItem.generated.h"
 
-UCLASS()
-class FIRSTPERSONTD_API ARifle : public ABaseWeapon
+UCLASS(Abstract)
+class FIRSTPERSONTD_API AInventoryItem : public AActor
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this actor's properties
-	ARifle();
+	AInventoryItem();
 
 protected:
 	// Called when the game starts or when spawned

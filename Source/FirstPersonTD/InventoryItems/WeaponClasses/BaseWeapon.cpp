@@ -30,13 +30,35 @@ void ABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(!CurrentOwner)
-		Mesh->SetVisibility(false);
+	// if(!CurrentOwner)
+	// 	Mesh->SetVisibility(false);
 }
 
 // Called every frame
 void ABaseWeapon::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ABaseWeapon::Shoot()
+{
+	//TODO: Generate bullet object
+}
+
+void ABaseWeapon::Reload()
+{
+	if(ClipSize > 0)
+	{
+		CurrentAmmo = ClipSize;
+		ClipSize--;
+	}
+	else
+	{
+		//TODO: Play error sound
+	}
+}
+
+void ABaseWeapon::Aim()
+{
 }
 

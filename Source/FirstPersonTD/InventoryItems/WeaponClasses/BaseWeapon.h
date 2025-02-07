@@ -1,0 +1,95 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#pragma once
+
+#include "CoreMinimal.h"
+#include "GameFramework/Actor.h"
+#include "../InventoryItem.h"
+#include "../Source/FirstPersonTD/Projectiles/BaseProjectile.h"
+
+#include "BaseWeapon.generated.h"
+
+// USTRUCT(BlueprintType)
+// struct FIKProperties
+// {
+// 	GENERATED_BODY()
+//
+// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+// 	class UAnimSequence* AnimPose;
+//
+// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+// 	float AimOffset = 15;
+//
+// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+// 	FTransform AimTransform;
+// };
+
+
+UCLASS(Abstract)
+class FIRSTPERSONTD_API ABaseWeapon : public AInventoryItem
+{
+	GENERATED_BODY()
+
+public:
+	ABaseWeapon();
+
+protected:
+	virtual void BeginPlay() override;
+
+#pragma region WeaponStats
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
+	int CurrentAmmo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
+	int ClipSize;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
+	int ReserveAmmo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
+	float ReloadTime;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
+	float FireRate;
+
+#pragma endregion
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
+	TSubclassOf<ABaseProjectile> WeaponBullet;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
+	UStaticMeshComponent* BulletOrigin;
+
+public:
+	virtual void Tick(float DeltaTime) override;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	class USceneComponent* Root;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	class UStaticMeshComponent* Mesh;
+
+	//INFO: Variable to keep track if the weapon has a scope
+	bool bHasScope;
+
+#pragma region WeaponFunctions
+
+	virtual void Shoot();
+	void Reload();
+	void Aim();
+	
+#pragma endregion	
+	
+	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "State")
+	// class AMyFPSCharacter* CurrentOwner;
+	//
+	// UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Config")
+	// FIKProperties IKProperties;
+	//
+	// UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Config")
+	// FTransform PlacementTransform;
+	
+	
+	//niagara for shot and muzzle flash?
+};

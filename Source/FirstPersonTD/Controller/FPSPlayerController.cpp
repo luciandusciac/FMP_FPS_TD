@@ -35,16 +35,16 @@ void AFPSPlayerController::BeginPlay()
 
 	AnimationInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance());
 	
-	AnimationStates.Add(0, AnimationInstance->bHasPrimary);
+	// AnimationStates.Add(0, AnimationInstance->bHasPrimary);
 	AnimationInstance->bHasPrimary = true;
-	AnimationStates.Add(1, AnimationInstance->bHasPistol);
-	//AnimationInstance->bHasPistol = false;
-	AnimationStates.Add(2, AnimationInstance->bHasGrenade);
-	//AnimationInstance->bHasGrenade = false;
-	AnimationStates.Add(3, AnimationInstance->bHasKnife);
+	// AnimationStates.Add(1, AnimationInstance->bHasPistol);
+	// //AnimationInstance->bHasPistol = false;
+	// AnimationStates.Add(2, AnimationInstance->bHasGrenade);
+	// //AnimationInstance->bHasGrenade = false;
+	// AnimationStates.Add(3, AnimationInstance->bHasKnife);
 	//AnimationInstance->bHasKnife = false;
 
-	AnimationStates.GenerateValueArray(AnimationBooleans);
+	//AnimationStates.GenerateValueArray(AnimationBooleans);
 }
 
 void AFPSPlayerController::MoveForward(const FInputActionValue& Value)
@@ -58,16 +58,16 @@ void AFPSPlayerController::MoveForward(const FInputActionValue& Value)
 	bIsWalking = true;
 	bStoppedWalkingVert = false;
 	
-	if(GetCharacter()->GetMesh())
-	{
-		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-		{
-			AnimInstance->VerticalWalk = FMath::Lerp(AnimInstance->VerticalWalk, Value.Get<float>() * 100.f,  DeltaT * 2.f);
-			AnimInstance->VerticalWalk = FMath::Clamp(AnimInstance->VerticalWalk, 0.f, 100.f);
+	//if(GetCharacter()->GetMesh())
+	//{
+		//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		//{
+			AnimationInstance->VerticalWalk = FMath::Lerp(AnimationInstance->VerticalWalk, Value.Get<float>() * 100.f,  DeltaT * 2.f);
+			AnimationInstance->VerticalWalk = FMath::Clamp(AnimationInstance->VerticalWalk, 0.f, 100.f);
 			//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
 			
-		}
-	}
+		//}
+	//}
 }
 
 void AFPSPlayerController::MoveBackwards(const FInputActionValue& Value)
@@ -81,16 +81,16 @@ void AFPSPlayerController::MoveBackwards(const FInputActionValue& Value)
 	bIsWalking = true;
 	bStoppedWalkingVert = false;
 	
-	if(GetCharacter()->GetMesh())
-	{
-		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-		{
-			AnimInstance->VerticalWalk = FMath::Lerp(AnimInstance->VerticalWalk, Value.Get<float>() * -100.f,  DeltaT * 2.f);
-			AnimInstance->VerticalWalk = FMath::Clamp(AnimInstance->VerticalWalk, -100.f, 0.f);
+	//if(GetCharacter()->GetMesh())
+	//{
+		//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		//{
+			AnimationInstance->VerticalWalk = FMath::Lerp(AnimationInstance->VerticalWalk, Value.Get<float>() * -100.f,  DeltaT * 2.f);
+			AnimationInstance->VerticalWalk = FMath::Clamp(AnimationInstance->VerticalWalk, -100.f, 0.f);
 			//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
 			
-		}
-	}
+		//}
+	//}
 }
 
 void AFPSPlayerController::MoveLeft(const FInputActionValue& Value)
@@ -104,16 +104,16 @@ void AFPSPlayerController::MoveLeft(const FInputActionValue& Value)
 	bIsWalking = true;
 	bStoppedWalkingHoriz = false;
 	
-	if(GetCharacter()->GetMesh())
-	{
-		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-		{
-			AnimInstance->HorizontalWalk = FMath::Lerp(AnimInstance->HorizontalWalk, Value.Get<float>() * 100.f,  DeltaT * 2.f);
-			AnimInstance->HorizontalWalk = FMath::Clamp(AnimInstance->HorizontalWalk, 0.f, 100.f);
+	//if(GetCharacter()->GetMesh())
+	//{
+		//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		//{
+			AnimationInstance->HorizontalWalk = FMath::Lerp(AnimationInstance->HorizontalWalk, Value.Get<float>() * 100.f,  DeltaT * 2.f);
+			AnimationInstance->HorizontalWalk = FMath::Clamp(AnimationInstance->HorizontalWalk, 0.f, 100.f);
 			//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
 			
-		}
-	}
+		//}
+	//}
 }
 
 void AFPSPlayerController::MoveRight(const FInputActionValue& Value)
@@ -127,16 +127,16 @@ void AFPSPlayerController::MoveRight(const FInputActionValue& Value)
 	bIsWalking = true;
 	bStoppedWalkingHoriz = false;
 	
-	if(GetCharacter()->GetMesh())
-	{
-		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-		{
-			AnimInstance->HorizontalWalk = FMath::Lerp(AnimInstance->HorizontalWalk, Value.Get<float>() * -100.f,  DeltaT * 2.f);
-			AnimInstance->HorizontalWalk = FMath::Clamp(AnimInstance->HorizontalWalk, -100.f, 0.f);
+	//if(GetCharacter()->GetMesh())
+	//{
+		//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		//{
+			AnimationInstance->HorizontalWalk = FMath::Lerp(AnimationInstance->HorizontalWalk, Value.Get<float>() * -100.f,  DeltaT * 2.f);
+			AnimationInstance->HorizontalWalk = FMath::Clamp(AnimationInstance->HorizontalWalk, -100.f, 0.f);
 			//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
 			
-		}
-	}
+		//}
+	//}
 }
 
 void AFPSPlayerController::LookAround(const FInputActionValue& Value)
@@ -148,16 +148,16 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 		PlayerCharacter->AddControllerPitchInput(-LookValue.Y);
 
 
-		if(GetCharacter()->GetMesh())
-		{
-			if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-			{
-				AnimInstance->VerticalBend = FMath::Lerp(AnimInstance->VerticalBend, LookValue.Y * 50.f,  DeltaT * 2.f);
-				AnimInstance->VerticalBend = FMath::Clamp(AnimInstance->VerticalBend, -50.f, 50.f);
+		//if(GetCharacter()->GetMesh())
+		//{
+			//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+			//{
+				AnimationInstance->VerticalBend = FMath::Lerp(AnimationInstance->VerticalBend, LookValue.Y * 50.f,  DeltaT * 2.f);
+				AnimationInstance->VerticalBend = FMath::Clamp(AnimationInstance->VerticalBend, -50.f, 50.f);
 				//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
 			
-			}
-		}
+			//}
+		//}
 	}
 }
 
@@ -207,13 +207,13 @@ void AFPSPlayerController::Shoot()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Shooting"));
 
-	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-	{
-		if(AnimInstance->bIsShooting)
+	//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	//{
+		if(AnimationInstance->bIsShooting)
 		{
 			return;
 		}
-	}
+	//}
 	
 	if(AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetCharacter()))
 	{
@@ -225,13 +225,13 @@ void AFPSPlayerController::Reload()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Reloading"));
 
-	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-	{
-		if(AnimInstance->bIsReloading)
+	//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	//{
+		if(AnimationInstance->bIsReloading)
 		{
 			return;
 		}
-	}
+	//}
 	
 	if(AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetCharacter()))
 	{
@@ -246,15 +246,15 @@ void AFPSPlayerController::PeekRight(const FInputActionValue& Value)
 	bIsPeeking = true;
 	bPeekingCompleted = false;
 	
-	if(GetCharacter()->GetMesh())
-	{
-		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-		{
-			AnimInstance->HorizontalBend = FMath::Lerp(AnimInstance->HorizontalBend, Value.Get<float>() * -50.f,  DeltaT * 10.f);
-			AnimInstance->HorizontalBend = FMath::Clamp(AnimInstance->HorizontalBend, -50.f, 0.f);
+	//if(GetCharacter()->GetMesh())
+	//{
+		//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		//{
+			AnimationInstance->HorizontalBend = FMath::Lerp(AnimationInstance->HorizontalBend, Value.Get<float>() * -50.f,  DeltaT * 10.f);
+			AnimationInstance->HorizontalBend = FMath::Clamp(AnimationInstance->HorizontalBend, -50.f, 0.f);
 			
-		}
-	}
+		//}
+	//}
 }
 
 void AFPSPlayerController::PeekLeft(const FInputActionValue& Value)
@@ -264,14 +264,14 @@ void AFPSPlayerController::PeekLeft(const FInputActionValue& Value)
 	bIsPeeking = true;
 	bPeekingCompleted = false;
 	
-	if(GetCharacter()->GetMesh())
-	{
-		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-		{
-			AnimInstance->HorizontalBend = FMath::Lerp(AnimInstance->HorizontalBend, Value.Get<float>() * 50.f,  DeltaT * 10.f);
-			AnimInstance->HorizontalBend = FMath::Clamp(AnimInstance->HorizontalBend, 0.f, 50.f);
-		}
-	}
+	//if(GetCharacter()->GetMesh())
+	//{
+		//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		//{
+			AnimationInstance->HorizontalBend = FMath::Lerp(AnimationInstance->HorizontalBend, Value.Get<float>() * 50.f,  DeltaT * 10.f);
+			AnimationInstance->HorizontalBend = FMath::Clamp(AnimationInstance->HorizontalBend, 0.f, 50.f);
+		//}
+	//}
 }
 
 void AFPSPlayerController::Crouch()
@@ -280,12 +280,12 @@ void AFPSPlayerController::Crouch()
 	if(GetCharacter())
 	{
 		GetCharacter()->Crouch();
-		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-		{
-			AnimInstance->bIsCrouching = true;
+		//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		//{
+			AnimationInstance->bIsCrouching = true;
 			bIsCrouching = true;
 			UE_LOG(LogTemp, Warning, TEXT("Crouching"));
-		}
+		//}
 	}
 	
 	// if(!bIsCrouching)
@@ -333,13 +333,13 @@ void AFPSPlayerController::ThrowGrenade()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Throwing grenade"));
 
-	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-	{
-		if(AnimInstance->bIsThrowingGrenade)
+	//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	//{
+		if(AnimationInstance->bIsThrowingGrenade)
 		{
 			return;
 		}
-	}
+	//}
 	
 	if(AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetCharacter()))
 	{
@@ -362,12 +362,12 @@ void AFPSPlayerController::StopCrouching()
 	if(GetCharacter())
 	{
 		GetCharacter()->Crouch();
-		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-		{
-			AnimInstance->bIsCrouching = false;
+		//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+		//{
+			AnimationInstance->bIsCrouching = false;
 			bIsCrouching = false;
 			UE_LOG(LogTemp, Warning, TEXT("Crouching"));
-		}
+		//}
 	}
 	//bIsCrouching = false;
 }
@@ -381,60 +381,60 @@ void AFPSPlayerController::Tick(float DeltaTime)
 
 	if(!bIsPeeking && !bPeekingCompleted)
 	{
-		if(GetCharacter()->GetMesh())
-		{
-			if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-			{
-				AnimInstance->HorizontalBend = FMath::Lerp(AnimInstance->HorizontalBend,0.f,  DeltaT * 10.f);
-				bPeekingCompleted = FMath::IsNearlyEqual(AnimInstance->HorizontalBend, 0.f, 0.01f);
+		//if(GetCharacter()->GetMesh())
+		//{
+			//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+			//{
+				AnimationInstance->HorizontalBend = FMath::Lerp(AnimationInstance->HorizontalBend,0.f,  DeltaT * 10.f);
+				bPeekingCompleted = FMath::IsNearlyEqual(AnimationInstance->HorizontalBend, 0.f, 0.01f);
 				//AnimInstance->HorizontalBend = FMath::Clamp(AnimInstance->HorizontalBend, 0.f, 50.f);
-			}
-		}
+			//}
+		//}
 	}
 
 	if(!bIsWalking && !bStoppedWalkingVert)
 	{
-		if(GetCharacter()->GetMesh())
-		{
-			if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-			{
-				AnimInstance->VerticalWalk = FMath::Lerp(AnimInstance->VerticalWalk, 0.f,  DeltaT * 10.f);
-				bStoppedWalkingVert = FMath::IsNearlyEqual(AnimInstance->VerticalWalk, 0.f, 0.1f);
+		//if(GetCharacter()->GetMesh())
+		//{
+			//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+			//{
+				AnimationInstance->VerticalWalk = FMath::Lerp(AnimationInstance->VerticalWalk, 0.f,  DeltaT * 10.f);
+				bStoppedWalkingVert = FMath::IsNearlyEqual(AnimationInstance->VerticalWalk, 0.f, 0.1f);
 				//AnimInstance->HorizontalWalk = 0.f;
 				//AnimInstance->VerticalWalk = 0.f;
-			}
-		}
+			//}
+		//}
 	}
 
 	if(!bIsWalking && !bStoppedWalkingHoriz)
 	{
-		if(GetCharacter()->GetMesh())
-		{
-			if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-			{
-				AnimInstance->HorizontalWalk = FMath::Lerp(AnimInstance->HorizontalWalk, 0.f,  DeltaT * 10.f);
-				bStoppedWalkingHoriz = FMath::IsNearlyEqual(AnimInstance->HorizontalWalk, 0.f, 0.1f);
+		//if(GetCharacter()->GetMesh())
+		//{
+			//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+			//{
+				AnimationInstance->HorizontalWalk = FMath::Lerp(AnimationInstance->HorizontalWalk, 0.f,  DeltaT * 10.f);
+				bStoppedWalkingHoriz = FMath::IsNearlyEqual(AnimationInstance->HorizontalWalk, 0.f, 0.1f);
 				//AnimInstance->HorizontalWalk = 0.f;
 				//AnimInstance->VerticalWalk = 0.f;
-			}
-		}
+			//}
+		//}
 	}
 
 	if(!bIsCrouching && !bCrouchingCompleted)
 	{
-		if(GetCharacter()->GetMesh())
-		{
-			if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-			{
+		//if(GetCharacter()->GetMesh())
+		//{
+			//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+			//{
 				//AnimInstance->HorizontalWalk = FMath::Lerp(AnimInstance->HorizontalWalk, 0.f,  DeltaT * 10.f);
 				bCrouchingCompleted = FMath::IsNearlyEqual(GetCharacter()->CrouchedEyeHeight, GetCharacter()->GetDefaultHalfHeight(), 0.1f);
 
 				if(bCrouchingCompleted)
 				{
-					AnimInstance->bIsCrouching = false;
+					AnimationInstance->bIsCrouching = false;
 				}
-			}
-		}
+			//}
+		//}
 	}
 }
 

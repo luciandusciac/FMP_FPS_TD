@@ -87,8 +87,8 @@ protected:
 #pragma endregion
 
 	int AnimationIndex = 0;
-	TMap<int, bool> AnimationStates;
-	TArray<bool> AnimationBooleans;
+	//TMap<int, bool> AnimationStates;
+	//TArray<bool> AnimationBooleans;
 	UPROPERTY()
 	USWAT_AnimInstance* AnimationInstance;
 

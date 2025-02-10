@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InputAction.h"
+#include "../InventoryItems/Inventory.h"
 #include "GameFramework/Character.h"
 #include "Camera/CameraComponent.h"
 #include "Animation/AnimSequence.h"
@@ -82,6 +83,10 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimSequence* PistolShootingAnimation;
+
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
+	UInventory* Inventory;
 
 	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
 	// TArray<class ABaseWeapon*> Weapons;

@@ -41,8 +41,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Bullet|Components")
 	class UProjectileMovementComponent* ProjectileMovementComponent;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Bullet|Components")
-	class UNiagaraComponent* BulletTrail;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Bullet|Components")
+	//class UNiagaraComponent* BulletTrail;
 	
 #pragma endregion	
 

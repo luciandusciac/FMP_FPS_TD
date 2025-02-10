@@ -7,6 +7,7 @@
 
 #include "InputAction.h"
 #include "InputMappingContext.h"
+#include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
 #include "GameFramework/PlayerController.h"
 
 #include "FPSPlayerController.generated.h"
@@ -84,6 +85,12 @@ protected:
 	float MovementSpeed = 100.0f;
 	float RotationSpeed = 100.0f;
 #pragma endregion
+
+	int AnimationIndex = 0;
+	TMap<int, bool> AnimationStates;
+	TArray<bool> AnimationBooleans;
+	UPROPERTY()
+	USWAT_AnimInstance* AnimationInstance;
 
 #pragma region InputProperties
 	UPROPERTY(EditAnywhere, Category= "Player|Input")

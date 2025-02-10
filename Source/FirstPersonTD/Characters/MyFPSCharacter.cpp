@@ -9,7 +9,7 @@
 #include "Engine/World.h"
 #include "GameFramework/Controller.h"
 #include "Net/UnrealNetwork.h"
-#include "./FirstPersonTD/WeaponClasses/BaseWeapon.h"
+#include "../Source/FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
 
 class ABaseWeapon;

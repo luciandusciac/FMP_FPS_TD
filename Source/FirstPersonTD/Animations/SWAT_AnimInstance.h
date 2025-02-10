@@ -43,5 +43,14 @@ public:
 	bool bIsThrowingGrenade {false};
 
 	UPROPERTY(BlueprintReadWrite, Category = "Weapon Booleans")
+	bool bHasPrimary {false};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon Booleans")
 	bool bHasPistol {false};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon Booleans")
+	bool bHasGrenade {false};
+
+	UPROPERTY(BlueprintReadWrite, Category = "Weapon Booleans")
+	bool bHasKnife {false};
 };

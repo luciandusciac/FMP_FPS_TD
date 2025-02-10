@@ -22,6 +22,8 @@ AFPSPlayerController::AFPSPlayerController()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	
 }
 
 
@@ -31,7 +33,18 @@ void AFPSPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	//SetupInputComponent();
+	AnimationInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance());
+	
+	AnimationStates.Add(0, AnimationInstance->bHasPrimary);
+	AnimationInstance->bHasPrimary = true;
+	AnimationStates.Add(1, AnimationInstance->bHasPistol);
+	//AnimationInstance->bHasPistol = false;
+	AnimationStates.Add(2, AnimationInstance->bHasGrenade);
+	//AnimationInstance->bHasGrenade = false;
+	AnimationStates.Add(3, AnimationInstance->bHasKnife);
+	//AnimationInstance->bHasKnife = false;
+
+	AnimationStates.GenerateValueArray(AnimationBooleans);
 }
 
 void AFPSPlayerController::MoveForward(const FInputActionValue& Value)
@@ -150,13 +163,44 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 
 void AFPSPlayerController::SwapWeapon()
 {
-	if(!HasAuthority()) return;
+	
 	UE_LOG(LogTemp, Warning, TEXT("Swapping weapon"));
 	
-	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+	AnimationIndex++;
+	if(AnimationIndex > 3)
 	{
-			AnimInstance->bHasPistol = !AnimInstance->bHasPistol;
+		AnimationIndex = 0;
 	}
+
+	if(AnimationIndex == 0)
+	{
+		AnimationInstance->bHasPrimary = true;
+		AnimationInstance->bHasPistol = false;
+		AnimationInstance->bHasGrenade = false;
+		AnimationInstance->bHasKnife = false;
+	}
+	else if(AnimationIndex == 1)
+	{
+		AnimationInstance->bHasPrimary = false;
+		AnimationInstance->bHasPistol = true;
+		AnimationInstance->bHasGrenade = false;
+		AnimationInstance->bHasKnife = false;
+	}
+	else if(AnimationIndex == 2)
+	{
+		AnimationInstance->bHasPrimary = false;
+		AnimationInstance->bHasPistol = false;
+		AnimationInstance->bHasGrenade = true;
+		AnimationInstance->bHasKnife = false;
+	}
+	else if(AnimationIndex == 3)
+	{
+		AnimationInstance->bHasPrimary = false;
+		AnimationInstance->bHasPistol = false;
+		AnimationInstance->bHasGrenade = false;
+		AnimationInstance->bHasKnife = true;
+	}
+	
 }
 
 void AFPSPlayerController::Shoot()

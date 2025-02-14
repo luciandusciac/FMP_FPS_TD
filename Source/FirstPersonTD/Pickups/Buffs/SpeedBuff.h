@@ -15,9 +15,13 @@ class FIRSTPERSONTD_API ASpeedBuff : public ABuffPickup
 	GENERATED_BODY()
 
 public:
+	
+	ASpeedBuff();
+	
 	float SpeedIncreaseAmount;
 
 	virtual void OnExpire() override;
 
+	UFUNCTION()
 	virtual void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 };

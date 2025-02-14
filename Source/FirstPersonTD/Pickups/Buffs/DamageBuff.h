@@ -15,9 +15,12 @@ class FIRSTPERSONTD_API ADamageBuff : public ABuffPickup
 	GENERATED_BODY()
 
 public:
+	ADamageBuff();
+	
 	float DamageIncreaseAmount;
 
 	virtual void OnExpire() override;
 
+	UFUNCTION()
 	virtual void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult) override;
 };

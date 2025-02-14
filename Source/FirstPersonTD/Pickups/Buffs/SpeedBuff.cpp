@@ -5,6 +5,11 @@
 
 #include "FirstPersonTD/Characters/MyFPSCharacter.h"
 
+ASpeedBuff::ASpeedBuff()
+{
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASpeedBuff::OnComponentBeginOverlap);
+}
+
 void ASpeedBuff::OnExpire()
 {
 	Super::OnExpire();
@@ -13,14 +18,10 @@ void ASpeedBuff::OnExpire()
 void ASpeedBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                          UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	Super::OnComponentBeginOverlap(OverlappedComponent, OtherActor, OtherComp, OtherBodyIndex, bFromSweep, SweepResult);
 
 	if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
 	{
-		this->ConditionalBeginDestroy();
+		this->Destroy();
 		
-		// Increase the player's health
-		// Cast the overlapped actor to the player
-		// Call the IncreaseHealth function on the player
 	}
 }

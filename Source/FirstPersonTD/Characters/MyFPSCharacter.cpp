@@ -177,6 +177,7 @@ void AMyFPSCharacter::OnGrenadeThrown()
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->bIsThrowingGrenade = false;
+		AnimInstance->bHasGrenade = false;
 	}
 }
 

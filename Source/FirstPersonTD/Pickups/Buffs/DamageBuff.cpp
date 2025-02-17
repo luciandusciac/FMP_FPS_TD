@@ -7,12 +7,12 @@
 
 ADamageBuff::ADamageBuff()
 {
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ADamageBuff::OnComponentBeginOverlap);
+	//SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ADamageBuff::OnComponentBeginOverlap);
 }
 
 void ADamageBuff::OnExpire()
 {
-	Super::OnExpire();
+	//Super::OnExpire();
 }
 
 void ADamageBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

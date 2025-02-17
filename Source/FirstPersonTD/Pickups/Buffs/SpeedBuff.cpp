@@ -7,12 +7,12 @@
 
 ASpeedBuff::ASpeedBuff()
 {
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASpeedBuff::OnComponentBeginOverlap);
+	//SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ASpeedBuff::OnComponentBeginOverlap);
 }
 
 void ASpeedBuff::OnExpire()
 {
-	Super::OnExpire();
+	//Super::OnExpire();
 }
 
 void ASpeedBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

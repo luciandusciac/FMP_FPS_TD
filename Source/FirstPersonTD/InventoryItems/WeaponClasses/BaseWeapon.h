@@ -53,13 +53,16 @@ protected:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
 	float FireRate;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Stats")
+	float CurrentFireRate;
+
 #pragma endregion
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
 	TSubclassOf<ABaseProjectile> WeaponBullet;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
-	UStaticMeshComponent* BulletOrigin;
+	USceneComponent* BulletOrigin;
 
 public:
 	virtual void Tick(float DeltaTime) override;

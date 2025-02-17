@@ -11,18 +11,21 @@
 ABaseWeapon::ABaseWeapon()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
-	//FSetActorReplicates Replicates = FSetActorReplicates(cast<AActor>(this), true);
-	bReplicates = true;
-	bNetLoadOnClient = true;
-	SetReplicates(true);
+	// //FSetActorReplicates Replicates = FSetActorReplicates(cast<AActor>(this), true);
+	// bReplicates = true;
+	// bNetLoadOnClient = true;
+	// SetReplicates(true);
 	
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
 
 	Mesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Mesh"));
 	Mesh->SetupAttachment(Root);
+
+	BulletOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("BulletOrigin"));
+	BulletOrigin->SetupAttachment(Mesh);
 }
 
 // Called when the game starts or when spawned
@@ -32,6 +35,7 @@ void ABaseWeapon::BeginPlay()
 
 	// if(!CurrentOwner)
 	// 	Mesh->SetVisibility(false);
+	//Mesh->IgnoreActorWhenMoving(Cast<AActor>(WeaponBullet), true);
 }
 
 // Called every frame

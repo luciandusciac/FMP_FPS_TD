@@ -3,9 +3,12 @@
 #pragma once
 
 #include "CoreMinimal.h"
+//#include "FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "GameFramework/Actor.h"
 
 #include "BaseProjectile.generated.h"
+
+class ABaseWeapon;
 
 UCLASS()
 class FIRSTPERSONTD_API ABaseProjectile : public AActor
@@ -46,10 +49,15 @@ protected:
 
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
+
+	UFUNCTION()
+	void OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit);
 	
 #pragma endregion	
 
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	
 };

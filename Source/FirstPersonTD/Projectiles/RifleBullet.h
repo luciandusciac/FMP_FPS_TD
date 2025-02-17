@@ -22,4 +22,7 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	// UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Bullet|Components")
+	// AActor* WeaponOwner;
 };

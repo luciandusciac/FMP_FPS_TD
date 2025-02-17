@@ -3,24 +3,49 @@
 
 #include "Rifle.h"
 
+#include "Components/StaticMeshComponent.h"
+#include "Engine/World.h"
+
 
 // Sets default values
 ARifle::ARifle()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	
 }
 
-// Called when the game starts or when spawned
 void ARifle::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
 void ARifle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(CurrentFireRate>FireRate)
+	{
+		CurrentFireRate = 0;
+		Shoot();
+	}
+	else
+	{
+		CurrentFireRate += DeltaTime;
+	}
+}
+
+void ARifle::Shoot()
+{
+	Super::Shoot();
+	
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = GetInstigator();
+
+	GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), BulletOrigin->GetComponentRotation(), SpawnParams);
+
+	UE_LOG(LogTemp, Warning, TEXT("Rifle Shot"));
 }
 

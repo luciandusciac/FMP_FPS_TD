@@ -3,24 +3,46 @@
 
 #include "Pistol.h"
 
+#include "Engine/World.h"
+
 
 // Sets default values
 APistol::APistol()
 {
-	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 }
 
-// Called when the game starts or when spawned
 void APistol::BeginPlay()
 {
 	Super::BeginPlay();
 	
 }
 
-// Called every frame
 void APistol::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(CurrentFireRate>FireRate)
+	{
+		CurrentFireRate = 0;
+		Shoot();
+	}
+	else
+	{
+		CurrentFireRate += DeltaTime;
+	}
+}
+
+void APistol::Shoot()
+{
+	Super::Shoot();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = GetInstigator();
+
+	GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), BulletOrigin->GetComponentRotation(), SpawnParams);
+
+	UE_LOG(LogTemp, Warning, TEXT("Pistol Shot"));
 }
 

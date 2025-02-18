@@ -55,12 +55,12 @@ void ABaseProjectile::BeginPlay()
 	ProjectileMovementComponent->Velocity = GetActorForwardVector() * Speed;
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 	ProjectileMovementComponent->bShouldBounce = false;
-	ProjectileMovementComponent->ProjectileGravityScale = 0.5f;
+	ProjectileMovementComponent->ProjectileGravityScale = 0.1f;
 
 	
 	if (GetOwner())
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Projectile owner is: %s"), *GetOwner()->GetName());
+		//UE_LOG(LogTemp, Warning, TEXT("Projectile owner is: %s"), *GetOwner()->GetName());
 		//SphereComponent->IgnoreActorWhenMoving(Cast<AActor>(GetOwner()), true);
 		SphereComponent->MoveIgnoreActors.Add(GetOwner());
 	}
@@ -69,7 +69,7 @@ void ABaseProjectile::BeginPlay()
 		UE_LOG(LogTemp, Error, TEXT("Projectile has NO owner!"));
 	}
 	
-	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ABaseProjectile::OnComponentBeginOverlap);
+	//SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ABaseProjectile::OnComponentBeginOverlap);
 
 	SphereComponent->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnComponentHit);
 	// if(GetOwner())

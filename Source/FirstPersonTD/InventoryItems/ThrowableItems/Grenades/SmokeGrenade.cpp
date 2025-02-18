@@ -9,6 +9,8 @@ ASmokeGrenade::ASmokeGrenade()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
+
+	ExplosionTime = 3.0f;
 }
 
 // Called when the game starts or when spawned
@@ -22,5 +24,14 @@ void ASmokeGrenade::BeginPlay()
 void ASmokeGrenade::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+}
+
+void ASmokeGrenade::Explode()
+{
+	Super::Explode();
+
+	UE_LOG(LogTemp, Warning, TEXT("Smoke Explosion"));
+
+	this->Destroy();
 }
 

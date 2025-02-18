@@ -23,4 +23,15 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void Explode();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	class USceneComponent* Root;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Grenade Stats")
+	float ExplosionTime;
+
+	FTimerHandle ExplosionTimerHandle;
+	
 };

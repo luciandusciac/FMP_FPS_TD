@@ -61,6 +61,10 @@ public:
 	float ReloadingTime;
 	void OnReload();
 
+	void NextWeapon();
+	void PreviousWeapon();
+	void ThrowWeapon();
+
 	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")

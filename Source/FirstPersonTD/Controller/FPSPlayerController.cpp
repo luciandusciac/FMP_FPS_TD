@@ -175,6 +175,11 @@ void AFPSPlayerController::NextWeapon()
 	}
 
 	this->EquipWeapon(AnimationIndex);
+
+	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetCharacter()))
+	{
+		C->NextWeapon();
+	}
 }
 
 void AFPSPlayerController::PreviousWeapon()
@@ -188,6 +193,11 @@ void AFPSPlayerController::PreviousWeapon()
 	}
 
 	this->EquipWeapon(AnimationIndex);
+
+	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetCharacter()))
+	{
+		C->PreviousWeapon();
+	}
 }
 
 void AFPSPlayerController::EquipWeapon(int Index)
@@ -239,6 +249,14 @@ void AFPSPlayerController::EquipWeapon(int Index)
 	// }
 
 	UE_LOG(LogTemp, Warning, TEXT("Weapon index is %d"), Index);
+}
+
+void AFPSPlayerController::ThrowItem()
+{
+	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetCharacter()))
+	{
+		C->ThrowWeapon();
+	}
 }
 
 void AFPSPlayerController::Shoot()
@@ -497,6 +515,7 @@ void AFPSPlayerController::SetupInputComponent()
 		{
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_NextWeapon), ETriggerEvent::Started, this, &AFPSPlayerController::NextWeapon);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_PreviousWeapon), ETriggerEvent::Started, this, &AFPSPlayerController::PreviousWeapon);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_ThrowItem), ETriggerEvent::Triggered, this, &AFPSPlayerController::ThrowItem);
 
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveForward), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveForward);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveBackwards), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveBackwards);

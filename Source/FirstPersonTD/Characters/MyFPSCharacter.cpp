@@ -281,8 +281,26 @@ void AMyFPSCharacter::OnReload()
 	}
 }
 
+void AMyFPSCharacter::NextWeapon()
+{
+	Inventory->NextItem();
+}
+
+void AMyFPSCharacter::PreviousWeapon()
+{
+	Inventory->PreviousItem();
+}
+
+void AMyFPSCharacter::ThrowWeapon()
+{
+	Inventory->ThrowItem();
+
+	//TODO: Istantiate item and throw it
+	
+}
+
 void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                              UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if (!Inventory)
 	{

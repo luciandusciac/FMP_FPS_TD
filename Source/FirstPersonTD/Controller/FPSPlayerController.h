@@ -34,6 +34,7 @@ enum class EInputActionKey : uint8
 	IAK_Aim					UMETA(DisplayName = "Aim"),
 	IAK_AimGrenade			UMETA(DisplayName = "AimGrenade"),
 	IAK_ThrowGrenade		UMETA(DisplayName = "ThrowGrenade"),
+	IAK_ThrowItem			UMETA(DisplayName = "ThrowItem"),
 };
 
 
@@ -62,6 +63,7 @@ protected:
 	void NextWeapon();
 	void PreviousWeapon();
 	void EquipWeapon(int Index);
+	void ThrowItem();
 
 	void Shoot();
 	void Reload();

@@ -24,7 +24,8 @@ enum class EInputActionKey : uint8
 	IAK_Look				UMETA(DisplayName = "Look"),
 	IAK_MoveRight			UMETA(DisplayName = "MoveRight"),
 	IAK_MoveLeft			UMETA(DisplayName = "MoveLeft"),
-	IAK_SwitchWeapon		UMETA(DisplayName = "SwitchWeapon"),
+	IAK_NextWeapon			UMETA(DisplayName = "NextWeapon"),
+	IAK_PreviousWeapon		UMETA(DisplayName = "PreviousWeapon"),
 	IAK_Shoot				UMETA(DisplayName = "Shoot"),
 	IAK_Reload				UMETA(DisplayName = "Reload"),
 	IAK_PeekRight			UMETA(DisplayName = "PeekRight"),
@@ -58,7 +59,9 @@ protected:
 	void MoveLeft(const FInputActionValue& Value);
 	void MoveRight(const FInputActionValue& Value);
 	void LookAround(const FInputActionValue& Value);
-	void SwapWeapon();
+	void NextWeapon();
+	void PreviousWeapon();
+	void EquipWeapon(int Index);
 
 	void Shoot();
 	void Reload();

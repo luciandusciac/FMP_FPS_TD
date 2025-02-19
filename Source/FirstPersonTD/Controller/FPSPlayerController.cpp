@@ -34,9 +34,11 @@ void AFPSPlayerController::BeginPlay()
 	Super::BeginPlay();
 
 	AnimationInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance());
+
+	EquipWeapon(AnimationIndex);
 	
 	// AnimationStates.Add(0, AnimationInstance->bHasPrimary);
-	AnimationInstance->bHasPrimary = true;
+	//AnimationInstance->bHasPrimary = true;
 	// AnimationStates.Add(1, AnimationInstance->bHasPistol);
 	// //AnimationInstance->bHasPistol = false;
 	// AnimationStates.Add(2, AnimationInstance->bHasGrenade);
@@ -161,46 +163,82 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 	}
 }
 
-void AFPSPlayerController::SwapWeapon()
+void AFPSPlayerController::NextWeapon()
 {
 	
-	UE_LOG(LogTemp, Warning, TEXT("Swapping weapon"));
+	UE_LOG(LogTemp, Warning, TEXT("Swapping to next weapon"));
 	
 	AnimationIndex++;
 	if(AnimationIndex > 3)
 	{
-		AnimationIndex = 0;
+		AnimationIndex = 0;  //TODO: Replace with the total number of weapons
 	}
 
-	if(AnimationIndex == 0)
+	this->EquipWeapon(AnimationIndex);
+}
+
+void AFPSPlayerController::PreviousWeapon()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Swapping to previous weapon"));
+	
+	AnimationIndex--;
+	if(AnimationIndex < 0)
 	{
-		AnimationInstance->bHasPrimary = true;
-		AnimationInstance->bHasPistol = false;
-		AnimationInstance->bHasGrenade = false;
-		AnimationInstance->bHasKnife = false;
+		AnimationIndex = 3;  //TODO: Replace with the total number of weapons
 	}
-	else if(AnimationIndex == 1)
+
+	this->EquipWeapon(AnimationIndex);
+}
+
+void AFPSPlayerController::EquipWeapon(int Index)
+{
+
+	AnimationInstance->bHasPrimary = false;
+	AnimationInstance->bHasPistol = false;
+	AnimationInstance->bHasGrenade = false;
+	AnimationInstance->bHasKnife = false;
+	
+	switch (Index)
 	{
-		AnimationInstance->bHasPrimary = false;
-		AnimationInstance->bHasPistol = true;
-		AnimationInstance->bHasGrenade = false;
-		AnimationInstance->bHasKnife = false;
-	}
-	else if(AnimationIndex == 2)
-	{
-		AnimationInstance->bHasPrimary = false;
-		AnimationInstance->bHasPistol = false;
-		AnimationInstance->bHasGrenade = true;
-		AnimationInstance->bHasKnife = false;
-	}
-	else if(AnimationIndex == 3)
-	{
-		AnimationInstance->bHasPrimary = false;
-		AnimationInstance->bHasPistol = false;
-		AnimationInstance->bHasGrenade = false;
-		AnimationInstance->bHasKnife = true;
+	case 0: AnimationInstance->bHasPrimary = true; break;
+	case 1: AnimationInstance->bHasPistol = true; break;
+	case 2: AnimationInstance->bHasGrenade = true; break;
+	case 3: AnimationInstance->bHasKnife = true; break;
+	default:
+		UE_LOG(LogTemp, Error, TEXT("Invalid weapon index: %d"), Index);
+		return;
 	}
 	
+	// if(Index == 0)
+	// {
+	// 	AnimationInstance->bHasPrimary = true;
+	// 	AnimationInstance->bHasPistol = false;
+	// 	AnimationInstance->bHasGrenade = false;
+	// 	AnimationInstance->bHasKnife = false;
+	// }
+	// else if(Index == 1)
+	// {
+	// 	AnimationInstance->bHasPrimary = false;
+	// 	AnimationInstance->bHasPistol = true;
+	// 	AnimationInstance->bHasGrenade = false;
+	// 	AnimationInstance->bHasKnife = false;
+	// }
+	// else if(Index == 2)
+	// {
+	// 	AnimationInstance->bHasPrimary = false;
+	// 	AnimationInstance->bHasPistol = false;
+	// 	AnimationInstance->bHasGrenade = true;
+	// 	AnimationInstance->bHasKnife = false;
+	// }
+	// else if(Index == 3)
+	// {
+	// 	AnimationInstance->bHasPrimary = false;
+	// 	AnimationInstance->bHasPistol = false;
+	// 	AnimationInstance->bHasGrenade = false;
+	// 	AnimationInstance->bHasKnife = true;
+	// }
+
+	UE_LOG(LogTemp, Warning, TEXT("Weapon index is %d"), Index);
 }
 
 void AFPSPlayerController::Shoot()
@@ -457,7 +495,8 @@ void AFPSPlayerController::SetupInputComponent()
 	{
 		if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(InputComponent.Get()))
 		{
-			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_SwitchWeapon), ETriggerEvent::Started, this, &AFPSPlayerController::SwapWeapon);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_NextWeapon), ETriggerEvent::Started, this, &AFPSPlayerController::NextWeapon);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_PreviousWeapon), ETriggerEvent::Started, this, &AFPSPlayerController::PreviousWeapon);
 
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveForward), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveForward);
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveBackwards), ETriggerEvent::Triggered, this, &AFPSPlayerController::MoveBackwards);
@@ -480,7 +519,7 @@ void AFPSPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Aim), ETriggerEvent::Triggered, this, &AFPSPlayerController::Aim);
 
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_AimGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::AimGrenade);
-			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_ThrowGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::ThrowGrenade);
+			//EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_ThrowGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::ThrowGrenade);
 
 			
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_MoveForward), ETriggerEvent::Completed, this, &AFPSPlayerController::StopWalking);

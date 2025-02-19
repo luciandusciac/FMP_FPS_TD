@@ -24,3 +24,7 @@ void AInventoryItem::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void AInventoryItem::Use()
+{
+}
+

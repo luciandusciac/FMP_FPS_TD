@@ -23,4 +23,9 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	virtual void Use();
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bIsConsumable;
 };

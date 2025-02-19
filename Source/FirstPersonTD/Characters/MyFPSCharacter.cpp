@@ -10,6 +10,7 @@
 #include "GameFramework/Controller.h"
 #include "Net/UnrealNetwork.h"
 #include "../Source/FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
+#include "Components/CapsuleComponent.h"
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
 
 class ABaseWeapon;
@@ -23,6 +24,12 @@ AMyFPSCharacter::AMyFPSCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetupAttachment(GetMesh(), "Head");
+
+	//Inventory = NewObject<UInventory>(this, UInventory::StaticClass());
+
+	//Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
+	
+	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyFPSCharacter::OnComponentBeginOverlap);
 }
 
 // Called when the game starts or when spawned
@@ -35,6 +42,8 @@ void AMyFPSCharacter::BeginPlay()
 	PistolShootingTime = PistolShootingAnimation->GetPlayLength();
 	//DeathTime = DeathAnimation->GetPlayLength();
 	GrenadeThrowTime = GrenadeThrowAnimation->GetPlayLength();
+
+	Inventory = NewObject<UInventory>(this);
 	
 	// if(HasAuthority())
 	// {
@@ -270,5 +279,20 @@ void AMyFPSCharacter::OnReload()
 	{
 		AnimInstance->bIsReloading = false;
 	}
+}
+
+void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (!Inventory)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Inventory is NULL! Cannot add item."));
+		return;
+	}
+	if(Cast<ABaseWeapon>(OtherActor))
+	{
+		Inventory->AddItem(Cast<AInventoryItem>(OtherActor));
+	}
+	
 }
 

@@ -27,7 +27,10 @@ public:
 	void AddItem(AInventoryItem* Item);
 	void ThrowItem();
 	void UseItem(AInventoryItem* Item);
-	void SwapItem();
+	//void SwapItem();
+
+	void NextItem();
+	void PreviousItem();
 
 private:
 

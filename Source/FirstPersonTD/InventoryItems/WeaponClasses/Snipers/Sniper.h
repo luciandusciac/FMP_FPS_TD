@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "../BaseWeapon.h"
+#include "FirstPersonTD/InventoryItems/Interfaces/PrimaryWeapon.h"
 
 #include "Sniper.generated.h"
 
 UCLASS()
-class FIRSTPERSONTD_API ASniper : public ABaseWeapon
+class FIRSTPERSONTD_API ASniper : public ABaseWeapon, public IPrimaryWeapon
 {
 	GENERATED_BODY()
 

@@ -293,10 +293,42 @@ void AMyFPSCharacter::PreviousWeapon()
 
 void AMyFPSCharacter::ThrowWeapon()
 {
+	if (!Inventory)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Inventory is NULL!"));
+		return;
+	}
+
+	AInventoryItem* ItemToThrow = Inventory->CurrentItem;
 	Inventory->ThrowItem();
 
-	//TODO: Istantiate item and throw it
-	
+	if (ItemToThrow)
+	{
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		
+		AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(ItemToThrow->GetClass(), GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
+		UStaticMeshComponent* MeshComp = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
+		if (MeshComp)
+		{
+			MeshComp->SetSimulatePhysics(true);
+			MeshComp->AddImpulse(GetActorForwardVector() * 5000.f + FVector(0.f, 0.f, 4000.f));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to get mesh component!"));
+		}
+
+		if (!SpawnedWeapon)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No weapon to throw!"));
+	}
+	//TODO: Destroy item in hands
 }
 
 void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,

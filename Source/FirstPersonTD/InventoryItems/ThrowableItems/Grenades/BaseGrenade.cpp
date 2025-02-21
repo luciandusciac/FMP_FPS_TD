@@ -14,6 +14,9 @@ ABaseGrenade::ABaseGrenade()
 
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
+
+	ExplosionVFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ExplosionVFX"));
+	ExplosionVFX->SetupAttachment(Root);
 }
 
 // Called when the game starts or when spawned
@@ -33,5 +36,7 @@ void ABaseGrenade::Tick(float DeltaTime)
 void ABaseGrenade::Explode()
 {
 	GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), GetActorLocation());
+	
 }
 

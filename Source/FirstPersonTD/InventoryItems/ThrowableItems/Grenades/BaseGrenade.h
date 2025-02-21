@@ -4,6 +4,9 @@
 
 #include "CoreMinimal.h"
 #include "../BaseThrowable.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
+#include "NiagaraSystem.h"
 
 #include "BaseGrenade.generated.h"
 
@@ -33,5 +36,8 @@ public:
 	float ExplosionTime;
 
 	FTimerHandle ExplosionTimerHandle;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
+	UNiagaraComponent* ExplosionVFX;
 	
 };

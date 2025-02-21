@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "../InventoryItem.h"
 #include "../Source/FirstPersonTD/Projectiles/BaseProjectile.h"
+#include "NiagaraComponent.h"
+#include "NiagaraSystem.h"
 
 #include "BaseWeapon.generated.h"
 
@@ -83,6 +85,11 @@ public:
 	void Aim();
 	
 #pragma endregion	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
+	UNiagaraComponent* MuzzleFlash;
+
+	
 	
 	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "State")
 	// class AMyFPSCharacter* CurrentOwner;

@@ -25,6 +25,9 @@ ABaseProjectile::ABaseProjectile()
         SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
+
+	BulletTrail = CreateDefaultSubobject<UNiagaraComponent>(TEXT("BulletTrail"));
+	BulletTrail->SetupAttachment(SphereComponent);
 	
 	// SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
  //    SphereComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
@@ -57,17 +60,28 @@ void ABaseProjectile::BeginPlay()
 	ProjectileMovementComponent->bShouldBounce = false;
 	ProjectileMovementComponent->ProjectileGravityScale = 0.1f;
 
+	//UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BulletTrail->GetAsset(), GetActorLocation());
+	UNiagaraFunctionLibrary::SpawnSystemAttached(
+		   BulletTrail->GetAsset(),
+		   RootComponent,
+		   NAME_None,
+		   FVector::ZeroVector,
+		   FRotator(0, 180.f, 0),
+		   EAttachLocation::Type::KeepRelativeOffset,
+		   true
+	   );
+
 	
-	if (GetOwner())
-	{
-		//UE_LOG(LogTemp, Warning, TEXT("Projectile owner is: %s"), *GetOwner()->GetName());
-		//SphereComponent->IgnoreActorWhenMoving(Cast<AActor>(GetOwner()), true);
-		SphereComponent->MoveIgnoreActors.Add(GetOwner());
-	}
-	else
-	{
-		UE_LOG(LogTemp, Error, TEXT("Projectile has NO owner!"));
-	}
+	// if (GetOwner())
+	// {
+	// 	//UE_LOG(LogTemp, Warning, TEXT("Projectile owner is: %s"), *GetOwner()->GetName());
+	// 	//SphereComponent->IgnoreActorWhenMoving(Cast<AActor>(GetOwner()), true);
+	// 	SphereComponent->MoveIgnoreActors.Add(GetOwner());
+	// }
+	// else
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("Projectile has NO owner!"));
+	// }
 	
 	//SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ABaseProjectile::OnComponentBeginOverlap);
 
@@ -100,5 +114,6 @@ void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 void ABaseProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	//BulletTrail->Activate();
 }
 

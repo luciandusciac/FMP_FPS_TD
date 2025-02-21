@@ -5,6 +5,8 @@
 #include "CoreMinimal.h"
 //#include "FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "GameFramework/Actor.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 
 #include "BaseProjectile.generated.h"
 
@@ -44,8 +46,8 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Bullet|Components")
 	class UProjectileMovementComponent* ProjectileMovementComponent;
 
-	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Bullet|Components")
-	//class UNiagaraComponent* BulletTrail;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Bullet|Components|Effects")
+	class UNiagaraComponent* BulletTrail;
 
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);

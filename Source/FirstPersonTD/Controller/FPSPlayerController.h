@@ -62,7 +62,6 @@ protected:
 	void LookAround(const FInputActionValue& Value);
 	void NextWeapon();
 	void PreviousWeapon();
-	void EquipWeapon(int Index);
 	void ThrowItem();
 
 	void Shoot();
@@ -91,7 +90,6 @@ protected:
 	float RotationSpeed = 100.0f;
 #pragma endregion
 
-	int AnimationIndex = 0;
 	//TMap<int, bool> AnimationStates;
 	//TArray<bool> AnimationBooleans;
 	UPROPERTY()
@@ -109,4 +107,7 @@ public:
 	virtual void Tick(float DeltaSeconds) override;
 	virtual void OnPossess(APawn* InPawn) override;
 	virtual void SetupInputComponent() override;
+
+	int AnimationIndex = NULL;
+	void EquipWeapon(int Index);
 };

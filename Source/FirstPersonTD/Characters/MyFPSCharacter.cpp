@@ -30,6 +30,8 @@ AMyFPSCharacter::AMyFPSCharacter()
 	//Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 	
 	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyFPSCharacter::OnComponentBeginOverlap);
+
+	AnimationInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance());
 }
 
 // Called when the game starts or when spawned
@@ -289,6 +291,7 @@ void AMyFPSCharacter::NextWeapon()
 void AMyFPSCharacter::PreviousWeapon()
 {
 	Inventory->PreviousItem();
+	
 }
 
 void AMyFPSCharacter::ThrowWeapon()

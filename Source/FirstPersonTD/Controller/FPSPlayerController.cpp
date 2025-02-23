@@ -35,7 +35,7 @@ void AFPSPlayerController::BeginPlay()
 
 	AnimationInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance());
 
-	EquipWeapon(AnimationIndex);
+	//EquipWeapon(AnimationIndex);
 	
 	// AnimationStates.Add(0, AnimationInstance->bHasPrimary);
 	//AnimationInstance->bHasPrimary = true;
@@ -168,13 +168,13 @@ void AFPSPlayerController::NextWeapon()
 	
 	UE_LOG(LogTemp, Warning, TEXT("Swapping to next weapon"));
 	
-	AnimationIndex++;
-	if(AnimationIndex > 3)
-	{
-		AnimationIndex = 0;  //TODO: Replace with the total number of weapons
-	}
-
-	this->EquipWeapon(AnimationIndex);
+	// AnimationIndex++;
+	// if(AnimationIndex > 3)
+	// {
+	// 	AnimationIndex = 0;  //TODO: Replace with the total number of weapons
+	// }
+	//
+	// this->EquipWeapon(AnimationIndex);
 
 	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetCharacter()))
 	{
@@ -185,14 +185,55 @@ void AFPSPlayerController::NextWeapon()
 void AFPSPlayerController::PreviousWeapon()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Swapping to previous weapon"));
-	
-	AnimationIndex--;
-	if(AnimationIndex < 0)
-	{
-		AnimationIndex = 3;  //TODO: Replace with the total number of weapons
-	}
 
-	this->EquipWeapon(AnimationIndex);
+	// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetCharacter()))
+	// {
+	// 	if(C->Inventory->InventorySlots.Num() == 0)
+	// 	{
+	// 		UE_LOG(LogTemp, Error, TEXT("No weapons in inventory!"));
+	// 		return;
+	// 	}
+	// 	else if(C->Inventory->InventorySlots.Num() == 1)
+	// 	{
+	// 		return;
+	// 	}
+	// 	else if(C->Inventory->InventorySlots.Num() > 1)
+	// 	{
+	// 		C->Inventory->CurrentInventorySlot--;
+	// 		AnimationIndex = C->Inventory->CurrentInventorySlot;
+	// 		if(C->Inventory->CurrentInventorySlot <= 0)
+	// 		{
+	// 			C->Inventory->CurrentInventorySlot = C->Inventory->InventorySlots.Num();
+	// 		}
+	//
+	// 		if (C->Inventory->InventorySlots.Contains(C->Inventory->CurrentInventorySlot)) 
+	// 		{
+	// 			C->Inventory->CurrentItem = C->Inventory->InventorySlots[C->Inventory->CurrentInventorySlot];
+	//
+	// 			if (C->Inventory->CurrentItem)
+	// 			{
+	// 				UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *C->Inventory->CurrentItem->GetName());
+	// 			}
+	// 			else
+	// 			{
+	// 				UE_LOG(LogTemp, Error, TEXT("Item at slot %d is NULL!"), C->Inventory->CurrentInventorySlot);
+	// 			}
+	// 		}
+	// 		else
+	// 		{
+	// 			UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), C->Inventory->CurrentInventorySlot);
+	// 			C->Inventory->CurrentItem = nullptr;
+	// 		}
+	// 	}
+	// }
+	
+	// AnimationIndex--;
+	// if(AnimationIndex < 0)
+	// {
+	// 	AnimationIndex = 3;  //TODO: Replace with the total number of weapons
+	// }
+	//
+	// this->EquipWeapon(AnimationIndex);
 
 	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetCharacter()))
 	{
@@ -214,6 +255,7 @@ void AFPSPlayerController::EquipWeapon(int Index)
 	case 1: AnimationInstance->bHasPistol = true; break;
 	case 2: AnimationInstance->bHasGrenade = true; break;
 	case 3: AnimationInstance->bHasKnife = true; break;
+	case 10: AnimationInstance->bHasPrimary = false; AnimationInstance->bHasPistol = false; AnimationInstance->bHasGrenade = false; AnimationInstance->bHasKnife = false; break; 
 	default:
 		UE_LOG(LogTemp, Error, TEXT("Invalid weapon index: %d"), Index);
 		return;

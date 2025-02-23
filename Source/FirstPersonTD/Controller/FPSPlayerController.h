@@ -70,6 +70,7 @@ protected:
 	void PeekLeft(const FInputActionValue& Value);
 	void Crouch();
 	void Aim();
+	void StopAiming();
 	void AimGrenade();
 	void ThrowGrenade();
 

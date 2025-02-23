@@ -53,6 +53,7 @@ public:
 	void OnShoot();
 
 	void Aim();
+	void StopAiming();
 
 	void Die();
 	float DeathTime;
@@ -97,6 +98,9 @@ public:
 	
 	UPROPERTY()
 	USWAT_AnimInstance* AnimationInstance;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Aiming")
+	FTransform AimTransform;
 	
 	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
 	// TArray<class ABaseWeapon*> Weapons;

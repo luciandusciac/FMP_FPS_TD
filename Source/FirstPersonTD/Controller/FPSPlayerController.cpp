@@ -419,7 +419,18 @@ void AFPSPlayerController::Crouch()
 
 void AFPSPlayerController::Aim()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Aiming"));
+	if(AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetCharacter()))
+	{
+		PlayerCharacter->Aim();
+	}
+}
+
+void AFPSPlayerController::StopAiming()
+{
+	if(AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetCharacter()))
+	{
+		PlayerCharacter->StopAiming();
+	}
 }
 
 void AFPSPlayerController::AimGrenade()
@@ -578,6 +589,7 @@ void AFPSPlayerController::SetupInputComponent()
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Crouch), ETriggerEvent::Completed, this, &AFPSPlayerController::StopCrouching);
 
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Aim), ETriggerEvent::Triggered, this, &AFPSPlayerController::Aim);
+			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_Aim), ETriggerEvent::Completed, this, &AFPSPlayerController::StopAiming);
 
 			EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_AimGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::AimGrenade);
 			//EnhancedInputComponent->BindAction(*InputActions.Find(EInputActionKey::IAK_ThrowGrenade), ETriggerEvent::Triggered, this, &AFPSPlayerController::ThrowGrenade);

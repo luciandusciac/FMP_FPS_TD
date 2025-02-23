@@ -24,10 +24,6 @@ AMyFPSCharacter::AMyFPSCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetupAttachment(GetMesh(), "Head");
-
-	//Inventory = NewObject<UInventory>(this, UInventory::StaticClass());
-
-	//Inventory = CreateDefaultSubobject<UInventory>(TEXT("Inventory"));
 	
 	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyFPSCharacter::OnComponentBeginOverlap);
 
@@ -46,129 +42,8 @@ void AMyFPSCharacter::BeginPlay()
 	GrenadeThrowTime = GrenadeThrowAnimation->GetPlayLength();
 
 	Inventory = NewObject<UInventory>(this);
-	
-	// if(HasAuthority())
-	// {
-	// 	for(const TSubclassOf<ABaseWeapon>& WeaponClass : DefaultWeapons)
-	// 	{
-	// 		if(!WeaponClass) continue;
-	// 		FActorSpawnParameters SpawnParams;
-	// 		//SpawnParams.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AdjustIfPossibleButAlwaysSpawn;
-	// 		SpawnParams.Owner = this;
-	// 		//SpawnParams.Instigator = this;
-	// 		ABaseWeapon* Weapon;
-	// 		
-	// 		if(WeaponClass && GetWorld())
-	// 		{
-	// 			Weapon = GetWorld()->SpawnActor<ABaseWeapon>(WeaponClass, SpawnParams);
-	// 			
-	// 		}
-	//
-	// 		const int32 index = Weapons.Add(Weapon);
-	// 		if(index == CurrentWeaponIndex)
-	// 		{
-	// 			CurrentWeapon = Weapon;
-	// 			OnRep_CurrentWeapon(nullptr);
-	// 		}
-	// 	}
-	// }
 }
 
-// void AMyFPSCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-// {
-// 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-//
-// 	DOREPLIFETIME(AMyFPSCharacter, Weapons);
-// 	DOREPLIFETIME(AMyFPSCharacter, CurrentWeapon);
-// 	DOREPLIFETIME(AMyFPSCharacter, CurrentWeaponIndex);
-// }
-//
-// void AMyFPSCharacter::OnRep_CurrentWeapon(const class ABaseWeapon* LastWeapon)
-// {
-// 	// if(CurrentWeapon)
-// 	// {
-// 	// 	if(!CurrentWeapon->CurrentOwner)
-// 	// 	{
-// 	// 		const FTransform SocketTransform = CurrentWeapon->PlacementTransform * GetMesh()->GetSocketTransform(FName("WeaponSocket"));
-// 	// 		CurrentWeapon->SetActorTransform(SocketTransform, false, nullptr, ETeleportType::TeleportPhysics);
-// 	// 		CurrentWeapon->AttachToComponent(GetMesh(), FAttachmentTransformRules::KeepWorldTransform, "WeaponSocket");
-// 	//
-// 	// 		CurrentWeapon->CurrentOwner = this;
-// 	// 		CurrentWeapon->SetOwner(this);
-// 	// 	}
-// 	// 	CurrentWeapon->Mesh->SetVisibility(true);
-// 	// 	wprintf(TEXT("%d : Visible"), GetLocalRole());
-// 	// }
-// 	//
-// 	// if(LastWeapon)
-// 	// {
-// 	// 	LastWeapon->Mesh->SetVisibility(false);
-// 	// }
-// }
-//
-// void AMyFPSCharacter::EquipWeapon(const int32 Index)
-// {
-// 	// if(!Weapons.IsValidIndex(Index) || CurrentWeapon == Weapons[Index]) return;
-// 	//
-// 	// if(IsLocallyControlled())
-// 	// {
-// 	// 	CurrentWeaponIndex = Index;
-// 	// 	
-// 	// 	const ABaseWeapon* LastWeapon = CurrentWeapon;
-// 	// 	CurrentWeapon = Weapons[Index];
-// 	// 	OnRep_CurrentWeapon(LastWeapon);
-// 	// 	Server_SetCurrentWeapon(Weapons[Index]);
-// 	// }
-// 	// else if(!HasAuthority())
-// 	// {
-// 	// 	Server_SetCurrentWeapon(Weapons[Index]);	
-// 	// }
-//
-// 	
-// 	// if (HasAuthority()) // Server
-// 	// {
-// 	// 	const ABaseWeapon* LastWeapon = CurrentWeapon;
-// 	// 	CurrentWeapon = Weapons[Index];
-// 	// 	CurrentWeaponIndex = Index;
-// 	// 	OnRep_CurrentWeapon(LastWeapon); // Update state
-// 	// }
-// 	// else if (IsLocallyControlled()) // Client
-// 	// {
-// 	// 	Server_SetCurrentWeapon(Weapons[Index]); // Notify server
-// 	// }
-// 	
-// }
-//
-// void AMyFPSCharacter::SwapWeapon()
-// {
-// 	// const int32 Index = Weapons.IsValidIndex(CurrentWeaponIndex + 1) ? CurrentWeaponIndex + 1 : 0;
-// 	// EquipWeapon(Index);
-// }
-//
-// void AMyFPSCharacter::Server_SetCurrentWeapon_Implementation(ABaseWeapon* NewWeapon)
-// {
-// 	// const ABaseWeapon* LastWeapon = CurrentWeapon;
-// 	// CurrentWeapon = NewWeapon;
-// 	// OnRep_CurrentWeapon(LastWeapon);
-// 	
-// 	// if (Weapons.Contains(NewWeapon)) // Validate the weapon
-// 	// {
-// 	// 	const ABaseWeapon* LastWeapon = CurrentWeapon;
-// 	// 	CurrentWeapon = NewWeapon;
-// 	//
-// 	// 	// Update index for replication
-// 	// 	CurrentWeaponIndex = Weapons.IndexOfByKey(NewWeapon);
-// 	//
-// 	// 	OnRep_CurrentWeapon(LastWeapon);
-// 	// }
-// }
-
-// Called to bind functionality to input
-// void AMyFPSCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-// {
-// 	Super::SetupPlayerInputComponent(PlayerInputComponent);
-// 	
-// }
 
 void AMyFPSCharacter::ThrowGrenade()
 {
@@ -209,12 +84,7 @@ void AMyFPSCharacter::Shoot()
 		}
 		AnimInstance->bIsShooting = true;
 	}
-	// GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, ShootingTime, false);
-	//
-	// if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
-	// {
-	// 	AnimInstance->bIsShooting = true;
-	// }
+	
 }
 
 void AMyFPSCharacter::OnShoot()
@@ -224,22 +94,25 @@ void AMyFPSCharacter::OnShoot()
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->bIsShooting = false;
-
-		// if(AnimInstance->bHasPistol)
-		// {
-		// 	//GetMesh()->PlayAnimation(PistolShootingAnimation, false);
-		// 	AnimInstance->PlaySlotAnimationAsDynamicMontage(PistolShootingAnimation, FName("Spine"));
-		// }
-		// else
-		// {
-		// 	//GetMesh()->PlayAnimation(ShootingAnimation, false);
-		// 	AnimInstance->PlaySlotAnimationAsDynamicMontage(ShootingAnimation, FName("Spine"));
-		// }
 	}
 }
 
 void AMyFPSCharacter::Aim()
 {
+	if(Inventory->CurrentItem != nullptr)
+	{
+		//                                                                                                                   tweak the values here for camera position when aiming
+		Camera->SetRelativeLocation(FMath::VInterpTo(Camera->GetRelativeLocation(), AimTransform.GetLocation() + FVector(-8, 6, 0), GetWorld()->GetDeltaSeconds(), 10.0f));
+	
+		Camera->SetFieldOfView(50.f);
+	}
+}
+
+void AMyFPSCharacter::StopAiming()
+{
+	Camera->SetRelativeLocation(FMath::VInterpTo(Camera->GetRelativeLocation(), FVector(0.f, 0.f, 0.f), GetWorld()->GetDeltaSeconds(), 50.0f));
+
+	Camera->SetFieldOfView(90.f);
 }
 
 void AMyFPSCharacter::Die()
@@ -259,17 +132,6 @@ void AMyFPSCharacter::Reload()
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->bIsReloading = true;
-
-		// if(AnimInstance->bHasPistol)
-		// {
-		// 	//GetMesh()->PlayAnimation(PistolReloadingAnimation, false);
-		// 	AnimInstance->PlaySlotAnimationAsDynamicMontage(PistolReloadingAnimation, FName("Spine"));
-		// }
-		// else
-		// {
-		// 	//GetMesh()->PlayAnimation(ReloadingAnimation, false);
-		// 	AnimInstance->PlaySlotAnimationAsDynamicMontage(ReloadingAnimation, FName("Spine"));
-		// }
 	}
 }
 

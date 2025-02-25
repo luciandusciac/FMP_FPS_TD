@@ -8,6 +8,7 @@
 #include "Engine/World.h"
 #include "FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "GameFramework/ProjectileMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 
 ABaseProjectile::ABaseProjectile()
@@ -28,6 +29,9 @@ ABaseProjectile::ABaseProjectile()
 
 	BulletTrail = CreateDefaultSubobject<UNiagaraComponent>(TEXT("BulletTrail"));
 	BulletTrail->SetupAttachment(SphereComponent);
+
+	//BulletHoleDecal = LoadObject<UMaterialInterface>(nullptr, TEXT("Material'/FMP_FPS_TD/Content/VFX/Bullet/BulletImpact/M_BulletHole.uasset'"));
+	
 	
 	// SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
  //    SphereComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
@@ -107,7 +111,7 @@ void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 	if(OtherActor != GetOwner())
 	{
 		this->Destroy();
-		
+		UGameplayStatics::SpawnDecalAtLocation(GetWorld(), BulletHoleDecal, FVector(10, 10, 10), Hit.ImpactPoint, Hit.ImpactNormal.Rotation(), 10.f);
 	}
 }
 

@@ -49,6 +49,9 @@ protected:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Bullet|Components|Effects")
 	class UNiagaraComponent* BulletTrail;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet|Components|Effects")
+	UMaterialInterface* BulletHoleDecal;
+
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 

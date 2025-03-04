@@ -16,7 +16,7 @@ class FIRSTPERSONTD_API AEnemyController : public AAIController
 
 public:
 	// Sets default values for this actor's properties
-	AEnemyController();
+	AEnemyController(FObjectInitializer const& ObjectInitializer);
 
 protected:
 	// Called when the game starts or when spawned
@@ -25,4 +25,17 @@ protected:
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	void OnPossess(APawn* InPawn) override;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "AI")
+	UBlackboardComponent* BlackboardComponent;
+	
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "AI")
+	UBehaviorTreeComponent* BehaviorTreeComponent;
+
+	UPROPERTY(EditInstanceOnly, BlueprintReadWrite, Category = "AI")
+	UBehaviorTree* BehaviorTree;
 };
+
+

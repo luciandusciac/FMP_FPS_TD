@@ -28,18 +28,18 @@ protected:
 
 public:
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
-	UBehaviorTree* BehaviorTree;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
-	UAIPerceptionComponent* PerceptionComponent;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
-	UAISenseConfig_Sight* SightConfig;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
-	UAISenseConfig_Hearing* HearingConfig;
-
-	UFUNCTION()
-	void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
+	// UBehaviorTree* BehaviorTree;
+	//
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
+	// UAIPerceptionComponent* PerceptionComponent;
+	//
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
+	// UAISenseConfig_Sight* SightConfig;
+	//
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
+	// UAISenseConfig_Hearing* HearingConfig;
+	//
+	// UFUNCTION()
+	// void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);
 };

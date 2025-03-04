@@ -1,0 +1,36 @@
+// Fill out your copyright notice in the Description page of Project Settings.
+
+#include "BTT_ChasePlayer.h"
+#include "../EnemyKeys.h"
+#include "BTT_FindPlayerLocation.h"
+#include "./FirstPersonTD/Controller/EnemyController.h"
+#include "Runtime/NavigationSystem/Public/NavigationSystem.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/GameplayStatics.h"
+
+UBTT_ChasePlayer::UBTT_ChasePlayer(FObjectInitializer const& ObjectInitializer)
+{
+	NodeName = TEXT("Chase Player");
+}
+
+EBTNodeResult::Type UBTT_ChasePlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+{
+	//return Super::ExecuteTask(OwnerComp, NodeMemory);
+	
+	auto const AIController = Cast<AEnemyController>(OwnerComp.GetAIOwner());
+
+	UNavigationSystemV1* const NavSys = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if(NavSys)
+	{
+		//get player location
+		FVector PlayerLocation = AIController->GetBlackboardComponent()->GetValueAsVector(EnemyKeys::PlayerLocation);
+
+		//move to player location
+		AIController->MoveToLocation(PlayerLocation, 10.0f);
+	}
+
+	FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	return EBTNodeResult::Succeeded;
+
+}

@@ -9,10 +9,12 @@ public class FirstPersonTD : ModuleRules
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 	
 		PublicDependencyModuleNames.AddRange(new string[] { "Core", "CoreUObject", "Engine", "InputCore", "EnhancedInput",
-			"Niagara", "NiagaraCore", "Slate", "SlateCore", "AIModule", "GameplayTasks", "NavigationSystem" });
+			"Niagara", "NiagaraCore", "Slate", "SlateCore" });
 
-		PrivateDependencyModuleNames.AddRange(new string[] {  });
+		PrivateDependencyModuleNames.AddRange(new string[] { "AIModule", "GameplayTasks", "NavigationSystem" });
 
+		
+		//bEnableUndefinedIdentifierWarnings = false;
 		// Uncomment if you are using Slate UI
 		// PrivateDependencyModuleNames.AddRange(new string[] { "Slate", "SlateCore" });
 		

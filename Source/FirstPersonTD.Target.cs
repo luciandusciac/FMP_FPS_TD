@@ -8,7 +8,9 @@ public class FirstPersonTDTarget : TargetRules
 	public FirstPersonTDTarget(TargetInfo Target) : base(Target)
 	{
 		Type = TargetType.Game;
-		DefaultBuildSettings = BuildSettingsVersion.V5;
+		DefaultBuildSettings = BuildSettingsVersion.Latest;
+		WindowsPlatform.Compiler = WindowsCompiler.VisualStudio2022;
+		WindowsPlatform.CompilerVersion = "14.38.33144";
 		IncludeOrderVersion = EngineIncludeOrderVersion.Unreal5_4;
 		ExtraModuleNames.Add("FirstPersonTD");
 	}

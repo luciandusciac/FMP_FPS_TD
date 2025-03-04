@@ -9,7 +9,7 @@
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTreeComponent.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/Blackboard/BlackboardKeyType.h"
 #include "Runtime/NavigationSystem/Public/NavigationSystem.h"
-#include "../Controller/EnemyController.h"
+#include "./FirstPersonTD/Controller/EnemyController.h"
 #include "BTT_FindPlayerLocation.generated.h"
 
 /**

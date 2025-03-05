@@ -8,6 +8,11 @@
 ADamageBuff::ADamageBuff()
 {
 	//SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ADamageBuff::OnComponentBeginOverlap);
+	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	SphereComponent->InitSphereRadius(50.0f);
+	SphereComponent->SetCollisionProfileName(TEXT("OverlapAll"));
+
+	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ADamageBuff::OnComponentBeginOverlap);
 }
 
 void ADamageBuff::OnExpire()

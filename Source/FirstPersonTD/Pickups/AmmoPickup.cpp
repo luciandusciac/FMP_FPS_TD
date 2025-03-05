@@ -9,7 +9,7 @@ AAmmoPickup::AAmmoPickup()
 {
 	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
 	SphereComponent->InitSphereRadius(50.0f);
-	SphereComponent->SetCollisionProfileName(TEXT("BlockAll"));
+	SphereComponent->SetCollisionProfileName(TEXT("OverlapAll"));
 
 	SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &AAmmoPickup::OnComponentBeginOverlap);
 }

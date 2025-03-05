@@ -24,7 +24,7 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	int CurrentInventorySlot;
 	
-	void AddItem(AInventoryItem* Item);
+	bool AddItem(AInventoryItem* Item);
 	void ThrowItem();
 	void UseItem(AInventoryItem* Item);
 	//void SwapItem();

@@ -178,6 +178,8 @@ void AMyFPSCharacter::ThrowWeapon()
 		{
 			MeshComp->SetSimulatePhysics(true);
 			MeshComp->AddImpulse(GetActorForwardVector() * 5000.f + FVector(0.f, 0.f, 4000.f));
+			//TODO: Destroy item in hands
+			CurrentItemInHands->Destroy();
 		}
 		else
 		{
@@ -193,7 +195,7 @@ void AMyFPSCharacter::ThrowWeapon()
 	{
 		UE_LOG(LogTemp, Error, TEXT("No weapon to throw!"));
 	}
-	//TODO: Destroy item in hands
+	
 }
 
 void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -206,7 +208,19 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 	}
 	if(Cast<ABaseWeapon>(OtherActor))
 	{
-		Inventory->AddItem(Cast<AInventoryItem>(OtherActor));
+		//INFO: Add weapon to inventory
+		if(Inventory->AddItem(Cast<AInventoryItem>(OtherActor)))
+		{
+			//INFO: Attach weapon to player hand
+			OtherActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "WeaponSocket");
+			//make these into a uproperty
+			OtherActor->SetActorRelativeLocation(FVector(0.f, 0.f, 0.f));
+			OtherActor->SetActorRelativeRotation(FRotator(-90.f, -90.f, 0.f)); 
+			OtherActor->SetActorScale3D(FVector(0.5f, 0.5f, 0.5f));
+			CurrentItemInHands = OtherActor;
+		}
+
+		
 	}
 	
 }

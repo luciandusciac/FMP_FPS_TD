@@ -15,7 +15,7 @@ UInventory::UInventory()
 	CurrentInventorySlot = NULL;
 }
 
-void UInventory::AddItem(AInventoryItem* Item)
+bool UInventory::AddItem(AInventoryItem* Item)
 {
 	/*
 	 * If item implements primary weapon interface, add with key 0
@@ -31,14 +31,14 @@ void UInventory::AddItem(AInventoryItem* Item)
 	if (!Item)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Trying to add a NULL item to inventory!"));
-		return;
+		return false;
 	}
 
 	if(Item->Implements<UPrimaryWeapon>() && !InventorySlots.Contains(0))
 	{
 		InventorySlots.Add(0, Item);
 		CurrentItem = Item;
-		Item->Destroy();
+		//Item->Destroy();  //commented out because it needs adding to hands
 		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
 		CurrentInventorySlot = 0; //???
 
@@ -49,6 +49,7 @@ void UInventory::AddItem(AInventoryItem* Item)
 			{
 				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
 				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
+				return true;
 			}
 		}
 	}
@@ -56,7 +57,7 @@ void UInventory::AddItem(AInventoryItem* Item)
 	{
 		InventorySlots.Add(1, Item);
 		CurrentItem = Item;
-		Item->Destroy();
+		//Item->Destroy();  //commented out because it needs adding to hands
 		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
 		CurrentInventorySlot = 1; //???
 
@@ -67,6 +68,7 @@ void UInventory::AddItem(AInventoryItem* Item)
 			{
 				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
 				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
+				return true;
 			}
 		}
 	}
@@ -84,7 +86,7 @@ void UInventory::AddItem(AInventoryItem* Item)
 	// 	InventorySlots.Add(4, Item);
 	// }
 
-	
+	return false;
 }
 
 void UInventory::ThrowItem()
@@ -114,11 +116,13 @@ void UInventory::ThrowItem()
 			//CurrentInventorySlot = NULL;
 			
 			if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-			{//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
+			{
+				//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
 				if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
 				{
 					controller->AnimationIndex = 10;  //Animation is lined up with inventory slot
 					controller->EquipWeapon(controller->AnimationIndex);  //Play the animation related to the weapon
+					//C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
 				}
 			}
 		}
@@ -160,6 +164,7 @@ void UInventory::NextItem()
 			{
 				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
 				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
+				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
 			}
 		}
 	}
@@ -180,6 +185,7 @@ void UInventory::NextItem()
 			{
 				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
 				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
+				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
 			}
 		}
 		
@@ -202,6 +208,7 @@ void UInventory::NextItem()
 			CurrentItem = nullptr;
 		}
 	}
+	
 }
 
 void UInventory::PreviousItem()
@@ -228,6 +235,7 @@ void UInventory::PreviousItem()
 			{
 				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
 				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
+				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
 			}
 		}
 		

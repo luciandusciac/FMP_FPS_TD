@@ -6,7 +6,7 @@
 #include "BaseGrenade.h"
 #include "FragGrenade.generated.h"
 
-class USphereComponent;
+//class USphereComponent;
 
 UCLASS()
 class FIRSTPERSONTD_API AFragGrenade : public ABaseGrenade
@@ -27,8 +27,8 @@ public:
 
 	virtual void Explode() override;
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
-	USphereComponent* SphereComponent;
+	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	//USphereComponent* SphereComponent;
 
 	//niagara for explosion
 };

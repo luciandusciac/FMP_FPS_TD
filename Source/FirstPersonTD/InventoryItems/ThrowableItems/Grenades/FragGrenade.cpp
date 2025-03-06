@@ -5,6 +5,8 @@
 
 #include "SWarningOrErrorBox.h"
 #include "Components/SphereComponent.h"
+#include "Engine/OverlapResult.h"
+#include "FirstPersonTD/Characters/EnemyCharacter.h"
 #include "FirstPersonTD/Characters/MyFPSCharacter.h"
 
 
@@ -14,13 +16,14 @@ AFragGrenade::AFragGrenade()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	SphereComponent->SetupAttachment(RootComponent);
+	//SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
+	//SphereComponent->SetupAttachment(RootComponent);
+	//SphereComponent->Deactivate();
 
 	//SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
 	//SphereComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
 	//SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	SphereComponent->InitSphereRadius(10.f);
+	//SphereComponent->InitSphereRadius(10.f);
 
 	ExplosionTime = 3.0f;
 }
@@ -41,16 +44,45 @@ void AFragGrenade::Tick(float DeltaTime)
 void AFragGrenade::Explode()
 {
 	Super::Explode();
+	//SphereComponent->SetActive(true);
+	//SphereComponent->Activate();
 
-	TArray<AActor*> OverlappingActors;
-	SphereComponent->GetOverlappingActors(OverlappingActors);
+	
+	// TArray<AActor*> OverlappingActors;
+	//
+	// SphereComponent->GetOverlappingActors(OverlappingActors);
+	//
+	// UE_LOG(LogTemp, Warning, TEXT("Frag Explosion"));
+	//
+	// for (AActor* Actor : OverlappingActors)
+	// {
+	// 	if(Cast<AMyFPSCharacter>(Actor))
+	// 		UE_LOG(LogTemp, Warning, TEXT("Actor: %s"), *Actor->GetName());
+	// }
 
-	UE_LOG(LogTemp, Warning, TEXT("Frag Explosion"));
+	TArray<FOverlapResult> OverlapResults;
+	FCollisionQueryParams CollisionParams;
+	CollisionParams.AddIgnoredActor(this);
 
-	for (AActor* Actor : OverlappingActors)
+	bool bHasHit = GetWorld()->OverlapMultiByChannel(
+		OverlapResults,
+		GetActorLocation(),
+		FQuat::Identity,
+		ECC_WorldDynamic,
+		FCollisionShape::MakeSphere(100.f),
+		CollisionParams
+	);
+
+	if (bHasHit)
 	{
-		if(Cast<AMyFPSCharacter>(Actor))
-			UE_LOG(LogTemp, Warning, TEXT("Actor: %s"), *Actor->GetName());
+		for (FOverlapResult Result : OverlapResults)
+		{
+			AActor* OverlappingActor = Result.GetActor();
+			if (OverlappingActor && OverlappingActor != this && (Cast<AMyFPSCharacter>(OverlappingActor) || Cast<AEnemyCharacter>(OverlappingActor)))
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Overlapping Actor: %s"), *OverlappingActor->GetName());
+			}
+		}
 	}
 
 	this->Destroy();

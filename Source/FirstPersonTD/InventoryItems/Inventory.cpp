@@ -6,6 +6,8 @@
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
 #include "FirstPersonTD/Characters/MyFPSCharacter.h"
 #include "FirstPersonTD/Controller/FPSPlayerController.h"
+#include "Interfaces/GrenadeInterface.h"
+#include "Interfaces/KnifeInterface.h"
 #include "Interfaces/PrimaryWeapon.h"
 #include "Interfaces/SecondaryWeapon.h"
 
@@ -60,6 +62,44 @@ bool UInventory::AddItem(AInventoryItem* Item)
 		//Item->Destroy();  //commented out because it needs adding to hands
 		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
 		CurrentInventorySlot = 1; //???
+
+		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+		{
+			//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
+			if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
+			{
+				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
+				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
+				return true;
+			}
+		}
+	}
+	else if (Item->Implements<UGrenadeInterface>() && !InventorySlots.Contains(2))
+	{
+		InventorySlots.Add(2, Item);
+		CurrentItem = Item;
+		//Item->Destroy();  //commented out because it needs adding to hands
+		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
+		CurrentInventorySlot = 2; //???
+
+		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+		{
+			//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
+			if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
+			{
+				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
+				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
+				return true;
+			}
+		}
+	}
+	else if (Item->Implements<UKnifeInterface>() && !InventorySlots.Contains(3))
+	{
+		InventorySlots.Add(3, Item);
+		CurrentItem = Item;
+		//Item->Destroy();  //commented out because it needs adding to hands
+		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
+		CurrentInventorySlot = 3; //???
 
 		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
 		{

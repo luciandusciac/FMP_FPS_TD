@@ -172,24 +172,33 @@ void AMyFPSCharacter::ThrowWeapon()
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		
-		AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(ItemToThrow->GetClass(), GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
-		UStaticMeshComponent* MeshComp = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
-		if (MeshComp)
-		{
-			MeshComp->SetSimulatePhysics(true);
-			MeshComp->AddImpulse(GetActorForwardVector() * 5000.f + FVector(0.f, 0.f, 4000.f));
+		//AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(ItemToThrow->GetClass(), GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
+		//UStaticMeshComponent* MeshComp = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
+		//if (MeshComp)
+		//{
+			//MeshComp->SetSimulatePhysics(true);
+			//MeshComp->AddImpulse(GetActorForwardVector() * 5000.f + FVector(0.f, 0.f, 4000.f));
 			//TODO: Destroy item in hands
-			CurrentItemInHands->Destroy();
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to get mesh component!"));
-		}
+			///CurrentItemInHands->Destroy();
+			CurrentItemInHands->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+			UStaticMeshComponent* MeshComponent = CurrentItemInHands->GetComponentByClass<UStaticMeshComponent>();
+			MeshComponent->SetSimulatePhysics(true);
+			MeshComponent->AddImpulse(GetActorForwardVector() * 5000.f + FVector(0.f, 0.f, 4000.f));
+			MeshComponent->SetWorldRotation(FRotator(0, 0, 0));
+			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
+			//CurrentItemInHands->SetActorRotation(GetActorRotation());
+			
+			CurrentItemInHands = nullptr;
+		//}
+		//else
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Failed to get mesh component!"));
+		//}
 
-		if (!SpawnedWeapon)
-		{
-			UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
-		}
+		//if (!SpawnedWeapon)
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
+		//}
 	}
 	else
 	{
@@ -206,17 +215,18 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 		UE_LOG(LogTemp, Error, TEXT("Inventory is NULL! Cannot add item."));
 		return;
 	}
-	if(Cast<ABaseWeapon>(OtherActor))
+	
+	if(AInventoryItem* It = Cast<AInventoryItem>(OtherActor))
 	{
 		//INFO: Add weapon to inventory
-		if(Inventory->AddItem(Cast<AInventoryItem>(OtherActor)))
+		if(Inventory->AddItem(It))
 		{
 			//INFO: Attach weapon to player hand
 			OtherActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "WeaponSocket");
-			//make these into a uproperty
-			OtherActor->SetActorRelativeLocation(FVector(0.f, 0.f, 0.f));
-			OtherActor->SetActorRelativeRotation(FRotator(-90.f, -90.f, 0.f)); 
-			OtherActor->SetActorScale3D(FVector(0.5f, 0.5f, 0.5f));
+			//INFO: Weapon attachment transform properties
+			OtherActor->SetActorRelativeLocation(WeaponLocation);
+			OtherActor->SetActorRelativeRotation(WeaponRotation); 
+			OtherActor->SetActorScale3D(WeaponScale);
 			CurrentItemInHands = OtherActor;
 		}
 

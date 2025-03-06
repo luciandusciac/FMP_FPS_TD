@@ -3,12 +3,13 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "FirstPersonTD/InventoryItems/InventoryItem.h"
 #include "GameFramework/Actor.h"
 
 #include "BaseThrowable.generated.h"
 
 UCLASS(Abstract)
-class FIRSTPERSONTD_API ABaseThrowable : public AActor
+class FIRSTPERSONTD_API ABaseThrowable : public AInventoryItem
 {
 	GENERATED_BODY()
 

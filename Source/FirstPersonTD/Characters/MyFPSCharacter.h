@@ -102,9 +102,17 @@ public:
 	UPROPERTY()
 	USWAT_AnimInstance* AnimationInstance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Aiming")
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Aiming")
 	FTransform AimTransform;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Holding")
+	FVector WeaponScale;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Holding")
+	FRotator WeaponRotation;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Holding")
+	FVector WeaponLocation;
 	
 	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
 	// TArray<class ABaseWeapon*> Weapons;

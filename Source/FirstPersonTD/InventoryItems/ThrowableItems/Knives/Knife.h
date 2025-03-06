@@ -4,11 +4,12 @@
 
 #include "CoreMinimal.h"
 #include "../BaseThrowable.h"
+#include "FirstPersonTD/InventoryItems/Interfaces/KnifeInterface.h"
 
 #include "Knife.generated.h"
 
 UCLASS()
-class FIRSTPERSONTD_API AKnife : public ABaseThrowable
+class FIRSTPERSONTD_API AKnife : public ABaseThrowable, public IKnifeInterface
 {
 	GENERATED_BODY()
 

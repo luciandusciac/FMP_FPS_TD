@@ -4,11 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "UObject/Interface.h"
-#include "GrenadeInterface.generated.h"
+#include "FragGrenadeInterface.generated.h"
 
 // This class does not need to be modified.
 UINTERFACE()
-class UGrenadeInterface : public UInterface
+class UFragGrenadeInterface : public UInterface
 {
 	GENERATED_BODY()
 };
@@ -16,7 +16,7 @@ class UGrenadeInterface : public UInterface
 /**
  * 
  */
-class FIRSTPERSONTD_API IGrenadeInterface
+class FIRSTPERSONTD_API IFragGrenadeInterface
 {
 	GENERATED_BODY()
 

@@ -110,5 +110,6 @@ public:
 	virtual void SetupInputComponent() override;
 
 	int AnimationIndex = NULL;
+	UFUNCTION()
 	void EquipWeapon(int Index);
 };

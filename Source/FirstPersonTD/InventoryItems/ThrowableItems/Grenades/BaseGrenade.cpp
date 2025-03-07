@@ -24,7 +24,7 @@ void ABaseGrenade::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorldTimerManager().SetTimer(ExplosionTimerHandle, this, &ABaseGrenade::Explode, ExplosionTime, false);
+	//GetWorldTimerManager().SetTimer(ExplosionTimerHandle, this, &ABaseGrenade::Explode, ExplosionTime, false);
 }
 
 // Called every frame

@@ -37,5 +37,13 @@ private:
 	UPROPERTY()
 	TMap<int, AInventoryItem*> InventorySlots;
 
+	UPROPERTY()
+	TArray<AInventoryItem*> InventoryItems;
+
+	void SortInventoryItems();
+	void CheckEmptyInventory(int Index);
+	void SetCurrentItemInHands();
 
 };
+
+

@@ -6,10 +6,12 @@
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
 #include "FirstPersonTD/Characters/MyFPSCharacter.h"
 #include "FirstPersonTD/Controller/FPSPlayerController.h"
-#include "Interfaces/GrenadeInterface.h"
+#include "Interfaces/FlashbangInterface.h"
+#include "Interfaces/FragGrenadeInterface.h"
 #include "Interfaces/KnifeInterface.h"
 #include "Interfaces/PrimaryWeapon.h"
 #include "Interfaces/SecondaryWeapon.h"
+#include "Interfaces/SmokeGrenadeInterface.h"
 
 UInventory::UInventory()
 {
@@ -36,97 +38,91 @@ bool UInventory::AddItem(AInventoryItem* Item)
 		return false;
 	}
 
-	if(Item->Implements<UPrimaryWeapon>() && !InventorySlots.Contains(0))
+	if(Item->Implements<UPrimaryWeapon>() && !InventorySlots.Contains(0) /*&& !InventoryItems.Contains(Item)*/)
 	{
+		CheckEmptyInventory(0);
 		InventorySlots.Add(0, Item);
-		CurrentItem = Item;
+		//InventoryItems.Add(Item);
+		//CurrentItem = Item;
 		//Item->Destroy();  //commented out because it needs adding to hands
 		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
-		CurrentInventorySlot = 0; //???
-
-		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		{
-			//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-			if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-			{
-				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
-				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
-				return true;
-			}
-		}
+		//CurrentInventorySlot = 0; //???
+		CheckEmptyInventory(0);
+		
+		
+		// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+		// {
+		// 	//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
+		// 	if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
+		// 	{
+		// 		controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
+		// 		controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
+		// 		C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
+		// 		SortInventoryItems();
+		// 		
+		// 	}
+		// }
 	}
 	else if(Item->Implements<USecondaryWeapon>() && !InventorySlots.Contains(1))
 	{
+		CheckEmptyInventory(1);
 		InventorySlots.Add(1, Item);
-		CurrentItem = Item;
+		//CurrentItem = Item;
 		//Item->Destroy();  //commented out because it needs adding to hands
 		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
-		CurrentInventorySlot = 1; //???
-
-		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		{
-			//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-			if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-			{
-				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
-				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
-				return true;
-			}
-		}
+		//CurrentInventorySlot = 1; //???
+		CheckEmptyInventory(1);
+		
 	}
-	else if (Item->Implements<UGrenadeInterface>() && !InventorySlots.Contains(2))
+	else if (Item->Implements<UFragGrenadeInterface>() && !InventorySlots.Contains(2))
 	{
+		CheckEmptyInventory(2);
 		InventorySlots.Add(2, Item);
-		CurrentItem = Item;
+		//CurrentItem = Item;
 		//Item->Destroy();  //commented out because it needs adding to hands
 		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
-		CurrentInventorySlot = 2; //???
-
-		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		{
-			//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-			if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-			{
-				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
-				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
-				return true;
-			}
-		}
+		//CurrentInventorySlot = 2; //???
+		CheckEmptyInventory(2);
+		
 	}
-	else if (Item->Implements<UKnifeInterface>() && !InventorySlots.Contains(3))
+	else if (Item->Implements<USmokeGrenadeInterface>() && !InventorySlots.Contains(3))
 	{
+		CheckEmptyInventory(3);
 		InventorySlots.Add(3, Item);
-		CurrentItem = Item;
+		//CurrentItem = Item;
 		//Item->Destroy();  //commented out because it needs adding to hands
 		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
-		CurrentInventorySlot = 3; //???
-
-		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		{
-			//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-			if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-			{
-				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
-				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
-				return true;
-			}
-		}
+		//CurrentInventorySlot = 3; //???
+		CheckEmptyInventory(3);
 	}
-
-	// else if(Item->Implements<UGrenade>())
-	// {
-	// 	InventorySlots.Add(2, Item);
-	// }
-	// else if(Item->Implements<UKnife>())
-	// {
-	// 	InventorySlots.Add(3, Item);
-	// }
-	// else
-	// {
-	// 	InventorySlots.Add(4, Item);
-	// }
-
-	return false;
+	else if (Item->Implements<UFlashbangInterface>() && !InventorySlots.Contains(4))
+	{
+		CheckEmptyInventory(4);
+		InventorySlots.Add(4, Item);
+		//CurrentItem = Item;
+		//Item->Destroy();  //commented out because it needs adding to hands
+		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
+		//CurrentInventorySlot = 4; //???
+		CheckEmptyInventory(4);
+	}
+	else if (Item->Implements<UKnifeInterface>() && !InventorySlots.Contains(5))
+	{
+		CheckEmptyInventory(5);
+		InventorySlots.Add(5, Item);
+		//CurrentItem = Item;
+		//Item->Destroy();  //commented out because it needs adding to hands
+		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
+		//CurrentInventorySlot = 5; //???
+		CheckEmptyInventory(5);
+	}
+	else
+	{
+		return false;
+	}
+	SortInventoryItems();
+	
+	//SetCurrentItemInHands();
+	return true;
 }
 
 void UInventory::ThrowItem()
@@ -139,13 +135,13 @@ void UInventory::ThrowItem()
 
 	if(InventorySlots.Num() > 0)
 	{
-		//CurrentItem = nullptr;
-		CurrentItem->Destroy();
+		//CurrentItem->Destroy();
 		//InventorySlots[CurrentInventorySlot] = nullptr;
+		UE_LOG(LogTemp, Warning, TEXT("Item thrown: %s"), *CurrentItem->GetName());
 		InventorySlots.Remove(CurrentInventorySlot);
 		UE_LOG(LogTemp, Warning, TEXT("Inventory slot empty: %d"), InventorySlots.IsEmpty());
+		//CurrentItem = nullptr;
 	
-		UE_LOG(LogTemp, Warning, TEXT("Item thrown: %s"), *CurrentItem->GetName());
 
 		if(InventorySlots.Num()>0)
 			NextItem();
@@ -197,41 +193,69 @@ void UInventory::NextItem()
 		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
 		CurrentItem = InventorySlots[CurrentInventorySlot];
 		
-		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		{
-			//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-			if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-			{
-				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
-				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
-				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
-			}
-		}
+		SetCurrentItemInHands();
 	}
 	
 	if(InventorySlots.Num() > 1)
 	{
-		CurrentInventorySlot++;
-		if(CurrentInventorySlot >= InventorySlots.Num())
-		{
-			CurrentInventorySlot = 0;
-		}
+		// TArray<int> Keys;
+		// TArray<AInventoryItem*> Items;
+		// //InventorySlots.GenerateKeyArray(Keys);
+		// InventorySlots.GenerateValueArray(Items);
+		// int i = 0;
+		//
+		// //int CurrentIndex = Keys.IndexOfByKey(CurrentInventorySlot);
+		// //int CurrentIndex = Items.IndexOfByKey(CurrentItem);
+		// int CurrentIndex = Items.Find(CurrentItem);
+		// //CurrentIndex = (CurrentIndex + 1) % Items.Num();
+		// CurrentIndex++;
+		// if(CurrentIndex >= Items.Num())
+		// {
+		// 	CurrentIndex = 0;
+		// }
+		// //CurrentInventorySlot = Keys[CurrentIndex];
+		// CurrentInventorySlot = CurrentIndex;
+		// //CurrentItem = InventorySlots[CurrentInventorySlot];
+		// CurrentItem = Items[CurrentIndex];
 
+		//InventoryItems.Sort([](int A, int B) { return A < B; });
+		
+		
+		// CurrentInventorySlot++;
+		// if(CurrentInventorySlot >= InventorySlots.Num())
+		// {
+		// 	CurrentInventorySlot = 0;
+		// }
 
-		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		{
-			//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-			if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-			{
-				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
-				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
-				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
-			}
-		}
+		TArray<int> GunValues;
+		InventorySlots.GenerateKeyArray(GunValues);
+		int CurrentIndex = GunValues.Find(CurrentInventorySlot);
+		CurrentIndex = (CurrentIndex + 1) % GunValues.Num();
+		CurrentInventorySlot = GunValues[CurrentIndex];
+		
+		SetCurrentItemInHands();
+
+		// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+		// {
+		// 	//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
+		// 	if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
+		// 	{
+		// 		controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
+		// 		
+		// 		controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
+		// 	}
+		// }
+
+		
+		//C->CurrentItemInHands->Destroy();
+		//C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
+		//AActor* NewWeapon = GetWorld()->SpawnActor(CurrentItem->GetClass());
+		//NewWeapon->AttachToComponent(C->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("WeaponSocket"));
+		//C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
 		
 		if (InventorySlots.Contains(CurrentInventorySlot)) 
 		{
-			CurrentItem = InventorySlots[CurrentInventorySlot];
+			CurrentItem = InventorySlots[CurrentInventorySlot]; //????????????????????????????????????????????????
 
 			if (CurrentItem)
 			{
@@ -251,6 +275,65 @@ void UInventory::NextItem()
 	
 }
 
+// void UInventory::NextItem()
+// {
+// 	if (InventorySlots.Num() == 0)
+// 	{
+// 		CurrentItem = nullptr;
+// 		return;
+// 	}
+//
+// 	// Case: Only one item in inventory
+// 	if (InventorySlots.Num() == 1)
+// 	{
+// 		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
+// 		CurrentItem = InventorySlots.FindRef(CurrentInventorySlot);  // Safe lookup
+//
+// 		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+// 		{
+// 			if (AFPSPlayerController* Controller = Cast<AFPSPlayerController>(C->GetController()))
+// 			{
+// 				Controller->AnimationIndex = CurrentInventorySlot;  // Sync animation
+// 				Controller->EquipWeapon(CurrentInventorySlot);  // Play animation
+// 				C->CurrentItemInHands = CurrentItem;
+// 			}
+// 		}
+// 		return;  // No need to go further if there's only one item
+// 	}
+//
+// 	// Case: Multiple items in inventory
+// 	TArray<int> Keys;
+// 	InventorySlots.GenerateKeyArray(Keys);
+// 	int CurrentIndex = Keys.IndexOfByKey(CurrentInventorySlot);
+//
+// 	// Move to the next slot (wrap around if needed)
+// 	CurrentIndex = (CurrentIndex + 1) % Keys.Num();
+// 	CurrentInventorySlot = Keys[CurrentIndex];
+//
+// 	// Safe lookup
+// 	if (AInventoryItem** FoundItem = InventorySlots.Find(CurrentInventorySlot))
+// 	{
+// 		CurrentItem = *FoundItem;
+//
+// 		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+// 		{
+// 			if (AFPSPlayerController* Controller = Cast<AFPSPlayerController>(C->GetController()))
+// 			{
+// 				Controller->AnimationIndex = CurrentInventorySlot;
+// 				Controller->EquipWeapon(CurrentInventorySlot);
+// 				C->CurrentItemInHands = CurrentItem;
+// 			}
+// 		}
+//
+// 		UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *CurrentItem->GetName());
+// 	}
+// 	else
+// 	{
+// 		UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
+// 		CurrentItem = nullptr;
+// 	}
+// }
+
 void UInventory::PreviousItem()
 {
 	if(InventorySlots.Num() == 0)
@@ -261,11 +344,24 @@ void UInventory::PreviousItem()
 	
 	if(InventorySlots.Num() > 1)
 	{
-		CurrentInventorySlot--;
-		if(CurrentInventorySlot < 0)
-		{
-			CurrentInventorySlot = InventorySlots.Num()-1;
-		}
+		TArray<int> Keys;
+		TArray<AInventoryItem*> Items;
+		//InventorySlots.GenerateKeyArray(Keys);
+		InventorySlots.GenerateValueArray(Items);
+
+		//int CurrentIndex = Keys.IndexOfByKey(CurrentInventorySlot);
+		int CurrentIndex = Items.IndexOfByKey(CurrentItem);
+		if (Items.Num()>0)
+		CurrentIndex = (CurrentIndex - 1 + Items.Num()) % Items.Num();
+		//CurrentInventorySlot = Keys[CurrentIndex];
+		CurrentInventorySlot = CurrentIndex;
+		CurrentItem = InventorySlots[CurrentInventorySlot];
+		
+		// CurrentInventorySlot--;
+		// if(CurrentInventorySlot < 0)
+		// {
+		// 	CurrentInventorySlot = InventorySlots.Num()-1;
+		// }
 
 
 		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
@@ -273,6 +369,7 @@ void UInventory::PreviousItem()
 			//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
 			if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
 			{
+				C->CurrentItemInHands->Destroy();
 				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
 				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
 				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
@@ -296,6 +393,55 @@ void UInventory::PreviousItem()
 		{
 			UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
 			CurrentItem = nullptr;
+		}
+	}
+}
+
+void UInventory::SortInventoryItems()
+{
+	TArray<int> Keys;
+	InventorySlots.GenerateKeyArray(Keys);
+	Keys.Sort([](int A, int B) { return A < B; });
+	TMap<int, AInventoryItem*> SortedInventoryItems;
+	for (int Key : Keys)
+	{
+		SortedInventoryItems.Add(Key, InventorySlots[Key]);
+	}
+	InventorySlots = SortedInventoryItems;
+}
+
+void UInventory::CheckEmptyInventory(int Index)
+{
+	if (InventorySlots.IsEmpty())
+	{
+		CurrentInventorySlot = Index;
+		//SetCurrentItemInHands();
+	}
+	else if (InventorySlots.Num() == 1)
+	{
+		SetCurrentItemInHands();
+	}
+}
+
+void UInventory::SetCurrentItemInHands()
+{
+	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+	{
+		//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
+		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
+		{
+			if (InventorySlots.Contains(CurrentInventorySlot))
+			{
+				controller->AnimationIndex = CurrentInventorySlot;  // Animation is lined up with inventory slot
+				controller->EquipWeapon(CurrentInventorySlot);  // Play the animation related to the weapon
+				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
+				//SortInventoryItems();
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Invalid inventory slot: %d"), CurrentInventorySlot);
+			}
+				
 		}
 	}
 }

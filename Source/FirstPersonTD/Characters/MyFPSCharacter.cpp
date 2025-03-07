@@ -165,9 +165,9 @@ void AMyFPSCharacter::ThrowWeapon()
 	}
 
 	AInventoryItem* ItemToThrow = Inventory->CurrentItem;
-	Inventory->ThrowItem();
+	CurrentItemInHands = Cast<AActor>(ItemToThrow);
 
-	if (ItemToThrow)
+	if (CurrentItemInHands)
 	{
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
@@ -181,14 +181,20 @@ void AMyFPSCharacter::ThrowWeapon()
 			//TODO: Destroy item in hands
 			///CurrentItemInHands->Destroy();
 			CurrentItemInHands->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
-			UStaticMeshComponent* MeshComponent = CurrentItemInHands->GetComponentByClass<UStaticMeshComponent>();
+			UStaticMeshComponent* MeshComponent = CurrentItemInHands->FindComponentByClass<UStaticMeshComponent>();
+		if (MeshComponent)
+		{
 			MeshComponent->SetSimulatePhysics(true);
-			MeshComponent->AddImpulse(GetActorForwardVector() * 5000.f + FVector(0.f, 0.f, 4000.f));
+			MeshComponent->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 100.f));
 			MeshComponent->SetWorldRotation(FRotator(0, 0, 0));
+			CurrentItemInHands = nullptr;
+			
+		}
+
+		Inventory->ThrowItem();
 			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
 			//CurrentItemInHands->SetActorRotation(GetActorRotation());
 			
-			CurrentItemInHands = nullptr;
 		//}
 		//else
 		//{

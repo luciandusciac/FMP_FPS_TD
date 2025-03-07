@@ -7,12 +7,12 @@
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "NiagaraSystem.h"
-#include "FirstPersonTD/InventoryItems/Interfaces/GrenadeInterface.h"
+#include "FirstPersonTD/InventoryItems/Interfaces/FragGrenadeInterface.h"
 
 #include "BaseGrenade.generated.h"
 
 UCLASS()
-class FIRSTPERSONTD_API ABaseGrenade : public ABaseThrowable, public IGrenadeInterface
+class FIRSTPERSONTD_API ABaseGrenade : public ABaseThrowable
 {
 	GENERATED_BODY()
 

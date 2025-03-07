@@ -253,14 +253,19 @@ void AFPSPlayerController::EquipWeapon(int Index)
 	{
 	case 0: AnimationInstance->bHasPrimary = true; break;
 	case 1: AnimationInstance->bHasPistol = true; break;
-	case 2: AnimationInstance->bHasGrenade = true; break;
-	case 3: AnimationInstance->bHasKnife = true; break;
+	case 2:
+	case 3:
+	case 4:
+		AnimationInstance->bHasGrenade = true; break;
+	case 5: AnimationInstance->bHasKnife = true; break;
 	case 10: AnimationInstance->bHasPrimary = false; AnimationInstance->bHasPistol = false; AnimationInstance->bHasGrenade = false; AnimationInstance->bHasKnife = false; break; 
 	default:
 		UE_LOG(LogTemp, Error, TEXT("Invalid weapon index: %d"), Index);
 		return;
 	}
-	
+
+	AnimationInstance->Modify();
+	AnimationInstance->MarkPackageDirty();
 	// if(Index == 0)
 	// {
 	// 	AnimationInstance->bHasPrimary = true;

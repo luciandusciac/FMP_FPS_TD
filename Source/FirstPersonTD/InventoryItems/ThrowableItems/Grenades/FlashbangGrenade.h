@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "BaseGrenade.h"
+#include "FirstPersonTD/InventoryItems/Interfaces/FlashbangInterface.h"
 #include "FlashbangGrenade.generated.h"
 
 UCLASS()
-class FIRSTPERSONTD_API AFlashbangGrenade : public ABaseGrenade
+class FIRSTPERSONTD_API AFlashbangGrenade : public ABaseGrenade, public IFlashbangInterface
 {
 	GENERATED_BODY()
 

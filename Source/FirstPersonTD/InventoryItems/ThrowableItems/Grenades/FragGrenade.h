@@ -9,7 +9,7 @@
 //class USphereComponent;
 
 UCLASS()
-class FIRSTPERSONTD_API AFragGrenade : public ABaseGrenade
+class FIRSTPERSONTD_API AFragGrenade : public ABaseGrenade, public IFragGrenadeInterface
 {
 	GENERATED_BODY()
 

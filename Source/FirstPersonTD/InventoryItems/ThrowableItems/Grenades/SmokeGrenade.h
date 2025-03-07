@@ -4,10 +4,11 @@
 
 #include "CoreMinimal.h"
 #include "BaseGrenade.h"
+#include "FirstPersonTD/InventoryItems/Interfaces/SmokeGrenadeInterface.h"
 #include "SmokeGrenade.generated.h"
 
 UCLASS()
-class FIRSTPERSONTD_API ASmokeGrenade : public ABaseGrenade
+class FIRSTPERSONTD_API ASmokeGrenade : public ABaseGrenade, public ISmokeGrenadeInterface
 {
 	GENERATED_BODY()
 

@@ -26,6 +26,8 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Explode() override;
+	virtual void OnExplode() override;
+	virtual void Use() override;
 	
 	//UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	//USphereComponent* SphereComponent;

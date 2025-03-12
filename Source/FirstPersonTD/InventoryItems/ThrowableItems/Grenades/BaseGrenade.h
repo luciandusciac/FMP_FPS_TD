@@ -29,6 +29,10 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Explode();
+	virtual void OnExplode();
+	bool bCanExplode;
+
+	virtual void Use() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	class USceneComponent* Root;

@@ -17,6 +17,8 @@ ABaseGrenade::ABaseGrenade()
 
 	ExplosionVFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ExplosionVFX"));
 	ExplosionVFX->SetupAttachment(Root);
+
+	bCanExplode = false;
 }
 
 // Called when the game starts or when spawned
@@ -31,12 +33,29 @@ void ABaseGrenade::BeginPlay()
 void ABaseGrenade::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	
 }
 
 void ABaseGrenade::Explode()
 {
-	GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
+	//GetWorldTimerManager().SetTimer(ExplosionTimerHandle, this, &ABaseGrenade::OnExplode, ExplosionTime, false);
+	
+	//GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
 	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), GetActorLocation());
 	
+}
+
+void ABaseGrenade::OnExplode()
+{
+	//GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), GetActorLocation());
+}
+
+void ABaseGrenade::Use()
+{
+	//Super::Use();
+	//bCanExplode = true;
+	//Explode();
 }
 

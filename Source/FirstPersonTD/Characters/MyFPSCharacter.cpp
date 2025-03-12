@@ -12,6 +12,8 @@
 #include "../Source/FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "Components/CapsuleComponent.h"
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
+#include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/BaseGrenade.h"
+#include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FragGrenade.h"
 
 class ABaseWeapon;
 
@@ -55,18 +57,43 @@ void AMyFPSCharacter::ThrowGrenade()
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->bIsThrowingGrenade = true;
+
+		// if (ABaseGrenade* Gr = Cast<ABaseGrenade>(CurrentItemInHands))
+		// {
+		// 	Gr = GetWorld()->SpawnActor<ABaseGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 1000.f, GetActorRotation());
+		// 	
+		// 	Inventory->ThrowItem();
+		// 	CurrentItemInHands->Destroy();
+		// 	
+		// 	Gr->Explode();
+		// }
 	}
 }
 
 void AMyFPSCharacter::OnGrenadeThrown()
 {
-	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
+	//GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
 	
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->bIsThrowingGrenade = false;
 		AnimInstance->bHasGrenade = false;
+	
 	}
+		
+	
+
+		AFragGrenade* Gr = GetWorld()->SpawnActor<AFragGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
+		UStaticMeshComponent* MeshComp = Gr->FindComponentByClass<UStaticMeshComponent>();
+		if (MeshComp)
+		{
+			//MeshComp->SetSimulatePhysics(true);
+			MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
+		}
+		Gr->bCanExplode = true;
+		CurrentItemInHands->Destroy();
+	
+	
 }
 
 void AMyFPSCharacter::Shoot()
@@ -84,7 +111,12 @@ void AMyFPSCharacter::Shoot()
 			GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, ShootingTime, false);
 			
 		}
-		//AnimInstance->bIsShooting = true;
+		// else if (AnimInstance->bHasGrenade)
+		// {
+		// 	
+		// }
+		AnimInstance->bIsShooting = true;
+		
 		if (AInventoryItem* i =  Cast<AInventoryItem>(CurrentItemInHands))
 		{
 			i->Use();
@@ -240,6 +272,7 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 			OtherActor->SetActorRelativeRotation(WeaponRotation); 
 			OtherActor->SetActorScale3D(WeaponScale);
 			CurrentItemInHands = OtherActor;
+			//OtherActor->Destroy();
 		}
 
 		

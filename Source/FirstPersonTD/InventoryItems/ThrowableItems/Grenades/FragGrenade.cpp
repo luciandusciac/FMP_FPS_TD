@@ -39,14 +39,21 @@ void AFragGrenade::BeginPlay()
 void AFragGrenade::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bCanExplode)
+	{
+		Explode();
+		bCanExplode = false;
+	}
 }
 
 void AFragGrenade::Explode()
 {
-	Super::Explode();
+	//Super::Explode();
 	//SphereComponent->SetActive(true);
 	//SphereComponent->Activate();
 
+	GetWorldTimerManager().SetTimer(ExplosionTimerHandle, this, &AFragGrenade::OnExplode, ExplosionTime, false);
 	
 	// TArray<AActor*> OverlappingActors;
 	//
@@ -60,10 +67,20 @@ void AFragGrenade::Explode()
 	// 		UE_LOG(LogTemp, Warning, TEXT("Actor: %s"), *Actor->GetName());
 	// }
 
+	
+}
+
+void AFragGrenade::OnExplode()
+{
+
+	Super::OnExplode();
+
+	
+	
 	TArray<FOverlapResult> OverlapResults;
 	FCollisionQueryParams CollisionParams;
 	CollisionParams.AddIgnoredActor(this);
-
+	
 	bool bHasHit = GetWorld()->OverlapMultiByChannel(
 		OverlapResults,
 		GetActorLocation(),
@@ -72,7 +89,7 @@ void AFragGrenade::Explode()
 		FCollisionShape::MakeSphere(100.f),
 		CollisionParams
 	);
-
+	
 	if (bHasHit)
 	{
 		for (FOverlapResult Result : OverlapResults)
@@ -84,7 +101,17 @@ void AFragGrenade::Explode()
 			}
 		}
 	}
-
+	
+	GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), GetActorLocation());
+	
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Frag grenade exploded!"));
 	this->Destroy();
+}
+
+void AFragGrenade::Use()
+{
+	Super::Use();
+	//bCanExplode = true;
 }
 

@@ -25,36 +25,44 @@ void AShotgun::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(CurrentFireRate>FireRate)
-	{
-		CurrentFireRate = 0;
-		Shoot();
-	}
-	else
-	{
-		CurrentFireRate += DeltaTime;
-	}
+	// if(CurrentFireRate>FireRate)
+	// {
+	// 	CurrentFireRate = 0;
+	// 	Shoot();
+	// }
+	// else
+	// {
+	// 	CurrentFireRate += DeltaTime;
+	// }
 }
 
 void AShotgun::Shoot()
 {
 	Super::Shoot();
-	
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = GetInstigator();
 
-	for(int i = 0; i<=PelletCount;  ++i)
+
+	if (!bIsShooting)
 	{
-		
-		FRotator RandomRotation = BulletOrigin->GetComponentRotation();
-		RandomRotation.Yaw += FMath::RandRange(-Spread, Spread);
-		RandomRotation.Pitch += FMath::RandRange(-Spread, Spread);
-
-		GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), RandomRotation, SpawnParams);
+		bIsShooting = true;
+		GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
 	
-	}
+	
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
 
-	UE_LOG(LogTemp, Warning, TEXT("Shotgun Shot"));
+		for(int i = 0; i<=PelletCount;  ++i)
+		{
+		
+			FRotator RandomRotation = BulletOrigin->GetComponentRotation();
+			RandomRotation.Yaw += FMath::RandRange(-Spread, Spread);
+			RandomRotation.Pitch += FMath::RandRange(-Spread, Spread);
+
+			GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), RandomRotation, SpawnParams);
+	
+		}
+
+		//UE_LOG(LogTemp, Warning, TEXT("Shotgun Shot"));
+	}
 }
 

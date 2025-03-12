@@ -81,13 +81,19 @@ public:
 #pragma region WeaponFunctions
 
 	virtual void Shoot();
+	virtual void OnShoot();
 	void Reload();
 	void Aim();
+	virtual void Use() override;
 	
 #pragma endregion	
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
 	UNiagaraComponent* MuzzleFlash;
+
+	bool bIsShooting;
+	float CurrentTime;
+	FTimerHandle ShootingTimerHandle;
 
 	
 	

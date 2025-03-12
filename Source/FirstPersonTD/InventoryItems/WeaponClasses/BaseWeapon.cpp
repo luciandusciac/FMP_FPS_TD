@@ -26,6 +26,8 @@ ABaseWeapon::ABaseWeapon()
 
 	BulletOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("BulletOrigin"));
 	BulletOrigin->SetupAttachment(Mesh);
+
+	bIsShooting = false;
 }
 
 // Called when the game starts or when spawned
@@ -46,7 +48,17 @@ void ABaseWeapon::Tick(float DeltaTime)
 
 void ABaseWeapon::Shoot()
 {
-	//TODO: Generate bullet object
+	// if (!bIsShooting)
+	// {
+	// 	bIsShooting = true;
+	// 	GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
+	// }
+}
+
+void ABaseWeapon::OnShoot()
+{
+	bIsShooting = false;
+	GetWorldTimerManager().ClearTimer(ShootingTimerHandle);
 }
 
 void ABaseWeapon::Reload()
@@ -64,5 +76,12 @@ void ABaseWeapon::Reload()
 
 void ABaseWeapon::Aim()
 {
+}
+
+void ABaseWeapon::Use()
+{
+	Super::Use();
+
+	Shoot();
 }
 

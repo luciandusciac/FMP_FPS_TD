@@ -24,3 +24,10 @@ void ABaseThrowable::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+void ABaseThrowable::Use()
+{
+	Super::Use();
+
+	
+}
+

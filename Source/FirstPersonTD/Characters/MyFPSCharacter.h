@@ -113,6 +113,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Holding")
 	FVector WeaponLocation;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Holding")
+	FTransform WeaponTransform;
 	
 	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
 	// TArray<class ABaseWeapon*> Weapons;

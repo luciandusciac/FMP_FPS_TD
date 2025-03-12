@@ -25,27 +25,34 @@ void ARifle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(CurrentFireRate>FireRate)
-	{
-		CurrentFireRate = 0;
-		Shoot();
-	}
-	else
-	{
-		CurrentFireRate += DeltaTime;
-	}
+	// if(CurrentFireRate>FireRate)
+	// {
+	// 	CurrentFireRate = 0;
+	// 	Shoot();
+	// }
+	// else
+	// {
+	// 	CurrentFireRate += DeltaTime;
+	// }
 }
 
 void ARifle::Shoot()
 {
 	Super::Shoot();
-	
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	SpawnParams.Instigator = GetInstigator();
 
-	GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), BulletOrigin->GetComponentRotation(), SpawnParams);
 
-	UE_LOG(LogTemp, Warning, TEXT("Rifle Shot"));
+	if (!bIsShooting)
+	{
+		bIsShooting = true;
+		GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
+		
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		SpawnParams.Instigator = GetInstigator();
+
+		GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), BulletOrigin->GetComponentRotation(), SpawnParams);
+
+		//UE_LOG(LogTemp, Warning, TEXT("Rifle Shot"));
+	}
 }
 

@@ -28,6 +28,8 @@ AMyFPSCharacter::AMyFPSCharacter()
 	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyFPSCharacter::OnComponentBeginOverlap);
 
 	AnimationInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance());
+
+	//WeaponTransform = FTransform(FRotator(0, 0, 0));
 }
 
 // Called when the game starts or when spawned
@@ -82,7 +84,11 @@ void AMyFPSCharacter::Shoot()
 			GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, ShootingTime, false);
 			
 		}
-		AnimInstance->bIsShooting = true;
+		//AnimInstance->bIsShooting = true;
+		if (AInventoryItem* i =  Cast<AInventoryItem>(CurrentItemInHands))
+		{
+			i->Use();
+		}
 	}
 	
 }

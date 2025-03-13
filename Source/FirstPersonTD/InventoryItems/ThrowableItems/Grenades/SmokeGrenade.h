@@ -25,6 +25,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Explode() override;
+	virtual void OnExplode() override;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	class UParticleSystemComponent* SmokeParticle;

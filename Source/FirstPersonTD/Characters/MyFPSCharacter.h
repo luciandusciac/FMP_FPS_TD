@@ -9,6 +9,7 @@
 #include "Camera/CameraComponent.h"
 #include "Animation/AnimSequence.h"
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
+#include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/BaseGrenade.h"
 
 #include "MyFPSCharacter.generated.h"
 

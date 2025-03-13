@@ -31,6 +31,7 @@ public:
 	virtual void Explode();
 	virtual void OnExplode();
 	bool bCanExplode;
+	bool bMeshDisabled;
 
 	virtual void Use() override;
 
@@ -44,5 +45,8 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "VFX")
 	UNiagaraComponent* ExplosionVFX;
+
+	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	                             UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
 };

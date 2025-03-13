@@ -17,5 +17,5 @@ void UThrowGrenadeNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 	}
 
 	// Call the function to spawn the grenade
-	Character->OnGrenadeThrown();
+	Character->ThrowGrenade();
 }

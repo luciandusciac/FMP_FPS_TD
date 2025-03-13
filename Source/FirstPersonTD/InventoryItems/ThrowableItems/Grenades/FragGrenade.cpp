@@ -73,7 +73,7 @@ void AFragGrenade::Explode()
 void AFragGrenade::OnExplode()
 {
 
-	Super::OnExplode();
+	//Super::OnExplode();
 
 	
 	
@@ -103,7 +103,7 @@ void AFragGrenade::OnExplode()
 	}
 	
 	GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), GetActorLocation());
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), this->GetActorLocation());
 	
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Frag grenade exploded!"));
 	this->Destroy();

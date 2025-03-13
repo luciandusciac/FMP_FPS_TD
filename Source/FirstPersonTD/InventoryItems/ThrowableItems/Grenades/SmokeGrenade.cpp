@@ -24,13 +24,25 @@ void ASmokeGrenade::BeginPlay()
 void ASmokeGrenade::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bCanExplode)
+	{
+		Explode();
+		bCanExplode = false;
+	}
 }
 
 void ASmokeGrenade::Explode()
 {
-	Super::Explode();
+	GetWorldTimerManager().SetTimer(ExplosionTimerHandle, this, &ASmokeGrenade::OnExplode, ExplosionTime, false);
 
+	
+}
+
+void ASmokeGrenade::OnExplode()
+{
 	UE_LOG(LogTemp, Warning, TEXT("Smoke Explosion"));
+	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), GetActorLocation());
 
 	this->Destroy();
 }

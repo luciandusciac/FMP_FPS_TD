@@ -28,12 +28,23 @@ void AFlashbangGrenade::BeginPlay()
 void AFlashbangGrenade::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if (bCanExplode)
+	{
+		Explode();
+		bCanExplode = false;
+	}
 }
 
 void AFlashbangGrenade::Explode()
 {
-	Super::Explode();
+	//Super::Explode();
  
+	GetWorldTimerManager().SetTimer(ExplosionTimerHandle, this, &AFlashbangGrenade::OnExplode, ExplosionTime, false);
+}
+
+void AFlashbangGrenade::OnExplode()
+{
 	UE_LOG(LogTemp, Warning, TEXT("Flashbang Explosion"));
 
 	TArray<AActor*> FoundActors;

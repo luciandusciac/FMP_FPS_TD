@@ -12,8 +12,12 @@
 #include "../Source/FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "Components/CapsuleComponent.h"
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
+#include "FirstPersonTD/InventoryItems/Interfaces/FlashbangInterface.h"
+#include "FirstPersonTD/InventoryItems/Interfaces/SmokeGrenadeInterface.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/BaseGrenade.h"
+#include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FlashbangGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FragGrenade.h"
+#include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/SmokeGrenade.h"
 
 class ABaseWeapon;
 
@@ -51,47 +55,83 @@ void AMyFPSCharacter::BeginPlay()
 
 void AMyFPSCharacter::ThrowGrenade()
 {
-	//GetMesh()->PlayAnimation(GrenadeThrowAnimation, false);
-	GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnGrenadeThrown, GrenadeThrowTime, false);
-	
-	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
-	{
-		AnimInstance->bIsThrowingGrenade = true;
+	//GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnGrenadeThrown, GrenadeThrowTime, false);
 
-		// if (ABaseGrenade* Gr = Cast<ABaseGrenade>(CurrentItemInHands))
-		// {
-		// 	Gr = GetWorld()->SpawnActor<ABaseGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 1000.f, GetActorRotation());
-		// 	
-		// 	Inventory->ThrowItem();
-		// 	CurrentItemInHands->Destroy();
-		// 	
-		// 	Gr->Explode();
-		// }
-	}
-}
-
-void AMyFPSCharacter::OnGrenadeThrown()
-{
-	//GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
-	
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->bIsThrowingGrenade = false;
 		AnimInstance->bHasGrenade = false;
 	
 	}
-		
 	
-
+	if (CurrentItemInHands->GetClass()->ImplementsInterface(UFragGrenadeInterface::StaticClass()))
+	{
 		AFragGrenade* Gr = GetWorld()->SpawnActor<AFragGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
 		UStaticMeshComponent* MeshComp = Gr->FindComponentByClass<UStaticMeshComponent>();
 		if (MeshComp)
 		{
-			//MeshComp->SetSimulatePhysics(true);
+			MeshComp->SetSimulatePhysics(true);
+			MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			MeshComp->BodyInstance.SetUseCCD(true);
 			MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
 		}
 		Gr->bCanExplode = true;
-		CurrentItemInHands->Destroy();
+		//CurrentItemInHands->Destroy();
+	}
+	else if (CurrentItemInHands->GetClass()->ImplementsInterface(UFlashbangInterface::StaticClass()))
+	{
+		AFlashbangGrenade* Gr = GetWorld()->SpawnActor<AFlashbangGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
+		UStaticMeshComponent* MeshComp = Gr->FindComponentByClass<UStaticMeshComponent>();
+		if (MeshComp)
+		{
+			MeshComp->SetSimulatePhysics(true);
+			MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			MeshComp->BodyInstance.SetUseCCD(true);
+			MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
+		}
+		Gr->bCanExplode = true;
+	}
+	else if (CurrentItemInHands->GetClass()->ImplementsInterface(USmokeGrenadeInterface::StaticClass()))
+	{
+		ASmokeGrenade* Gr = GetWorld()->SpawnActor<ASmokeGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
+		UStaticMeshComponent* MeshComp = Gr->FindComponentByClass<UStaticMeshComponent>();
+		if (MeshComp)
+		{
+			MeshComp->SetSimulatePhysics(true);
+			MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+			MeshComp->BodyInstance.SetUseCCD(true);
+			MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
+		}
+		Gr->bCanExplode = true;
+	}
+	
+	CurrentItemInHands->Destroy();
+}
+
+void AMyFPSCharacter::OnGrenadeThrown()
+{
+	//GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
+	
+	// if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
+	// {
+	// 	AnimInstance->bIsThrowingGrenade = false;
+	// 	AnimInstance->bHasGrenade = false;
+	//
+	// }
+		
+	
+
+	AFragGrenade* Gr = GetWorld()->SpawnActor<AFragGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
+	UStaticMeshComponent* MeshComp = Gr->FindComponentByClass<UStaticMeshComponent>();
+	if (MeshComp)
+	{
+		MeshComp->SetSimulatePhysics(true);
+		MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+		MeshComp->BodyInstance.SetUseCCD(true);
+		MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
+	}
+	Gr->bCanExplode = true;
+	CurrentItemInHands->Destroy();
 	
 	
 }
@@ -259,23 +299,61 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 		UE_LOG(LogTemp, Error, TEXT("Inventory is NULL! Cannot add item."));
 		return;
 	}
+
+
+	
 	
 	if(AInventoryItem* It = Cast<AInventoryItem>(OtherActor))
 	{
-		//INFO: Add weapon to inventory
-		if(Inventory->AddItem(It))
-		{
-			//INFO: Attach weapon to player hand
-			OtherActor->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, "WeaponSocket");
-			//INFO: Weapon attachment transform properties
-			OtherActor->SetActorRelativeLocation(WeaponLocation);
-			OtherActor->SetActorRelativeRotation(WeaponRotation); 
-			OtherActor->SetActorScale3D(WeaponScale);
-			CurrentItemInHands = OtherActor;
-			//OtherActor->Destroy();
-		}
+			//INFO: Add weapon to inventory
+			if(Inventory->AddItem(It))
+			{
+			
+				//OtherActor->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
 
-		
+				//OtherActor->SetOwner(this);
+				// if (It->GetClass()->ImplementsInterface(UFragGrenadeInterface::StaticClass()) ||
+				// 	It->GetClass()->ImplementsInterface(UFlashbangInterface::StaticClass()) ||
+				// 	It->GetClass()->ImplementsInterface(USmokeGrenadeInterface::StaticClass()))
+				// {
+					if (UStaticMeshComponent* MeshComp = OtherActor->FindComponentByClass<UStaticMeshComponent>())
+					{
+						MeshComp->SetSimulatePhysics(false);
+						MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+						MeshComp->SetMassScale(NAME_None, 0.0f);
+						MeshComp->SetEnableGravity(false);
+						MeshComp->WakeRigidBody();
+
+						//MeshComp->SetWorldLocationAndRotation(WeaponLocation, WeaponRotation);
+
+						//MeshComp->SetWorldScale3D(WeaponScale);
+						MeshComp->AttachToComponent(
+							GetMesh(),
+							FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true),
+							FName("WeaponSocket")
+						);
+						//MeshComp->SetWorldLocationAndRotation(WeaponLocation, WeaponRotation);
+						//MeshComp->SetWorldScale3D(WeaponScale);
+						MeshComp->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
+						MeshComp->SetRelativeLocation(WeaponLocation);
+						MeshComp->SetRelativeRotation(WeaponRotation);
+					}
+				//}
+				//else
+				//{
+					//INFO: Attach weapon to player hand
+					// OtherActor->AttachToComponent(
+					// 		GetMesh(),
+					// 		FAttachmentTransformRules::SnapToTargetNotIncludingScale,
+					// 		FName("WeaponSocket")
+					// 	);
+					// //INFO: Weapon attachment transform properties
+					// OtherActor->SetActorLocation(WeaponLocation);
+					// OtherActor->SetActorRotation(WeaponRotation); 
+					// OtherActor->SetActorScale3D(WeaponScale);
+				//}
+				CurrentItemInHands = OtherActor;
+			}
 	}
 	
 }

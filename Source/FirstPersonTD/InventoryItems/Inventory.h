@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "InventoryItem.h"
+#include "FirstPersonTD/Controller/FPSPlayerController.h"
 #include "Inventory.generated.h"
 
 /**
@@ -18,11 +19,16 @@ public:
 
 	UInventory();
 
+	virtual void BeginPlay();
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	AInventoryItem* CurrentItem;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	int CurrentInventorySlot;
+
+	UPROPERTY()
+	AFPSPlayerController* Controller;
 	
 	bool AddItem(AInventoryItem* Item);
 	void ThrowItem();

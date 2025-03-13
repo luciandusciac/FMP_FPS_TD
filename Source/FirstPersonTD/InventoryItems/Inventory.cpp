@@ -17,6 +17,16 @@ UInventory::UInventory()
 {
 	CurrentItem = nullptr;
 	CurrentInventorySlot = NULL;
+
+	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+	{
+		Controller = Cast<AFPSPlayerController>(C->GetController());
+		
+	}
+}
+
+void UInventory::BeginPlay()
+{
 }
 
 bool UInventory::AddItem(AInventoryItem* Item)
@@ -184,7 +194,13 @@ void UInventory::NextItem()
 {
 	if(InventorySlots.Num() == 0)
 	{
-		CurrentItem = nullptr;
+		//CurrentItem = nullptr;
+		if (CurrentItem)
+			CurrentItem->Destroy();
+
+		if (Controller)
+			Controller->EquipWeapon(10);  //no weapon
+
 		return;
 	}
 

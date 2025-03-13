@@ -15,7 +15,6 @@ void UThrowGrenadeNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequence
 		UE_LOG(LogTemp, Error, TEXT("UAnimNotify_SpawnGrenade: Character is NULL!"));
 		return;
 	}
-
-	// Call the function to spawn the grenade
+	
 	Character->ThrowGrenade();
 }

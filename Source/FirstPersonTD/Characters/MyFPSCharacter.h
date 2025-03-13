@@ -48,6 +48,8 @@ public:
 	float GrenadeThrowTime;
 	void OnGrenadeThrown();
 
+	void ThrowKnife();
+
 	void Shoot();
 	float ShootingTime;
 	float PistolShootingTime;

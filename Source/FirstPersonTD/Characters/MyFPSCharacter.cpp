@@ -13,11 +13,13 @@
 #include "Components/CapsuleComponent.h"
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
 #include "FirstPersonTD/InventoryItems/Interfaces/FlashbangInterface.h"
+#include "FirstPersonTD/InventoryItems/Interfaces/KnifeInterface.h"
 #include "FirstPersonTD/InventoryItems/Interfaces/SmokeGrenadeInterface.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/BaseGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FlashbangGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FragGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/SmokeGrenade.h"
+#include "FirstPersonTD/InventoryItems/ThrowableItems/Knives/Knife.h"
 
 class ABaseWeapon;
 
@@ -134,6 +136,19 @@ void AMyFPSCharacter::OnGrenadeThrown()
 	CurrentItemInHands->Destroy();
 	
 	
+}
+
+void AMyFPSCharacter::ThrowKnife()
+{
+	if (CurrentItemInHands->GetClass()->ImplementsInterface(UKnifeInterface::StaticClass()))
+	{
+		AKnife* Knife = GetWorld()->SpawnActor<AKnife>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
+		UStaticMeshComponent* MeshComp = Knife->FindComponentByClass<UStaticMeshComponent>();
+		if (MeshComp)
+		{
+			MeshComp->AddImpulse(GetActorForwardVector() * 5000.f);
+		}
+	}
 }
 
 void AMyFPSCharacter::Shoot()

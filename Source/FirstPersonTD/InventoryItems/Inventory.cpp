@@ -201,8 +201,10 @@ void UInventory::UseItem(AInventoryItem* Item)
 			{
 				C->SpawnCurrentWaponInHands();
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Next item equipped!"));
-				
+				return;
 			}
+			else
+				NextItem();
 			//if (NextItem())
 			//{
 			//	

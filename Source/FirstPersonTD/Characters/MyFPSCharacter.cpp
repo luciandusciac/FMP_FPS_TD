@@ -156,9 +156,9 @@ void AMyFPSCharacter::ThrowKnife()
 
 	//Inventory->CurrentItem = nullptr;
 	
+	Inventory->UseItem(Inventory->CurrentItem);
 	CurrentItemInHands->Destroy();
 	
-	Inventory->UseItem(Inventory->CurrentItem);
 	
 	//Inventory->NextItem();
 	//GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnKnifeThrown, KnifeThrowAnimation->GetPlayLength(), false);
@@ -265,11 +265,15 @@ void AMyFPSCharacter::NextWeapon()
 	if (Inventory->GetNumberOfItems() == 1 || Inventory->GetNumberOfItems() == 0)
 		return;
 
+		
 	if (CurrentItemInHands)
 		CurrentItemInHands->Destroy();
+		
 
 	if (Inventory->NextItem())
 	{
+
+		
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item destroyed, next weapon!"));
 
 		SpawnCurrentWaponInHands();
@@ -329,7 +333,7 @@ void AMyFPSCharacter::ThrowWeapon()
 	}
 
 	AInventoryItem* ItemToThrow = Inventory->CurrentItem;
-	CurrentItemInHands = Cast<AActor>(ItemToThrow);
+	//CurrentItemInHands = Cast<AActor>(ItemToThrow);
 
 	if (CurrentItemInHands)
 	{
@@ -343,7 +347,7 @@ void AMyFPSCharacter::ThrowWeapon()
 			//MeshComp->SetSimulatePhysics(true);
 			//MeshComp->AddImpulse(GetActorForwardVector() * 5000.f + FVector(0.f, 0.f, 4000.f));
 			//TODO: Destroy item in hands
-			CurrentItemInHands->Destroy();
+			//CurrentItemInHands->Destroy();
 			//CurrentItemInHands->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
 		UStaticMeshComponent* MeshComponent = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
 		if (MeshComponent)
@@ -354,7 +358,8 @@ void AMyFPSCharacter::ThrowWeapon()
 			//CurrentItemInHands = nullptr;
 			
 		}
-
+		
+		CurrentItemInHands->Destroy();
 		Inventory->ThrowItem();
 			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
 			//CurrentItemInHands->SetActorRotation(GetActorRotation());
@@ -377,38 +382,98 @@ void AMyFPSCharacter::ThrowWeapon()
 	
 }
 
+// void AMyFPSCharacter::SpawnCurrentWaponInHands()
+// {
+// 	AActor* WeaponToSpawn = Cast<AActor>(Inventory->CurrentItem);
+// 	
+// 	if (WeaponToSpawn)
+// 	{
+// 		FActorSpawnParameters SpawnParams;
+// 		SpawnParams.Owner = this;
+// 		AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(WeaponToSpawn->GetClass(), GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
+// 		CurrentItemInHands = SpawnedWeapon;
+// 		UStaticMeshComponent* MeshComponent = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
+// 		if (MeshComponent)
+// 		{
+// 			MeshComponent->SetSimulatePhysics(false);
+// 			MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+// 			MeshComponent->SetMassScale(NAME_None, 0.0f);
+// 			MeshComponent->SetEnableGravity(false);
+// 			MeshComponent->WakeRigidBody();
+// 			MeshComponent->AttachToComponent(
+// 				GetMesh(),
+// 				FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true),
+// 				FName("WeaponSocket")
+// 			);
+// 			MeshComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
+// 			MeshComponent->SetRelativeLocation(WeaponLocation);
+// 			MeshComponent->SetRelativeRotation(WeaponRotation);
+// 		}
+// 	}
+// 	else
+// 	{
+// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No weapon to spawn!"));
+// 	}
+// }
+
 void AMyFPSCharacter::SpawnCurrentWaponInHands()
 {
-	AActor* WeaponToSpawn = Cast<AActor>(Inventory->CurrentItem);
-	
-	if (WeaponToSpawn)
+	if (!Inventory || !Inventory->CurrentItem)
 	{
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(WeaponToSpawn->GetClass(), GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
-		CurrentItemInHands = SpawnedWeapon;
-		UStaticMeshComponent* MeshComponent = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
-		if (MeshComponent)
-		{
-			MeshComponent->SetSimulatePhysics(false);
-			MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-			MeshComponent->SetMassScale(NAME_None, 0.0f);
-			MeshComponent->SetEnableGravity(false);
-			MeshComponent->WakeRigidBody();
-			MeshComponent->AttachToComponent(
-				GetMesh(),
-				FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true),
-				FName("WeaponSocket")
-			);
-			MeshComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
-			MeshComponent->SetRelativeLocation(WeaponLocation);
-			MeshComponent->SetRelativeRotation(WeaponRotation);
-		}
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Inventory or CurrentItem is null!"));
+		return;
 	}
-	else
+
+	// Destroy the old weapon first
+	if (CurrentItemInHands)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No weapon to spawn!"));
+		CurrentItemInHands->Destroy();
+		CurrentItemInHands = nullptr;
 	}
+
+	// Get the class instead of the actual instance
+	TSubclassOf<AActor> WeaponClass = Inventory->CurrentItem->GetClass();
+	if (!WeaponClass)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Invalid weapon class!"));
+		return;
+	}
+
+	// Spawn new weapon
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(WeaponClass, GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
+	CurrentItemInHands = SpawnedWeapon;
+
+	if (!SpawnedWeapon)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Failed to spawn weapon!"));
+		return;
+	}
+
+	// Attach weapon to character mesh
+	UStaticMeshComponent* MeshComponent = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
+	if (MeshComponent)
+	{
+		MeshComponent->SetSimulatePhysics(false);
+		MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
+		MeshComponent->SetMassScale(NAME_None, 0.0f);
+		MeshComponent->SetEnableGravity(false);
+		MeshComponent->WakeRigidBody();
+
+		// Attach to socket
+		MeshComponent->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true),
+			FName("WeaponSocket")
+		);
+
+		MeshComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
+		MeshComponent->SetRelativeLocation(WeaponLocation);
+		MeshComponent->SetRelativeRotation(WeaponRotation);
+	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Weapon spawned and attached!"));
 }
 
 
@@ -439,7 +504,7 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 				//MeshComp->SetWorldScale3D(WeaponScale);
 				MeshComp->AttachToComponent(
 					GetMesh(),
-					FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true),
+					FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true),
 					FName("WeaponSocket")
 				);
 				//MeshComp->SetWorldLocationAndRotation(WeaponLocation, WeaponRotation);

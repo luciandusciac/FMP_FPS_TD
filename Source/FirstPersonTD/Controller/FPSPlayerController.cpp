@@ -265,7 +265,8 @@ void AFPSPlayerController::EquipWeapon(int Index)
 	}
 
 	AnimationInstance->Modify();
-	AnimationInstance->MarkPackageDirty();
+	//AnimationInstance->MarkPackageDirty();
+
 	// if(Index == 0)
 	// {
 	// 	AnimationInstance->bHasPrimary = true;

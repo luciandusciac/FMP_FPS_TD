@@ -185,13 +185,34 @@ void UInventory::UseItem(AInventoryItem* Item)
 	if(Item->bIsConsumable)
 	{
 		InventorySlots.Remove(CurrentInventorySlot);
-		NextItem();
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item used! Items left: " + InventorySlots.Num()));
+		//if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+		//{
+		//	C->NextWeapon();
+		//}
+		//NextItem();
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Item used! Items left: %d"), InventorySlots.Num()));
+
+		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+		{
+			//if (C->CurrentItemInHands)
+			//	C->CurrentItemInHands->Destroy();
+		
+			if (InventorySlots.Num() == 1 && !NextItem())
+			{
+				C->SpawnCurrentWaponInHands();
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Next item equipped!"));
+				
+			}
+			//if (NextItem())
+			//{
+			//	
+			//}
+		}	
 	}
 	
 }
 
-void UInventory::NextItem()
+bool UInventory::NextItem()
 {
 	if(InventorySlots.Num() == 0)
 	{
@@ -202,7 +223,7 @@ void UInventory::NextItem()
 		if (Controller)
 			Controller->EquipWeapon(10);  //no weapon
 
-		return;
+		return false;
 	}
 
 	if(InventorySlots.Num() == 1)
@@ -211,38 +232,11 @@ void UInventory::NextItem()
 		//CurrentItem = InventorySlots[CurrentInventorySlot];
 		
 		SetCurrentItemInHands();
+		return false;
 	}
 	
 	if(InventorySlots.Num() > 1)
 	{
-		// TArray<int> Keys;
-		// TArray<AInventoryItem*> Items;
-		// //InventorySlots.GenerateKeyArray(Keys);
-		// InventorySlots.GenerateValueArray(Items);
-		// int i = 0;
-		//
-		// //int CurrentIndex = Keys.IndexOfByKey(CurrentInventorySlot);
-		// //int CurrentIndex = Items.IndexOfByKey(CurrentItem);
-		// int CurrentIndex = Items.Find(CurrentItem);
-		// //CurrentIndex = (CurrentIndex + 1) % Items.Num();
-		// CurrentIndex++;
-		// if(CurrentIndex >= Items.Num())
-		// {
-		// 	CurrentIndex = 0;
-		// }
-		// //CurrentInventorySlot = Keys[CurrentIndex];
-		// CurrentInventorySlot = CurrentIndex;
-		// //CurrentItem = InventorySlots[CurrentInventorySlot];
-		// CurrentItem = Items[CurrentIndex];
-
-		//InventoryItems.Sort([](int A, int B) { return A < B; });
-		
-		
-		// CurrentInventorySlot++;
-		// if(CurrentInventorySlot >= InventorySlots.Num())
-		// {
-		// 	CurrentInventorySlot = 0;
-		// }
 
 		TArray<int> GunValues;
 		InventorySlots.GenerateKeyArray(GunValues);
@@ -251,24 +245,6 @@ void UInventory::NextItem()
 		CurrentInventorySlot = GunValues[CurrentIndex];
 		
 		SetCurrentItemInHands();
-
-		// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		// {
-		// 	//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-		// 	if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-		// 	{
-		// 		controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
-		// 		
-		// 		controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
-		// 	}
-		// }
-
-		
-		//C->CurrentItemInHands->Destroy();
-		//C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
-		//AActor* NewWeapon = GetWorld()->SpawnActor(CurrentItem->GetClass());
-		//NewWeapon->AttachToComponent(C->GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("WeaponSocket"));
-		//C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
 		
 		if (InventorySlots.Contains(CurrentInventorySlot)) 
 		{
@@ -288,114 +264,50 @@ void UInventory::NextItem()
 			UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
 			CurrentItem = nullptr;
 		}
+		return true;
 	}
 	
+	return false;
 }
 
-// void UInventory::NextItem()
-// {
-// 	if (InventorySlots.Num() == 0)
-// 	{
-// 		CurrentItem = nullptr;
-// 		return;
-// 	}
-//
-// 	// Case: Only one item in inventory
-// 	if (InventorySlots.Num() == 1)
-// 	{
-// 		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
-// 		CurrentItem = InventorySlots.FindRef(CurrentInventorySlot);  // Safe lookup
-//
-// 		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-// 		{
-// 			if (AFPSPlayerController* Controller = Cast<AFPSPlayerController>(C->GetController()))
-// 			{
-// 				Controller->AnimationIndex = CurrentInventorySlot;  // Sync animation
-// 				Controller->EquipWeapon(CurrentInventorySlot);  // Play animation
-// 				C->CurrentItemInHands = CurrentItem;
-// 			}
-// 		}
-// 		return;  // No need to go further if there's only one item
-// 	}
-//
-// 	// Case: Multiple items in inventory
-// 	TArray<int> Keys;
-// 	InventorySlots.GenerateKeyArray(Keys);
-// 	int CurrentIndex = Keys.IndexOfByKey(CurrentInventorySlot);
-//
-// 	// Move to the next slot (wrap around if needed)
-// 	CurrentIndex = (CurrentIndex + 1) % Keys.Num();
-// 	CurrentInventorySlot = Keys[CurrentIndex];
-//
-// 	// Safe lookup
-// 	if (AInventoryItem** FoundItem = InventorySlots.Find(CurrentInventorySlot))
-// 	{
-// 		CurrentItem = *FoundItem;
-//
-// 		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-// 		{
-// 			if (AFPSPlayerController* Controller = Cast<AFPSPlayerController>(C->GetController()))
-// 			{
-// 				Controller->AnimationIndex = CurrentInventorySlot;
-// 				Controller->EquipWeapon(CurrentInventorySlot);
-// 				C->CurrentItemInHands = CurrentItem;
-// 			}
-// 		}
-//
-// 		UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *CurrentItem->GetName());
-// 	}
-// 	else
-// 	{
-// 		UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
-// 		CurrentItem = nullptr;
-// 	}
-// }
-
-void UInventory::PreviousItem()
+bool UInventory::PreviousItem()
 {
 	if(InventorySlots.Num() == 0)
 	{
-		CurrentItem = nullptr;
-		return;
+		//CurrentItem = nullptr;
+		if (CurrentItem)
+			CurrentItem->Destroy();
+
+		if (Controller)
+			Controller->EquipWeapon(10);  //no weapon
+
+		return false;
 	}
-	
+
+	if(InventorySlots.Num() == 1)
+	{
+		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
+		//CurrentItem = InventorySlots[CurrentInventorySlot];
+		
+		SetCurrentItemInHands();
+		return false;
+	}
+
+
 	if(InventorySlots.Num() > 1)
 	{
-		TArray<int> Keys;
-		TArray<AInventoryItem*> Items;
-		//InventorySlots.GenerateKeyArray(Keys);
-		InventorySlots.GenerateValueArray(Items);
 
-		//int CurrentIndex = Keys.IndexOfByKey(CurrentInventorySlot);
-		int CurrentIndex = Items.IndexOfByKey(CurrentItem);
-		if (Items.Num()>0)
-		CurrentIndex = (CurrentIndex - 1 + Items.Num()) % Items.Num();
-		//CurrentInventorySlot = Keys[CurrentIndex];
-		CurrentInventorySlot = CurrentIndex;
-		CurrentItem = InventorySlots[CurrentInventorySlot];
+		TArray<int> GunValues;
+		InventorySlots.GenerateKeyArray(GunValues);
+		int CurrentIndex = GunValues.Find(CurrentInventorySlot);
+		CurrentIndex = (CurrentIndex - 1 + GunValues.Num()) % GunValues.Num();
+		CurrentInventorySlot = GunValues[CurrentIndex];
 		
-		// CurrentInventorySlot--;
-		// if(CurrentInventorySlot < 0)
-		// {
-		// 	CurrentInventorySlot = InventorySlots.Num()-1;
-		// }
-
-
-		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		{
-			//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-			if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-			{
-				C->CurrentItemInHands->Destroy();
-				controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
-				controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
-				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
-			}
-		}
+		SetCurrentItemInHands();
 		
 		if (InventorySlots.Contains(CurrentInventorySlot)) 
 		{
-			CurrentItem = InventorySlots[CurrentInventorySlot];
+			CurrentItem = InventorySlots[CurrentInventorySlot]; //????????????????????????????????????????????????
 
 			if (CurrentItem)
 			{
@@ -411,7 +323,66 @@ void UInventory::PreviousItem()
 			UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
 			CurrentItem = nullptr;
 		}
+		return true;
 	}
+	
+	// if(InventorySlots.Num() > 1)
+	// {
+	// 	TArray<int> Keys;
+	// 	TArray<AInventoryItem*> Items;
+	// 	//InventorySlots.GenerateKeyArray(Keys);
+	// 	InventorySlots.GenerateValueArray(Items);
+	//
+	// 	//int CurrentIndex = Keys.IndexOfByKey(CurrentInventorySlot);
+	// 	int CurrentIndex = Items.IndexOfByKey(CurrentItem);
+	// 	if (Items.Num()>0)
+	// 	CurrentIndex = (CurrentIndex - 1 + Items.Num()) % Items.Num();
+	// 	//CurrentInventorySlot = Keys[CurrentIndex];
+	// 	CurrentInventorySlot = CurrentIndex;
+	// 	CurrentItem = InventorySlots[CurrentInventorySlot];
+	// 	
+	// 	// CurrentInventorySlot--;
+	// 	// if(CurrentInventorySlot < 0)
+	// 	// {
+	// 	// 	CurrentInventorySlot = InventorySlots.Num()-1;
+	// 	// }
+	//
+	//
+	// 	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+	// 	{
+	// 		//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
+	// 		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
+	// 		{
+	// 			C->CurrentItemInHands->Destroy();
+	// 			controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
+	// 			controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
+	// 			C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
+	// 		}
+	// 	}
+	// 	
+	// 	if (InventorySlots.Contains(CurrentInventorySlot)) 
+	// 	{
+	// 		CurrentItem = InventorySlots[CurrentInventorySlot];
+	//
+	// 		if (CurrentItem)
+	// 		{
+	// 			UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *CurrentItem->GetName());
+	// 		}
+	// 		else
+	// 		{
+	// 			UE_LOG(LogTemp, Error, TEXT("Item at slot %d is NULL!"), CurrentInventorySlot);
+	// 		}
+	// 	}
+	// 	else
+	// 	{
+	// 		UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
+	// 		CurrentItem = nullptr;
+	// 	}
+	//
+	// 	return true;
+	// }
+
+	return false;
 }
 
 void UInventory::SortInventoryItems()
@@ -462,4 +433,9 @@ void UInventory::SetCurrentItemInHands()
 				
 		}
 	}
+}
+
+int UInventory::GetNumberOfItems()
+{
+	return InventorySlots.Num();
 }

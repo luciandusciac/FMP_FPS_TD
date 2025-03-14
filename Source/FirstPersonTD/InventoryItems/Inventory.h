@@ -35,8 +35,10 @@ public:
 	void UseItem(AInventoryItem* Item);
 	//void SwapItem();
 
-	void NextItem();
-	void PreviousItem();
+	bool NextItem();
+	bool PreviousItem();
+
+	int GetNumberOfItems();
 
 private:
 

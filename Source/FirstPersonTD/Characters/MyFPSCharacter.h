@@ -71,6 +71,8 @@ public:
 	void PreviousWeapon();
 	void ThrowWeapon();
 
+	void SpawnCurrentWaponInHands();
+
 	
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")

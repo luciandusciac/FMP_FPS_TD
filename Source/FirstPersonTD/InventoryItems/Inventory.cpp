@@ -179,13 +179,14 @@ void UInventory::ThrowItem()
 
 void UInventory::UseItem(AInventoryItem* Item)
 {
-	Item->Use();
+	//Item->Use();
 
 	// If item is consumable, remove from inventory
 	if(Item->bIsConsumable)
 	{
 		InventorySlots.Remove(CurrentInventorySlot);
 		NextItem();
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item used! Items left: " + InventorySlots.Num()));
 	}
 	
 }
@@ -207,7 +208,7 @@ void UInventory::NextItem()
 	if(InventorySlots.Num() == 1)
 	{
 		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
-		CurrentItem = InventorySlots[CurrentInventorySlot];
+		//CurrentItem = InventorySlots[CurrentInventorySlot];
 		
 		SetCurrentItemInHands();
 	}
@@ -433,10 +434,10 @@ void UInventory::CheckEmptyInventory(int Index)
 		CurrentInventorySlot = Index;
 		//SetCurrentItemInHands();
 	}
-	else if (InventorySlots.Num() == 1)
-	{
+	//else if (InventorySlots.Num() == 1)
+	//{
 		SetCurrentItemInHands();
-	}
+	//}
 }
 
 void UInventory::SetCurrentItemInHands()
@@ -451,6 +452,7 @@ void UInventory::SetCurrentItemInHands()
 				controller->AnimationIndex = CurrentInventorySlot;  // Animation is lined up with inventory slot
 				controller->EquipWeapon(CurrentInventorySlot);  // Play the animation related to the weapon
 				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
+				CurrentItem = InventorySlots[CurrentInventorySlot];
 				//SortInventoryItems();
 			}
 			else

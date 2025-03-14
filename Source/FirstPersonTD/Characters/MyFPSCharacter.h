@@ -49,6 +49,7 @@ public:
 	void OnGrenadeThrown();
 
 	void ThrowKnife();
+	void OnKnifeThrown();
 
 	void Shoot();
 	float ShootingTime;
@@ -86,6 +87,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimSequence* GrenadeThrowAnimation;
+
+	UPROPERTY(EditAnywhere, Category = "Animations")
+	UAnimSequence* KnifeThrowAnimation;
 	
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimSequence* PistolReloadingAnimation;

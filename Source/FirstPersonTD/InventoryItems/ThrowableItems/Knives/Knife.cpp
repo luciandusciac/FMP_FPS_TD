@@ -15,7 +15,8 @@ AKnife::AKnife()
 void AKnife::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	bIsConsumable = true;
 }
 
 // Called every frame

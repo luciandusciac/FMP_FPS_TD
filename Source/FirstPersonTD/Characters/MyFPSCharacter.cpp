@@ -107,6 +107,7 @@ void AMyFPSCharacter::ThrowGrenade()
 		Gr->bCanExplode = true;
 	}
 	
+	Inventory->UseItem(Inventory->CurrentItem);
 	CurrentItemInHands->Destroy();
 }
 
@@ -133,9 +134,10 @@ void AMyFPSCharacter::OnGrenadeThrown()
 		MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
 	}
 	Gr->bCanExplode = true;
-	CurrentItemInHands->Destroy();
 	
-	
+
+	//AnimationInstance->bHasGrenade = false;
+	//Inventory->NextItem();
 }
 
 void AMyFPSCharacter::ThrowKnife()
@@ -149,6 +151,24 @@ void AMyFPSCharacter::ThrowKnife()
 			MeshComp->AddImpulse(GetActorForwardVector() * 5000.f);
 		}
 	}
+
+	//Inventory->CurrentItem = nullptr;
+	Inventory->UseItem(Inventory->CurrentItem);
+	CurrentItemInHands->Destroy();
+	//Inventory->NextItem();
+	//GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnKnifeThrown, KnifeThrowAnimation->GetPlayLength(), false);
+
+}
+
+void AMyFPSCharacter::OnKnifeThrown()
+{
+	if (AnimationInstance)
+	{
+		AnimationInstance->bHasKnife = false;
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Knife animinstance changed!"));
+	}
+
+	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
 }
 
 void AMyFPSCharacter::Shoot()
@@ -249,62 +269,6 @@ void AMyFPSCharacter::PreviousWeapon()
 	
 }
 
-// void AMyFPSCharacter::ThrowWeapon()
-// {
-// 	if (!Inventory)
-// 	{
-// 		UE_LOG(LogTemp, Error, TEXT("Inventory is NULL!"));
-// 		return;
-// 	}
-//
-// 	AInventoryItem* ItemToThrow = Inventory->CurrentItem;
-// 	CurrentItemInHands = Cast<AActor>(ItemToThrow);
-//
-// 	if (CurrentItemInHands)
-// 	{
-// 		FActorSpawnParameters SpawnParams;
-// 		SpawnParams.Owner = this;
-// 		
-// 		//AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(ItemToThrow->GetClass(), GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
-// 		//UStaticMeshComponent* MeshComp = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
-// 		//if (MeshComp)
-// 		//{
-// 			//MeshComp->SetSimulatePhysics(true);
-// 			//MeshComp->AddImpulse(GetActorForwardVector() * 5000.f + FVector(0.f, 0.f, 4000.f));
-// 			//TODO: Destroy item in hands
-// 			///CurrentItemInHands->Destroy();
-// 			CurrentItemInHands->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
-// 			UStaticMeshComponent* MeshComponent = CurrentItemInHands->FindComponentByClass<UStaticMeshComponent>();
-// 		if (MeshComponent)
-// 		{
-// 			MeshComponent->SetSimulatePhysics(true);
-// 			MeshComponent->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 100.f));
-// 			MeshComponent->SetWorldRotation(FRotator(0, 0, 0));
-// 			CurrentItemInHands = nullptr;
-// 			
-// 		}
-//
-// 		Inventory->ThrowItem();
-// 			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
-// 			//CurrentItemInHands->SetActorRotation(GetActorRotation());
-// 			
-// 		//}
-// 		//else
-// 		//{
-// 		//	UE_LOG(LogTemp, Error, TEXT("Failed to get mesh component!"));
-// 		//}
-//
-// 		//if (!SpawnedWeapon)
-// 		//{
-// 		//	UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
-// 		//}
-// 	}
-// 	else
-// 	{
-// 		UE_LOG(LogTemp, Error, TEXT("No weapon to throw!"));
-// 	}
-// 	
-// }
 void AMyFPSCharacter::ThrowWeapon()
 {
 	if (!Inventory)
@@ -313,62 +277,55 @@ void AMyFPSCharacter::ThrowWeapon()
 		return;
 	}
 
-	// Get the current weapon
 	AInventoryItem* ItemToThrow = Inventory->CurrentItem;
-	if (!ItemToThrow)
+	CurrentItemInHands = Cast<AActor>(ItemToThrow);
+
+	if (CurrentItemInHands)
 	{
-		UE_LOG(LogTemp, Error, TEXT("No weapon to throw!"));
-		return;
-	}
-
-	// Detach the weapon from the character
-	ItemToThrow->DetachFromActor(FDetachmentTransformRules::KeepWorldTransform);
-
-	// Store the weapon class to respawn it later
-	TSubclassOf<AInventoryItem> WeaponClass = ItemToThrow->GetClass();
-	//int32 SavedAmmo = ItemToThrow->CurrentAmmo; // Save ammo data
-
-	// Remove the weapon from the inventory
-	Inventory->ThrowItem();
-	CurrentItemInHands->Destroy();
-	CurrentItemInHands = nullptr;
-
-	// Switch to the next weapon
-	//Inventory->NextItem(); // Calls your existing function to swap weapons
-
-	// Spawn the weapon as a new actor on the ground
-	FActorSpawnParameters SpawnParams;
-	SpawnParams.Owner = this;
-	AInventoryItem* SpawnedWeapon = GetWorld()->SpawnActor<AInventoryItem>(
-		WeaponClass,
-		GetActorLocation() + GetActorForwardVector() * 100.f + FVector(0.f, 0.f, 50.f), // Slightly above ground
-		GetActorRotation(),
-		SpawnParams
-	);
-
-	if (SpawnedWeapon)
-	{
-		// Restore saved ammo data
-		//SpawnedWeapon->CurrentAmmo = SavedAmmo;
-
-		// Enable physics and throw the weapon
-		if (UStaticMeshComponent* MeshComp = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>())
+		FActorSpawnParameters SpawnParams;
+		SpawnParams.Owner = this;
+		
+		AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(ItemToThrow->GetClass(), GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
+		//UStaticMeshComponent* MeshComp = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
+		//if (MeshComp)
+		//{
+			//MeshComp->SetSimulatePhysics(true);
+			//MeshComp->AddImpulse(GetActorForwardVector() * 5000.f + FVector(0.f, 0.f, 4000.f));
+			//TODO: Destroy item in hands
+			CurrentItemInHands->Destroy();
+			//CurrentItemInHands->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+		UStaticMeshComponent* MeshComponent = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
+		if (MeshComponent)
 		{
-			MeshComp->SetSimulatePhysics(true);
-			MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-			MeshComp->SetEnableGravity(true);
-
-			// Apply impulse for throwing effect
-			MeshComp->AddImpulse(GetActorForwardVector() * 1000.f + FVector(0.f, 0.f, 200.f), NAME_None, true);
+			MeshComponent->SetSimulatePhysics(true);
+			MeshComponent->AddImpulse(GetActorForwardVector() * 50.f + FVector(0.f, 0.f, 400.f));
+			MeshComponent->SetWorldRotation(FRotator(0, 0, 0));
+			//CurrentItemInHands = nullptr;
+			
 		}
 
-		UE_LOG(LogTemp, Warning, TEXT("Weapon thrown: %s"), *SpawnedWeapon->GetName());
+		Inventory->ThrowItem();
+			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
+			//CurrentItemInHands->SetActorRotation(GetActorRotation());
+			
+		//}
+		//else
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Failed to get mesh component!"));
+		//}
+
+		//if (!SpawnedWeapon)
+		//{
+		//	UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
+		//}
 	}
 	else
 	{
-		UE_LOG(LogTemp, Error, TEXT("Failed to spawn thrown weapon!"));
+		UE_LOG(LogTemp, Error, TEXT("No weapon to throw!"));
 	}
+	
 }
+
 
 void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
                                               UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)

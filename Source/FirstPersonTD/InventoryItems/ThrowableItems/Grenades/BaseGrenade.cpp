@@ -19,9 +19,8 @@ ABaseGrenade::ABaseGrenade()
 	ExplosionVFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ExplosionVFX"));
 	ExplosionVFX->SetupAttachment(Root);
 
-	bCanExplode = false;
-	bMeshDisabled = false;
-
+	//bCanExplode = false;
+	//bMeshDisabled = false;
 	
 }
 
@@ -38,7 +37,8 @@ void ABaseGrenade::BeginPlay()
 		MeshComp->BodyInstance.SetUseCCD(true);
 		
 	}
-	
+
+	bIsConsumable = true;
 	//GetWorldTimerManager().SetTimer(ExplosionTimerHandle, this, &ABaseGrenade::Explode, ExplosionTime, false);
 }
 

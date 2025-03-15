@@ -15,6 +15,8 @@
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
 #include "FirstPersonTD/InventoryItems/Interfaces/FlashbangInterface.h"
 #include "FirstPersonTD/InventoryItems/Interfaces/KnifeInterface.h"
+#include "FirstPersonTD/InventoryItems/Interfaces/PrimaryWeapon.h"
+#include "FirstPersonTD/InventoryItems/Interfaces/SecondaryWeapon.h"
 #include "FirstPersonTD/InventoryItems/Interfaces/SmokeGrenadeInterface.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/BaseGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FlashbangGrenade.h"
@@ -212,20 +214,48 @@ void AMyFPSCharacter::OnShoot()
 	}
 }
 
+// void AMyFPSCharacter::Aim()
+// {
+// 	if(Inventory->CurrentItem != nullptr)
+// 	{
+// 		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+// 		{
+// 			AimTransform = W->AimOrigin->GetRelativeLocation();
+// 			//                                                                                                                   tweak the values here for camera position when aiming
+// 			Camera->SetRelativeLocation(FMath::VInterpTo(Camera->GetRelativeLocation(), /*AimTransform.GetLocation() +*/ AimTransform, GetWorld()->GetDeltaSeconds(), 100.0f));
+// 	
+// 			//Camera->SetFieldOfView(50.f);
+// 		}
+// 	}
+// }
+
 void AMyFPSCharacter::Aim()
 {
-	if(Inventory->CurrentItem != nullptr)
+	if (Inventory->CurrentItem != nullptr)
 	{
-		//                                                                                                                   tweak the values here for camera position when aiming
-		Camera->SetRelativeLocation(FMath::VInterpTo(Camera->GetRelativeLocation(), AimTransform.GetLocation() + FVector(-8, 6, 0), GetWorld()->GetDeltaSeconds(), 10.0f));
-	
-		Camera->SetFieldOfView(50.f);
+		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+		{
+			FVector TargetLocation = W->AimOrigin->GetComponentLocation(); // World space position
+
+			// Interpolate smoothly
+			FVector NewCameraPosition = FMath::VInterpTo(
+				Camera->GetComponentLocation(),
+				TargetLocation,
+				GetWorld()->GetDeltaSeconds(),
+				5.0f // Adjust speed for smooth movement
+			);
+
+			Camera->SetWorldLocation(NewCameraPosition);
+            
+			// Optional: Zoom in for aiming
+			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
+		}
 	}
 }
 
 void AMyFPSCharacter::StopAiming()
 {
-	Camera->SetRelativeLocation(FMath::VInterpTo(Camera->GetRelativeLocation(), FVector(0.f, 0.f, 0.f), GetWorld()->GetDeltaSeconds(), 50.0f));
+	Camera->SetRelativeLocation(FMath::VInterpTo(Camera->GetRelativeLocation(), FVector(0.f, 0.f, 0.f), GetWorld()->GetDeltaSeconds(), 100.0f));
 
 	Camera->SetFieldOfView(90.f);
 }
@@ -509,7 +539,8 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 				);
 				//MeshComp->SetWorldLocationAndRotation(WeaponLocation, WeaponRotation);
 				//MeshComp->SetWorldScale3D(WeaponScale);
-				MeshComp->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
+				//MeshComp->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
+				MeshComp->SetRelativeScale3D(WeaponScale);
 				MeshComp->SetRelativeLocation(WeaponLocation);
 				MeshComp->SetRelativeRotation(WeaponRotation);
 			}

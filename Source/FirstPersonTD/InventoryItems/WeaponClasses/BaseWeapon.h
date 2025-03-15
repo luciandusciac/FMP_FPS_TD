@@ -75,6 +75,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	class UStaticMeshComponent* Mesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
+	USceneComponent* AimOrigin;
+	
 	//INFO: Variable to keep track if the weapon has a scope
 	bool bHasScope;
 

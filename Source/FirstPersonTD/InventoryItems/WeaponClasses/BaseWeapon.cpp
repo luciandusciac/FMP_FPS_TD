@@ -27,6 +27,9 @@ ABaseWeapon::ABaseWeapon()
 	BulletOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("BulletOrigin"));
 	BulletOrigin->SetupAttachment(Mesh);
 
+	AimOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("AimOrigin"));
+	AimOrigin->SetupAttachment(Root);
+
 	bIsShooting = false;
 }
 

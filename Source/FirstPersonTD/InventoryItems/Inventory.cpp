@@ -224,22 +224,17 @@ bool UInventory::NextItem()
 
 		if (Controller)
 			Controller->EquipWeapon(10);  //no weapon
-
 		return false;
 	}
-
 	if(InventorySlots.Num() == 1)
 	{
 		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
 		//CurrentItem = InventorySlots[CurrentInventorySlot];
-		
 		SetCurrentItemInHands();
 		return false;
 	}
-	
 	if(InventorySlots.Num() > 1)
 	{
-
 		TArray<int> GunValues;
 		InventorySlots.GenerateKeyArray(GunValues);
 		int CurrentIndex = GunValues.Find(CurrentInventorySlot);
@@ -247,10 +242,9 @@ bool UInventory::NextItem()
 		CurrentInventorySlot = GunValues[CurrentIndex];
 		
 		SetCurrentItemInHands();
-		
 		if (InventorySlots.Contains(CurrentInventorySlot)) 
 		{
-			CurrentItem = InventorySlots[CurrentInventorySlot]; //????????????????????????????????????????????????
+			CurrentItem = InventorySlots[CurrentInventorySlot];
 
 			if (CurrentItem)
 			{
@@ -268,7 +262,6 @@ bool UInventory::NextItem()
 		}
 		return true;
 	}
-	
 	return false;
 }
 

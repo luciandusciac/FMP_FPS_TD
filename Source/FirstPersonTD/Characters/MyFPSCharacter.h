@@ -111,8 +111,8 @@ public:
 	UPROPERTY()
 	USWAT_AnimInstance* AnimationInstance;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Aiming")
-	FTransform AimTransform;
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
+	FVector AimTransform;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Holding")
 	FVector WeaponScale;

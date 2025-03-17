@@ -498,9 +498,13 @@ void AMyFPSCharacter::SpawnCurrentWaponInHands()
 			FName("WeaponSocket")
 		);
 
-		MeshComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
-		MeshComponent->SetRelativeLocation(WeaponLocation);
-		MeshComponent->SetRelativeRotation(WeaponRotation);
+		//MeshComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
+		
+		//MeshComponent->SetRelativeScale3D(WeaponScale);
+		//MeshComponent->SetRelativeLocation(WeaponLocation);
+		//MeshComponent->SetRelativeRotation(WeaponRotation);
+
+		MeshComponent->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Weapon spawned and attached!"));
@@ -540,9 +544,12 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 				//MeshComp->SetWorldLocationAndRotation(WeaponLocation, WeaponRotation);
 				//MeshComp->SetWorldScale3D(WeaponScale);
 				//MeshComp->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
-				MeshComp->SetRelativeScale3D(WeaponScale);
-				MeshComp->SetRelativeLocation(WeaponLocation);
-				MeshComp->SetRelativeRotation(WeaponRotation);
+				
+				// MeshComp->SetRelativeScale3D(WeaponScale);
+				// MeshComp->SetRelativeLocation(WeaponLocation);
+				// MeshComp->SetRelativeRotation(WeaponRotation);
+
+				MeshComp->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
 			}
 
 			CurrentItemInHands = OtherActor;

@@ -11,22 +11,6 @@
 
 #include "BaseWeapon.generated.h"
 
-// USTRUCT(BlueprintType)
-// struct FIKProperties
-// {
-// 	GENERATED_BODY()
-//
-// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-// 	class UAnimSequence* AnimPose;
-//
-// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-// 	float AimOffset = 15;
-//
-// 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-// 	FTransform AimTransform;
-// };
-
-
 UCLASS(Abstract)
 class FIRSTPERSONTD_API ABaseWeapon : public AInventoryItem
 {
@@ -74,7 +58,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	class UStaticMeshComponent* Mesh;
-
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
 	USceneComponent* AimOrigin;
 	

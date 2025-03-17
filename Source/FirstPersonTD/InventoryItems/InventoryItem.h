@@ -28,4 +28,7 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bIsConsumable;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	FTransform AttachmentTransform;
 };

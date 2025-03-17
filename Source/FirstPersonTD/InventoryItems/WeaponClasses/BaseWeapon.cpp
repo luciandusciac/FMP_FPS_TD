@@ -2,10 +2,7 @@
 
 
 #include "BaseWeapon.h"
-
 #include "Components/StaticMeshComponent.h"
-
-
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -51,11 +48,6 @@ void ABaseWeapon::Tick(float DeltaTime)
 
 void ABaseWeapon::Shoot()
 {
-	// if (!bIsShooting)
-	// {
-	// 	bIsShooting = true;
-	// 	GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
-	// }
 }
 
 void ABaseWeapon::OnShoot()

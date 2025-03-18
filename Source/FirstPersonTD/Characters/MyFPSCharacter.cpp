@@ -307,7 +307,15 @@ void AMyFPSCharacter::NextWeapon()
 
 		
 	if (CurrentItemInHands)
+	{
+		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+		{
+			FAmmoData& CurrentWeaponData = AmmoDataMap.FindOrAdd(W->GetClass());
+			CurrentWeaponData.CurrentAmmo = W->GetCurrentAmmo();
+			CurrentWeaponData.ClipSize = W->GetReserveAmmo();
+		}
 		CurrentItemInHands->Destroy();
+	}
 		
 
 	if (Inventory->NextItem())
@@ -317,6 +325,19 @@ void AMyFPSCharacter::NextWeapon()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item destroyed, next weapon!"));
 
 		SpawnCurrentWaponInHands();
+
+		if (CurrentItemInHands)
+		{
+			// INFO: Load up the new weapon with the saved data if it exists
+			if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+			{
+				if (const FAmmoData* NewAmmoData = AmmoDataMap.Find(CurrentItemInHands->GetClass()))
+				{
+					W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
+					W->SetReserveAmmo(NewAmmoData->ClipSize);
+				}
+			}
+		}
 
 		// AActor* WeaponToSpawn = Cast<AActor>(Inventory->CurrentItem);
 		//
@@ -390,6 +411,15 @@ void AMyFPSCharacter::ThrowWeapon()
 
 	if (CurrentItemInHands)
 	{
+		// INFO: Save weapon data before throwing
+		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+		{
+			FAmmoData& CurrentWeaponData = AmmoDataMap.FindOrAdd(W->GetClass());
+			CurrentWeaponData.CurrentAmmo = W->GetCurrentAmmo();
+			CurrentWeaponData.ClipSize = W->GetReserveAmmo();
+		}
+
+		
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
 		
@@ -576,9 +606,28 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 			}
 
 			CurrentItemInHands = OtherActor;
+
+			// INFO: Load up the new weapon with the saved data if it exists
+			if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+			{
+				if (const FAmmoData* NewAmmoData = AmmoDataMap.Find(CurrentItemInHands->GetClass()))
+				{
+					W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
+					W->SetReserveAmmo(NewAmmoData->ClipSize);
+				}
+			}
 		}
 		else if(Inventory->AddItem(It))
 		{
+			if (ABaseWeapon* W = Cast<ABaseWeapon>(It))
+			{
+				if (const FAmmoData* NewAmmoData = AmmoDataMap.Find(CurrentItemInHands->GetClass()))
+				{
+					W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
+					W->SetReserveAmmo(NewAmmoData->ClipSize);
+				}
+			}
+			
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item added to inventory!"));
 			OtherActor->Destroy();
 		}

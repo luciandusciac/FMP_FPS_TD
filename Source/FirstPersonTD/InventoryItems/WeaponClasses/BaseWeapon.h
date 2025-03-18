@@ -72,6 +72,11 @@ public:
 	virtual void Reload();
 	void Aim();
 	virtual void Use() override;
+
+	int GetCurrentAmmo();
+	void SetCurrentAmmo(const int NewCurrentAmmo);
+	int GetReserveAmmo();
+	void SetReserveAmmo(const int NewReserveAmmo);
 	
 #pragma endregion	
 

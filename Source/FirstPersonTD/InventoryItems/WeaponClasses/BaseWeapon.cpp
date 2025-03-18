@@ -122,3 +122,23 @@ void ABaseWeapon::Use()
 	Shoot();
 }
 
+int ABaseWeapon::GetCurrentAmmo()
+{
+	return CurrentAmmo;
+}
+
+void ABaseWeapon::SetCurrentAmmo(const int NewCurrentAmmo)
+{
+	CurrentAmmo = NewCurrentAmmo;
+}
+
+int ABaseWeapon::GetReserveAmmo()
+{
+	return ReserveAmmo;
+}
+
+void ABaseWeapon::SetReserveAmmo(const int NewReserveAmmo)
+{
+	ReserveAmmo = NewReserveAmmo;
+}
+

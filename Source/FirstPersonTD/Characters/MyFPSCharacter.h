@@ -10,8 +10,25 @@
 #include "Animation/AnimSequence.h"
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/BaseGrenade.h"
+#include "FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 
 #include "MyFPSCharacter.generated.h"
+
+USTRUCT(BlueprintType)
+struct FAmmoData
+{
+	GENERATED_BODY()
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int CurrentAmmo;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	int ClipSize;
+
+	FAmmoData() : CurrentAmmo(0), ClipSize(0) {}
+	FAmmoData(const int NewCurrentAmmo, const int NewClipSize) : CurrentAmmo(NewCurrentAmmo), ClipSize(NewClipSize) {}
+};
+
 
 UCLASS()
 class FIRSTPERSONTD_API AMyFPSCharacter : public ACharacter
@@ -73,7 +90,7 @@ public:
 
 	void SpawnCurrentWaponInHands();
 
-	
+	TMap<TSubclassOf<ABaseWeapon>, FAmmoData> AmmoDataMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	class UCameraComponent* Camera;

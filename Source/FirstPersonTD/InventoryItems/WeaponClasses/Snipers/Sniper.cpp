@@ -37,17 +37,36 @@ void ASniper::Shoot()
 	
 	if (!bIsShooting)
 	{
-		bIsShooting = true;
-		GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
+		if (CurrentAmmo > 0)
+		{
+			CurrentAmmo--;
+			
+			bIsShooting = true;
+			GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
 	
 	
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = GetInstigator();
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = GetInstigator();
 
-		GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), BulletOrigin->GetComponentRotation(), SpawnParams);
-
+			GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), BulletOrigin->GetComponentRotation(), SpawnParams);
+		}
+		else if (CurrentAmmo == 0 && ReserveAmmo > 0)
+		{
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is reloading"));
+			Reload();
+		}
+		else
+		{
+			//TODO: Play error sound
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No ammo"));
+		}
 		//UE_LOG(LogTemp, Warning, TEXT("Sniper Shot"));
 	}
+}
+
+void ASniper::Reload()
+{
+	Super::Reload();
 }
 

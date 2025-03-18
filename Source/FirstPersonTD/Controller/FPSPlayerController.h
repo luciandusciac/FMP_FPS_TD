@@ -64,8 +64,8 @@ protected:
 	void PreviousWeapon();
 	void ThrowItem();
 
-	void Shoot();
-	void Reload();
+	//void Shoot();
+	//void Reload();
 	void PeekRight(const FInputActionValue& Value);
 	void PeekLeft(const FInputActionValue& Value);
 	void Crouch();
@@ -112,4 +112,7 @@ public:
 	int AnimationIndex = NULL;
 	UFUNCTION()
 	void EquipWeapon(int Index);
+
+	void Shoot();
+	void Reload();
 };

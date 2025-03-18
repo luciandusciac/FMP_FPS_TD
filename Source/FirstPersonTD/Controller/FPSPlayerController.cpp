@@ -309,14 +309,14 @@ void AFPSPlayerController::ThrowItem()
 
 void AFPSPlayerController::Shoot()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Shooting"));
+	//UE_LOG(LogTemp, Warning, TEXT("Shooting"));
 
 	//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
 	//{
-		if(AnimationInstance->bIsShooting)
-		{
-			return;
-		}
+		//if(AnimationInstance->bIsShooting)
+		//{
+		//	return;
+		//}
 	//}
 	
 	if(AMyFPSCharacter* PlayerCharacter = Cast<AMyFPSCharacter>(GetCharacter()))

@@ -25,6 +25,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Shoot() override;
+	virtual void Reload() override;
 
 private:
 	int PelletCount = 8;

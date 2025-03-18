@@ -43,26 +43,46 @@ void AShotgun::Shoot()
 
 	if (!bIsShooting)
 	{
-		bIsShooting = true;
-		GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
-	
-	
-		FActorSpawnParameters SpawnParams;
-		SpawnParams.Owner = this;
-		SpawnParams.Instigator = GetInstigator();
-
-		for(int i = 0; i<=PelletCount;  ++i)
+		if (CurrentAmmo > 0)
 		{
-		
-			FRotator RandomRotation = BulletOrigin->GetComponentRotation();
-			RandomRotation.Yaw += FMath::RandRange(-Spread, Spread);
-			RandomRotation.Pitch += FMath::RandRange(-Spread, Spread);
-
-			GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), RandomRotation, SpawnParams);
+			CurrentAmmo--;
+			
+			bIsShooting = true;
+			GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
 	
+	
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = GetInstigator();
+
+			for(int i = 0; i<=PelletCount;  ++i)
+			{
+		
+				FRotator RandomRotation = BulletOrigin->GetComponentRotation();
+				RandomRotation.Yaw += FMath::RandRange(-Spread, Spread);
+				RandomRotation.Pitch += FMath::RandRange(-Spread, Spread);
+
+				GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), RandomRotation, SpawnParams);
+	
+			}
+		}
+		else if (CurrentAmmo == 0 && ReserveAmmo > 0)
+		{
+			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is reloading"));
+			Reload();
+		}
+		else
+		{
+			//TODO: Play error sound
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No ammo"));
 		}
 
 		//UE_LOG(LogTemp, Warning, TEXT("Shotgun Shot"));
 	}
+}
+
+void AShotgun::Reload()
+{
+	Super::Reload();
 }
 

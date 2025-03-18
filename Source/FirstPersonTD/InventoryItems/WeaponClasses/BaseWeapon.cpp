@@ -3,6 +3,9 @@
 
 #include "BaseWeapon.h"
 #include "Components/StaticMeshComponent.h"
+#include "FirstPersonTD/Characters/MyFPSCharacter.h"
+#include "FirstPersonTD/Controller/FPSPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 ABaseWeapon::ABaseWeapon()
@@ -35,6 +38,9 @@ void ABaseWeapon::BeginPlay()
 {
 	Super::BeginPlay();
 
+	CurrentAmmo = ClipSize;
+	
+	
 	// if(!CurrentOwner)
 	// 	Mesh->SetVisibility(false);
 	//Mesh->IgnoreActorWhenMoving(Cast<AActor>(WeaponBullet), true);
@@ -48,6 +54,30 @@ void ABaseWeapon::Tick(float DeltaTime)
 
 void ABaseWeapon::Shoot()
 {
+	// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+	// {
+	// 	//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
+	// 	if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
+	// 	{
+	// 		controller->Shoot();
+	// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is shooting"));
+	// 		//C->Shoot();
+	// 	}
+	// }
+	// if (CurrentAmmo > 0)
+ //    {
+ //     	CurrentAmmo--;
+ //    }
+ //    else if (CurrentAmmo == 0 && ReserveAmmo > 0)
+ //    {
+ //     	Reload();
+ //    }
+ //    else
+ //    {
+ //     	//TODO: Play error sound
+ //     	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No ammo"));
+ //    	
+ //    }
 }
 
 void ABaseWeapon::OnShoot()
@@ -58,15 +88,27 @@ void ABaseWeapon::OnShoot()
 
 void ABaseWeapon::Reload()
 {
-	if(ClipSize > 0)
-	{
-		CurrentAmmo = ClipSize;
-		ClipSize--;
-	}
-	else
-	{
-		//TODO: Play error sound
-	}
+	//if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOwner()))
+	//{
+		//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
+		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+		{
+			//C->Reload();
+
+			
+			if(ReserveAmmo > 0)
+			{
+				CurrentAmmo = ClipSize;
+				ReserveAmmo--;
+			}
+			else
+			{
+				//TODO: Play error sound
+			}
+			controller->Reload();
+		}
+	//}
+	
 }
 
 void ABaseWeapon::Aim()

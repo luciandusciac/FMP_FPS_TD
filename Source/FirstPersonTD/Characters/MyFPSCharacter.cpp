@@ -38,7 +38,6 @@ AMyFPSCharacter::AMyFPSCharacter()
 	
 	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyFPSCharacter::OnComponentBeginOverlap);
 
-	AnimationInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance());
 
 	//WeaponTransform = FTransform(FRotator(0, 0, 0));
 }
@@ -55,6 +54,8 @@ void AMyFPSCharacter::BeginPlay()
 	GrenadeThrowTime = GrenadeThrowAnimation->GetPlayLength();
 
 	Inventory = NewObject<UInventory>(this);
+
+	AnimationInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance());
 }
 
 
@@ -181,24 +182,30 @@ void AMyFPSCharacter::OnKnifeThrown()
 void AMyFPSCharacter::Shoot()
 {
 	//GetMesh()->PlayAnimation(ShootingAnimation, false);
+	if (!Inventory->CurrentItem)
+		return;
+	
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
-		if(AnimInstance->bHasPistol)
+		if (!AnimInstance->bIsReloading)
 		{
-			GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, PistolShootingTime, false);
-			
-		}
-		else
-		{
-			GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, ShootingTime, false);
-			
-		}
+			if(AnimInstance->bHasPistol)
+			{
+				GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, PistolShootingTime, false);
 		
-		AnimInstance->bIsShooting = true;
+			}
+			else
+			{
+				GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, ShootingTime, false);
 		
-		if (AInventoryItem* i =  Cast<AInventoryItem>(CurrentItemInHands))
-		{
-			i->Use();
+			}
+	
+			AnimInstance->bIsShooting = true;
+	
+			if (AInventoryItem* i =  Cast<AInventoryItem>(CurrentItemInHands))
+			{
+				i->Use();
+			}
 		}
 	}
 	
@@ -278,6 +285,8 @@ void AMyFPSCharacter::Reload()
 	{
 		AnimInstance->bIsReloading = true;
 	}
+
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is reloading"));
 }
 
 void AMyFPSCharacter::OnReload()
@@ -288,6 +297,7 @@ void AMyFPSCharacter::OnReload()
 	{
 		AnimInstance->bIsReloading = false;
 	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character has reloaded"));
 }
 
 void AMyFPSCharacter::NextWeapon()
@@ -356,9 +366,22 @@ void AMyFPSCharacter::PreviousWeapon()
 
 void AMyFPSCharacter::ThrowWeapon()
 {
+	if (AnimationInstance)
+	{
+		if (AnimationInstance->bIsReloading)
+			return;  // INFO: Can't throw weapon while reloading
+		
+	}
+	
 	if (!Inventory)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Inventory is NULL!"));
+		return;
+	}
+
+	if (Inventory->GetNumberOfItems() == 0)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No items in inventory!"));
 		return;
 	}
 

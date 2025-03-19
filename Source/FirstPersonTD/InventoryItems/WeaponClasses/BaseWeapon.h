@@ -70,6 +70,7 @@ public:
 	virtual void Shoot();
 	virtual void OnShoot();
 	virtual void Reload();
+	void OnReload();
 	void Aim();
 	virtual void Use() override;
 
@@ -86,6 +87,7 @@ public:
 	bool bIsShooting;
 	float CurrentTime;
 	FTimerHandle ShootingTimerHandle;
+	FTimerHandle ReloadTimerHandle;
 	
 	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Category = "State")
 	// class AMyFPSCharacter* CurrentOwner;

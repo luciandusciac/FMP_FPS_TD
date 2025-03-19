@@ -207,12 +207,12 @@ void AMyFPSCharacter::Shoot()
 		{
 			if(AnimInstance->bHasPistol)
 			{
-				GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, 0.25f, false);
+				GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, PistolShootingTime, false);
 		
 			}
 			else
 			{
-				GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, 0.1f, false);
+				GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, ShootingTime, false);
 		
 			}
 	
@@ -221,11 +221,17 @@ void AMyFPSCharacter::Shoot()
 			if (AInventoryItem* i =  Cast<AInventoryItem>(CurrentItemInHands))
 			{
 				i->Use();
+				
+				//if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+				//{
+					//if (W->GetCurrentAmmo() >= 0 && !AnimInstance->bIsReloading)
+						//UpdateAmmoUI();
+				//}
 			}
 		}
 	}
-	UpdateAmmoUI();
-	
+	//if (!AnimationInstance->bIsReloading)
+	//	UpdateAmmoUI();
 }
 
 void AMyFPSCharacter::OnShoot()
@@ -236,6 +242,7 @@ void AMyFPSCharacter::OnShoot()
 	{
 		AnimInstance->bIsShooting = false;
 	}
+	
 }
 
 // void AMyFPSCharacter::Aim()
@@ -269,7 +276,7 @@ void AMyFPSCharacter::Aim()
 				5.0f // Adjust speed for smooth movement
 			);
 
-			Camera->SetWorldLocation(NewCameraPosition);
+			Camera->SetRelativeLocation(NewCameraPosition);
             
 			// Optional: Zoom in for aiming
 			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
@@ -295,20 +302,26 @@ void AMyFPSCharacter::OnDeath()
 
 void AMyFPSCharacter::Reload()
 {
-	//GetMesh()->PlayAnimation(ReloadingAnimation, false);
-	GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnReload, ReloadingTime, false);
-	
-	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
+	if (CurrentItemInHands)
 	{
-		AnimInstance->bIsReloading = true;
+		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+		{
+			W->Reload();
+		}
 	}
-
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is reloading"));
+	//UpdateAmmoUI();
+	
+	// if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
+	// {
+	// 	AnimInstance->bIsReloading = true;
+	// }
+	//
+	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is reloading"));
+	// GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnReload, ReloadingTime, false);
 }
 
 void AMyFPSCharacter::OnReload()
 {
-	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
 	
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
@@ -316,6 +329,7 @@ void AMyFPSCharacter::OnReload()
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character has reloaded"));
 	UpdateAmmoUI();
+	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
 }
 
 void AMyFPSCharacter::NextWeapon()
@@ -388,6 +402,7 @@ void AMyFPSCharacter::NextWeapon()
 		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No weapon to spawn!"));
 		// }
 	}
+
 	UpdateAmmoUI();
 }
 
@@ -477,6 +492,8 @@ void AMyFPSCharacter::ThrowWeapon()
 		//{
 		//	UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
 		//}
+		UpdateAmmoUI();
+
 
 	}
 	else
@@ -484,7 +501,6 @@ void AMyFPSCharacter::ThrowWeapon()
 		UE_LOG(LogTemp, Error, TEXT("No weapon to throw!"));
 	}
 	
-	UpdateAmmoUI();
 }
 
 // void AMyFPSCharacter::SpawnCurrentWaponInHands()
@@ -637,6 +653,7 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 					W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
 					W->SetReserveAmmo(NewAmmoData->ClipSize);
 				}
+				UpdateAmmoUI();
 			}
 		}
 		else if(Inventory->AddItem(It))
@@ -653,7 +670,7 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item added to inventory!"));
 			OtherActor->Destroy();
 		}
-		UpdateAmmoUI();
+		
 	}
 	
 }

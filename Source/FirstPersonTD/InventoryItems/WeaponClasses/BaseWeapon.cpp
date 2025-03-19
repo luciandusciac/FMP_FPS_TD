@@ -54,6 +54,14 @@ void ABaseWeapon::Tick(float DeltaTime)
 
 void ABaseWeapon::Shoot()
 {
+	if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	{
+		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(controller->GetCharacter()))
+		{
+			//C->AnimationInstance->bIsReloading = false;
+			C->UpdateAmmoUI();
+		}
+	}
 	// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
 	// {
 	// 	//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
@@ -94,21 +102,47 @@ void ABaseWeapon::Reload()
 		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
 		{
 			//C->Reload();
-
+			// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOwner()))
+			// {
+			// 	C->UpdateAmmoUI();
+			// }
+			
 			
 			if(ReserveAmmo > 0)
 			{
-				CurrentAmmo = ClipSize;
+				GetWorldTimerManager().SetTimer(ReloadTimerHandle, this, &ABaseWeapon::OnReload, ReloadTime, false);
+				//CurrentAmmo = ClipSize;
 				ReserveAmmo--;
+				if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(controller->GetCharacter()))
+				{
+					C->AnimationInstance->bIsReloading = true;
+					//C->UpdateAmmoUI();
+				}
+				//controller->Reload();
 			}
 			else
 			{
 				//TODO: Play error sound
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No reserve ammo"));
 			}
-			controller->Reload();
 		}
 	//}
 	
+}
+
+void ABaseWeapon::OnReload()
+{
+	CurrentAmmo = ClipSize;
+	if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	{
+		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(controller->GetCharacter()))
+		{
+			C->AnimationInstance->bIsReloading = false;
+			C->UpdateAmmoUI();
+		}
+	}
+	GetWorldTimerManager().ClearTimer(ReloadTimerHandle);
+	//ReserveAmmo--;
 }
 
 void ABaseWeapon::Aim()

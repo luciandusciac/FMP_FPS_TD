@@ -45,7 +45,6 @@ void APistol::Shoot()
 			CurrentAmmo--;
 			
 			bIsShooting = true;
-			GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
 	
 	
 			FActorSpawnParameters SpawnParams;
@@ -53,17 +52,25 @@ void APistol::Shoot()
 			SpawnParams.Instigator = GetInstigator();
 
 			GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), BulletOrigin->GetComponentRotation(), SpawnParams);
+			Super::Shoot();
+
+			
+			if (CurrentAmmo == 0)
+				Reload();
+
+			GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
+			
 		}
-		else if (CurrentAmmo == 0 && ReserveAmmo > 0)
-		{
-			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is reloading"));
-			Reload();
-		}
-		else
-		{
-			//TODO: Play error sound
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No ammo"));
-		}
+		// else if (CurrentAmmo == 0 && ReserveAmmo > 0)
+		// {
+		// 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is reloading"));
+		// 	Reload();
+		// }
+		// else
+		// {
+		// 	//TODO: Play error sound
+		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No ammo"));
+		// }
 
 		//UE_LOG(LogTemp, Warning, TEXT("Pistol Shot"));
 	}

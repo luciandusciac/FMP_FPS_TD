@@ -4,13 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "Animation/AnimNotifies/AnimNotify.h"
-#include "ThrowGrenadeNotify.generated.h"
+#include "ReloadNotify.generated.h"
 
 /**
  * 
  */
 UCLASS()
-class FIRSTPERSONTD_API UThrowGrenadeNotify : public UAnimNotify
+class FIRSTPERSONTD_API UReloadNotify : public UAnimNotify
 {
 	GENERATED_BODY()
 

@@ -38,6 +38,8 @@ AMyFPSCharacter::AMyFPSCharacter()
 	
 	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyFPSCharacter::OnComponentBeginOverlap);
 
+	HUDClass = nullptr;
+	HUD = nullptr;
 
 	//WeaponTransform = FTransform(FRotator(0, 0, 0));
 }
@@ -56,6 +58,20 @@ void AMyFPSCharacter::BeginPlay()
 	Inventory = NewObject<UInventory>(this);
 
 	AnimationInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance());
+
+	// INFO: UI creation
+	if (HUDClass)
+	{
+		AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
+		if (PlayerController)
+		{
+			HUD = CreateWidget<UPlayerHUD>(PlayerController, HUDClass);
+			if (HUD)
+			{
+				HUD->AddToPlayerScreen();
+			}
+		}
+	}
 }
 
 
@@ -191,12 +207,12 @@ void AMyFPSCharacter::Shoot()
 		{
 			if(AnimInstance->bHasPistol)
 			{
-				GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, PistolShootingTime, false);
+				GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, 0.25f, false);
 		
 			}
 			else
 			{
-				GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, ShootingTime, false);
+				GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnShoot, 0.1f, false);
 		
 			}
 	
@@ -208,6 +224,7 @@ void AMyFPSCharacter::Shoot()
 			}
 		}
 	}
+	UpdateAmmoUI();
 	
 }
 
@@ -298,6 +315,7 @@ void AMyFPSCharacter::OnReload()
 		AnimInstance->bIsReloading = false;
 	}
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character has reloaded"));
+	UpdateAmmoUI();
 }
 
 void AMyFPSCharacter::NextWeapon()
@@ -370,6 +388,7 @@ void AMyFPSCharacter::NextWeapon()
 		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No weapon to spawn!"));
 		// }
 	}
+	UpdateAmmoUI();
 }
 
 void AMyFPSCharacter::PreviousWeapon()
@@ -443,6 +462,7 @@ void AMyFPSCharacter::ThrowWeapon()
 		}
 		
 		CurrentItemInHands->Destroy();
+		CurrentItemInHands = nullptr;
 		Inventory->ThrowItem();
 			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
 			//CurrentItemInHands->SetActorRotation(GetActorRotation());
@@ -457,12 +477,14 @@ void AMyFPSCharacter::ThrowWeapon()
 		//{
 		//	UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
 		//}
+
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("No weapon to throw!"));
 	}
 	
+	UpdateAmmoUI();
 }
 
 // void AMyFPSCharacter::SpawnCurrentWaponInHands()
@@ -631,7 +653,31 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item added to inventory!"));
 			OtherActor->Destroy();
 		}
+		UpdateAmmoUI();
 	}
 	
+}
+
+void AMyFPSCharacter::UpdateAmmoUI()
+{
+	if (CurrentItemInHands)
+	{
+		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+		{
+			HUD->CurrentAmmoText->SetVisibility(ESlateVisibility::Visible);
+			HUD->ReserveAmmoText->SetVisibility(ESlateVisibility::Visible);
+			HUD->UpdateAmmoValues(W->GetCurrentAmmo(), W->GetReserveAmmo());
+		}
+		else
+		{
+			HUD->CurrentAmmoText->SetVisibility(ESlateVisibility::Hidden);
+			HUD->ReserveAmmoText->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
+	else
+	{
+		HUD->CurrentAmmoText->SetVisibility(ESlateVisibility::Hidden);
+		HUD->ReserveAmmoText->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 

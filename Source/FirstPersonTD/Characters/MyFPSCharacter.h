@@ -12,6 +12,9 @@
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/BaseGrenade.h"
 #include "FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 
+#include "Blueprint/UserWidget.h"
+#include "../UI/PlayerHUD.h"
+
 #include "MyFPSCharacter.generated.h"
 
 USTRUCT(BlueprintType)
@@ -142,7 +145,19 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Holding")
 	FTransform WeaponTransform;
+
+
+#pragma region UI
 	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	TSubclassOf<class UPlayerHUD> HUDClass;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	class UPlayerHUD* HUD;
+
+	void UpdateAmmoUI();
+	
+#pragma endregion	
 	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
 	// TArray<class ABaseWeapon*> Weapons;
 	//

@@ -72,6 +72,17 @@ void AMyFPSCharacter::BeginPlay()
 			}
 		}
 	}
+
+	// if (IsPlayerControlled())
+	// {
+	// 	GetMesh()->SetOwnerNoSee(true);  // Hide full-body mesh in first-person
+	// 	//ArmsMesh->SetOnlyOwnerSee(true);   // Show only the arms
+	// }
+
+	if (GEngine)
+	{
+		GEngine->Exec(GetWorld(), TEXT("r.SetNearClipPlane 5"));
+	}
 }
 
 

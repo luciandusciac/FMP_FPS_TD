@@ -81,7 +81,7 @@ void AMyFPSCharacter::BeginPlay()
 
 	if (GEngine)
 	{
-		GEngine->Exec(GetWorld(), TEXT("r.SetNearClipPlane 5"));
+		GEngine->Exec(GetWorld(), TEXT("r.SetNearClipPlane 1"));
 	}
 }
 
@@ -271,35 +271,66 @@ void AMyFPSCharacter::OnShoot()
 // 	}
 // }
 
+// void AMyFPSCharacter::Aim()
+// {
+// 	if (Inventory->CurrentItem != nullptr)
+// 	{
+// 		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+// 		{
+// 			FVector TargetLocation = W->AimOrigin->GetComponentLocation(); // World space position
+//
+// 			// Interpolate smoothly
+// 			FVector NewCameraPosition = FMath::VInterpTo(
+// 				Camera->GetComponentLocation(),
+// 				TargetLocation,
+// 				GetWorld()->GetDeltaSeconds(),
+// 				5.0f // Adjust speed for smooth movement
+// 			);
+//
+// 			Camera->SetRelativeLocation(NewCameraPosition);
+//             
+// 			// Optional: Zoom in for aiming
+// 			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
+// 		}
+// 	}
+// }
+
 void AMyFPSCharacter::Aim()
 {
 	if (Inventory->CurrentItem != nullptr)
 	{
 		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
 		{
-			FVector TargetLocation = W->AimOrigin->GetComponentLocation(); // World space position
+			// Attach Camera to the AimOrigin of the weapon
+			Camera->AttachToComponent(W->AimOrigin, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
-			// Interpolate smoothly
-			FVector NewCameraPosition = FMath::VInterpTo(
-				Camera->GetComponentLocation(),
-				TargetLocation,
-				GetWorld()->GetDeltaSeconds(),
-				5.0f // Adjust speed for smooth movement
-			);
+			Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f)); // Example adjustment
+			Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 
-			Camera->SetRelativeLocation(NewCameraPosition);
-            
-			// Optional: Zoom in for aiming
-			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
+			// Optional: Smoothly transition FOV for aiming zoom
+			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 10.0f));
 		}
 	}
 }
 
+// void AMyFPSCharacter::StopAiming()
+// {
+// 	Camera->SetRelativeLocation(FMath::VInterpTo(Camera->GetRelativeLocation(), FVector(0.f, 0.f, 0.f), GetWorld()->GetDeltaSeconds(), 100.0f));
+//
+// 	Camera->SetFieldOfView(90.f);
+// }
+
 void AMyFPSCharacter::StopAiming()
 {
-	Camera->SetRelativeLocation(FMath::VInterpTo(Camera->GetRelativeLocation(), FVector(0.f, 0.f, 0.f), GetWorld()->GetDeltaSeconds(), 100.0f));
+	// Detach Camera back to Character
+	Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 
-	Camera->SetFieldOfView(90.f);
+	// Reset Camera back to default position relative to the character
+	Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Head"));
+	Camera->SetupAttachment(GetMesh(), "Head");
+
+	// Smoothly return FOV back to normal
+	Camera->SetFieldOfView(/*FMath::FInterpTo(Camera->FieldOfView, 90.f, GetWorld()->GetDeltaSeconds(), 10.0f)*/90.f);
 }
 
 void AMyFPSCharacter::Die()

@@ -190,7 +190,7 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 			float UpOffset = FMath::Lerp(0.f, 40.f, NormalizedPitch);
 
 			// INFO: Use the correct offset depending on the direction
-			float Offset = (Pitch >= 90) ? DownOffset : UpOffset;
+			float Offset = (Pitch > 90) ? DownOffset : UpOffset;
 
 			FVector NewLocation = Camera->GetRelativeLocation();
 			NewLocation.Z = Offset;

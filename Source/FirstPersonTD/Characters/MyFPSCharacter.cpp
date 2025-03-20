@@ -301,13 +301,11 @@ void AMyFPSCharacter::Aim()
 	{
 		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
 		{
-			// Attach Camera to the AimOrigin of the weapon
 			Camera->AttachToComponent(W->AimOrigin, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
 			Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f)); // Example adjustment
 			Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
-
-			// Optional: Smoothly transition FOV for aiming zoom
+			
 			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 10.0f));
 		}
 	}
@@ -322,15 +320,12 @@ void AMyFPSCharacter::Aim()
 
 void AMyFPSCharacter::StopAiming()
 {
-	// Detach Camera back to Character
 	Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-
-	// Reset Camera back to default position relative to the character
+	
 	Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Head"));
 	Camera->SetupAttachment(GetMesh(), "Head");
-
-	// Smoothly return FOV back to normal
-	Camera->SetFieldOfView(/*FMath::FInterpTo(Camera->FieldOfView, 90.f, GetWorld()->GetDeltaSeconds(), 10.0f)*/90.f);
+	
+	Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 90.f, GetWorld()->GetDeltaSeconds(), 10.0f));
 }
 
 void AMyFPSCharacter::Die()

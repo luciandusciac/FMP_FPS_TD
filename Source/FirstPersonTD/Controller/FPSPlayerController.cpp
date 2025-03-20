@@ -141,6 +141,28 @@ void AFPSPlayerController::MoveRight(const FInputActionValue& Value)
 	//}
 }
 
+// void AFPSPlayerController::LookAround(const FInputActionValue& Value)
+// {
+// 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(GetPawn()))
+// 	{
+// 		const FVector2D LookValue = Value.Get<FVector2D>();
+// 		PlayerCharacter->AddControllerYawInput(LookValue.X);
+// 		PlayerCharacter->AddControllerPitchInput(-LookValue.Y);
+//
+//
+// 		//if(GetCharacter()->GetMesh())
+// 		//{
+// 			//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
+// 			//{
+// 				AnimationInstance->VerticalBend = FMath::Lerp(AnimationInstance->VerticalBend, LookValue.Y * 50.f,  DeltaT * 2.f);
+// 				AnimationInstance->VerticalBend = FMath::Clamp(AnimationInstance->VerticalBend, -50.f, 50.f);
+// 				//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
+// 			
+// 			//}
+// 		//}
+// 	}
+// }
+
 void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 {
 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(GetPawn()))
@@ -148,18 +170,35 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 		const FVector2D LookValue = Value.Get<FVector2D>();
 		PlayerCharacter->AddControllerYawInput(LookValue.X);
 		PlayerCharacter->AddControllerPitchInput(-LookValue.Y);
+		
+		// if (UCameraComponent* Camera = PlayerCharacter->FindComponentByClass<UCameraComponent>())
+		// {
+		// 	float PitchAngle = PlayerCharacter->GetControlRotation().Pitch;
+		// 	float Offset = FMath::Clamp(PitchAngle * 0.1f, 0.f, 10.f);
+		//
+		// 	FVector NewLocation = Camera->GetRelativeLocation();
+		// 	NewLocation.Z = Offset;
+		// 	Camera->SetRelativeLocation(NewLocation);
+		// }
 
-
-		//if(GetCharacter()->GetMesh())
-		//{
-			//if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-			//{
-				AnimationInstance->VerticalBend = FMath::Lerp(AnimationInstance->VerticalBend, LookValue.Y * 50.f,  DeltaT * 2.f);
-				AnimationInstance->VerticalBend = FMath::Clamp(AnimationInstance->VerticalBend, -50.f, 50.f);
-				//LookValue.Y = FMath::Clamp(LookValue.Y, -50.f, 50.f);
+		if (UCameraComponent* Camera = PlayerCharacter->FindComponentByClass<UCameraComponent>())
+		{
+			float Pitch = PlayerCharacter->GetControlRotation().Pitch;
+			float NormalizedPitch = FMath::Clamp(Pitch / 80.f, -1.f, 1.f);  
 			
-			//}
-		//}
+			float DownOffset = FMath::Lerp(0.f, 10.f, NormalizedPitch);
+			float UpOffset = FMath::Lerp(0.f, 40.f, NormalizedPitch);
+
+			// INFO: Use the correct offset depending on the direction
+			float Offset = (Pitch >= 90) ? DownOffset : UpOffset;
+
+			FVector NewLocation = Camera->GetRelativeLocation();
+			NewLocation.Z = Offset;
+			Camera->SetRelativeLocation(NewLocation);
+		}
+
+		AnimationInstance->VerticalBend = FMath::Lerp(AnimationInstance->VerticalBend, LookValue.Y * 50.f,  DeltaT * 2.f);
+		AnimationInstance->VerticalBend = FMath::Clamp(AnimationInstance->VerticalBend, -50.f, 50.f);
 	}
 }
 

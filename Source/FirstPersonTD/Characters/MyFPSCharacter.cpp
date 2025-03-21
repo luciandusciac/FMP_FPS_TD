@@ -310,10 +310,10 @@ void AMyFPSCharacter::Aim()
 		{
 			Camera->AttachToComponent(W->AimOrigin, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
-			Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f)); // Example adjustment
+			Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 			Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 			
-			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 10.0f));
+			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 2.0f));
 		}
 	}
 }
@@ -330,9 +330,11 @@ void AMyFPSCharacter::StopAiming()
 	Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	
 	Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Head"));
-	Camera->SetupAttachment(GetMesh(), "Head");
+	Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+	Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+	//Camera->SetupAttachment(GetMesh(), "Head");
 	
-	Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 90.f, GetWorld()->GetDeltaSeconds(), 10.0f));
+	Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 90.f, GetWorld()->GetDeltaSeconds(), 2.0f));
 }
 
 void AMyFPSCharacter::Die()
@@ -390,13 +392,13 @@ void AMyFPSCharacter::NextWeapon()
 			CurrentWeaponData.CurrentAmmo = W->GetCurrentAmmo();
 			CurrentWeaponData.ClipSize = W->GetReserveAmmo();
 		}
-		//CurrentItemInHands->Destroy();
+		CurrentItemInHands->Destroy();
 	}
 		
+	//CurrentItemInHands->Destroy();
 
 	if (Inventory->NextItem())
 	{
-		CurrentItemInHands->Destroy();
 		
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item destroyed, next weapon!"));
 
@@ -523,7 +525,12 @@ void AMyFPSCharacter::ThrowWeapon()
 		CurrentItemInHands->Destroy();
 		CurrentItemInHands = nullptr;
 		Inventory->ThrowItem();
-		SpawnCurrentWeaponInHands();
+		
+		if (Inventory->GetNumberOfItems() > 0)
+		{
+			SpawnCurrentWeaponInHands();
+			
+		}
 			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
 			//CurrentItemInHands->SetActorRotation(GetActorRotation());
 			
@@ -537,14 +544,15 @@ void AMyFPSCharacter::ThrowWeapon()
 		//{
 		//	UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
 		//}
-		UpdateAmmoUI();
 
+		UpdateAmmoUI();
 
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("No weapon to throw!"));
 	}
+
 	
 }
 
@@ -584,7 +592,7 @@ void AMyFPSCharacter::ThrowWeapon()
 
 void AMyFPSCharacter::SpawnCurrentWeaponInHands()
 {
-	if (!Inventory || !Inventory->CurrentItem)
+	if (!Inventory || !Inventory->CurrentItem || !CurrentItemInHands)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Inventory or CurrentItem is null!"));
 		return;
@@ -596,7 +604,7 @@ void AMyFPSCharacter::SpawnCurrentWeaponInHands()
 	 // 	CurrentItemInHands = nullptr;
 	 // }
 	
-	TSubclassOf<AActor> WeaponClass = Inventory->CurrentItem->GetClass();
+	TSubclassOf<AActor> WeaponClass = CurrentItemInHands->GetClass();
 	if (!WeaponClass)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Invalid weapon class!"));
@@ -607,7 +615,7 @@ void AMyFPSCharacter::SpawnCurrentWeaponInHands()
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
 	AInventoryItem* SpawnedWeapon = GetWorld()->SpawnActor<AInventoryItem>(WeaponClass, GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
-	//CurrentItemInHands = SpawnedWeapon;
+	CurrentItemInHands = SpawnedWeapon;
 
 	if (!SpawnedWeapon)
 	{

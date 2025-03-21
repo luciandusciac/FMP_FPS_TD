@@ -23,6 +23,8 @@ UInventory::UInventory()
 		Controller = Cast<AFPSPlayerController>(C->GetController());
 		
 	}
+
+	InventorySlots = TMap<int, AInventoryItem*>();
 }
 
 void UInventory::BeginPlay()
@@ -153,7 +155,7 @@ void UInventory::ThrowItem()
 		//CurrentItem = nullptr;
 	
 
-		if(InventorySlots.Num()>0)
+		if(GetNumberOfItems() > 0)
 			NextItem();
 		else
 		{
@@ -168,6 +170,7 @@ void UInventory::ThrowItem()
 				{
 					controller->AnimationIndex = 10;  //Animation is lined up with inventory slot
 					controller->EquipWeapon(controller->AnimationIndex);  //Play the animation related to the weapon
+					
 					//C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
 				}
 			}
@@ -229,14 +232,14 @@ bool UInventory::NextItem()
 			Controller->EquipWeapon(10);  //no weapon
 
 
-		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(Controller->GetCharacter()))
-		{
-			C->CurrentItemInHands->Destroy();
-			C->CurrentItemInHands = nullptr;
-			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No weapons in inventory!"));
-		}
-		
-		CurrentInventorySlot = 10;
+		// if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(Controller->GetCharacter()))
+		// {
+		// 	C->CurrentItemInHands->Destroy();
+		// 	C->CurrentItemInHands = nullptr;
+		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No weapons in inventory!"));
+		// }
+		//
+		// CurrentInventorySlot = 10;
 		
 		return false;
 	}
@@ -256,24 +259,24 @@ bool UInventory::NextItem()
 		CurrentInventorySlot = GunValues[CurrentIndex];
 		
 		SetCurrentItemInHands();
-		if (InventorySlots.Contains(CurrentInventorySlot)) 
-		{
-			CurrentItem = InventorySlots[CurrentInventorySlot];
-
-			if (CurrentItem)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *CurrentItem->GetName());
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("Item at slot %d is NULL!"), CurrentInventorySlot);
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
-			CurrentItem = nullptr;
-		}
+		// if (InventorySlots.Contains(CurrentInventorySlot)) 
+		// {
+		// 	CurrentItem = InventorySlots[CurrentInventorySlot];
+		//
+		// 	if (CurrentItem)
+		// 	{
+		// 		UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *CurrentItem->GetName());
+		// 	}
+		// 	else
+		// 	{
+		// 		UE_LOG(LogTemp, Error, TEXT("Item at slot %d is NULL!"), CurrentInventorySlot);
+		// 	}
+		// }
+		// else
+		// {
+		// 	UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
+		// 	CurrentItem = nullptr;
+		// }
 		return true;
 	}
 	return false;
@@ -314,24 +317,24 @@ bool UInventory::PreviousItem()
 		
 		SetCurrentItemInHands();
 		
-		if (InventorySlots.Contains(CurrentInventorySlot)) 
-		{
-			CurrentItem = InventorySlots[CurrentInventorySlot]; //????????????????????????????????????????????????
-
-			if (CurrentItem)
-			{
-				UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *CurrentItem->GetName());
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("Item at slot %d is NULL!"), CurrentInventorySlot);
-			}
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
-			CurrentItem = nullptr;
-		}
+		// if (InventorySlots.Contains(CurrentInventorySlot)) 
+		// {
+		// 	CurrentItem = InventorySlots[CurrentInventorySlot]; //????????????????????????????????????????????????
+		//
+		// 	if (CurrentItem)
+		// 	{
+		// 		UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *CurrentItem->GetName());
+		// 	}
+		// 	else
+		// 	{
+		// 		UE_LOG(LogTemp, Error, TEXT("Item at slot %d is NULL!"), CurrentInventorySlot);
+		// 	}
+		// }
+		// else
+		// {
+		// 	UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
+		// 	CurrentItem = nullptr;
+		// }
 		return true;
 	}
 	
@@ -437,12 +440,12 @@ void UInventory::SetCurrentItemInHands()
 
 				//C->SpawnCurrentWeaponInHands();
 				//SortInventoryItems();
-			//}
-			//else
-			//{
-			//	UE_LOG(LogTemp, Error, TEXT("Invalid inventory slot: %d"), CurrentInventorySlot);
-			//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Invalid inventory slot!"));
-			//}
+			// }
+			// else
+			// {
+			// 	UE_LOG(LogTemp, Error, TEXT("Invalid inventory slot: %d"), CurrentInventorySlot);
+			// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Invalid inventory slot!"));
+			// }
 				
 		}
 	}

@@ -41,6 +41,7 @@ AMyFPSCharacter::AMyFPSCharacter()
 	HUDClass = nullptr;
 	HUD = nullptr;
 
+	CurrentItemInHands = nullptr;
 	//WeaponTransform = FTransform(FRotator(0, 0, 0));
 }
 
@@ -138,8 +139,11 @@ void AMyFPSCharacter::ThrowGrenade()
 		Gr->bCanExplode = true;
 	}
 	
-	CurrentItemInHands->Destroy();
+	//CurrentItemInHands->Destroy();
 	Inventory->UseItem(Inventory->CurrentItem);
+
+	//if (CurrentItemInHands != nullptr)
+	//	SpawnCurrentWeaponInHands();
 	
 }
 
@@ -186,9 +190,12 @@ void AMyFPSCharacter::ThrowKnife()
 
 	//Inventory->CurrentItem = nullptr;
 	
+	//CurrentItemInHands->Destroy();
+	//CurrentItemInHands = nullptr;
 	Inventory->UseItem(Inventory->CurrentItem);
-	CurrentItemInHands->Destroy();
-	
+
+	//if (CurrentItemInHands)
+	//	SpawnCurrentWeaponInHands();
 	
 	//Inventory->NextItem();
 	//GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnKnifeThrown, KnifeThrowAnimation->GetPlayLength(), false);
@@ -383,17 +390,17 @@ void AMyFPSCharacter::NextWeapon()
 			CurrentWeaponData.CurrentAmmo = W->GetCurrentAmmo();
 			CurrentWeaponData.ClipSize = W->GetReserveAmmo();
 		}
-		CurrentItemInHands->Destroy();
+		//CurrentItemInHands->Destroy();
 	}
 		
 
 	if (Inventory->NextItem())
 	{
-
+		CurrentItemInHands->Destroy();
 		
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item destroyed, next weapon!"));
 
-		SpawnCurrentWaponInHands();
+		SpawnCurrentWeaponInHands();
 
 		if (CurrentItemInHands)
 		{
@@ -516,6 +523,7 @@ void AMyFPSCharacter::ThrowWeapon()
 		CurrentItemInHands->Destroy();
 		CurrentItemInHands = nullptr;
 		Inventory->ThrowItem();
+		SpawnCurrentWeaponInHands();
 			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
 			//CurrentItemInHands->SetActorRotation(GetActorRotation());
 			
@@ -574,22 +582,20 @@ void AMyFPSCharacter::ThrowWeapon()
 // 	}
 // }
 
-void AMyFPSCharacter::SpawnCurrentWaponInHands()
+void AMyFPSCharacter::SpawnCurrentWeaponInHands()
 {
 	if (!Inventory || !Inventory->CurrentItem)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Inventory or CurrentItem is null!"));
 		return;
 	}
-
-	// Destroy the old weapon first
-	if (CurrentItemInHands)
-	{
-		CurrentItemInHands->Destroy();
-		CurrentItemInHands = nullptr;
-	}
-
-	// Get the class instead of the actual instance
+	
+	 // if (CurrentItemInHands)
+	 // {
+	 // 	CurrentItemInHands->Destroy();
+	 // 	CurrentItemInHands = nullptr;
+	 // }
+	
 	TSubclassOf<AActor> WeaponClass = Inventory->CurrentItem->GetClass();
 	if (!WeaponClass)
 	{
@@ -600,8 +606,8 @@ void AMyFPSCharacter::SpawnCurrentWaponInHands()
 	// Spawn new weapon
 	FActorSpawnParameters SpawnParams;
 	SpawnParams.Owner = this;
-	AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(WeaponClass, GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
-	CurrentItemInHands = SpawnedWeapon;
+	AInventoryItem* SpawnedWeapon = GetWorld()->SpawnActor<AInventoryItem>(WeaponClass, GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
+	//CurrentItemInHands = SpawnedWeapon;
 
 	if (!SpawnedWeapon)
 	{
@@ -651,8 +657,9 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 	if(AInventoryItem* It = Cast<AInventoryItem>(OtherActor))
 	{
 			//INFO: Add weapon to inventory
-		if ((Inventory->CurrentItem == nullptr || CurrentItemInHands == nullptr) && Inventory->AddItem(It))
+		if (/*(Inventory->CurrentItem == nullptr || CurrentItemInHands == nullptr)*/Inventory->GetNumberOfItems() == 0 && Inventory->AddItem(It))
 		{
+			//SpawnCurrentWeaponInHands();
 			if (UStaticMeshComponent* MeshComp = OtherActor->FindComponentByClass<UStaticMeshComponent>())
 			{
 				MeshComp->SetSimulatePhysics(false);
@@ -660,9 +667,9 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 				MeshComp->SetMassScale(NAME_None, 0.0f);
 				MeshComp->SetEnableGravity(false);
 				MeshComp->WakeRigidBody();
-
+			
 				//MeshComp->SetWorldLocationAndRotation(WeaponLocation, WeaponRotation);
-
+			
 				//MeshComp->SetWorldScale3D(WeaponScale);
 				MeshComp->AttachToComponent(
 					GetMesh(),
@@ -676,22 +683,26 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 				// MeshComp->SetRelativeScale3D(WeaponScale);
 				// MeshComp->SetRelativeLocation(WeaponLocation);
 				// MeshComp->SetRelativeRotation(WeaponRotation);
-
+			
 				MeshComp->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
 			}
 
-			CurrentItemInHands = OtherActor;
+			//CurrentItemInHands = OtherActor;
 
 			// INFO: Load up the new weapon with the saved data if it exists
-			if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
-			{
-				if (const FAmmoData* NewAmmoData = AmmoDataMap.Find(CurrentItemInHands->GetClass()))
+			//if (CurrentItemInHands != nullptr)
+			//{
+				if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
 				{
-					W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
-					W->SetReserveAmmo(NewAmmoData->ClipSize);
+					if (const FAmmoData* NewAmmoData = AmmoDataMap.Find(CurrentItemInHands->GetClass()))
+					{
+						W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
+						W->SetReserveAmmo(NewAmmoData->ClipSize);
+					}
+					UpdateAmmoUI();
 				}
-				UpdateAmmoUI();
-			}
+			//}
+			
 		}
 		else if(Inventory->AddItem(It))
 		{

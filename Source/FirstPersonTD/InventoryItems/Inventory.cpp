@@ -50,7 +50,7 @@ bool UInventory::AddItem(AInventoryItem* Item)
 
 	if(Item->Implements<UPrimaryWeapon>() && !InventorySlots.Contains(0) /*&& !InventoryItems.Contains(Item)*/)
 	{
-		CheckEmptyInventory(0);
+		//CheckEmptyInventory(0);
 		InventorySlots.Add(0, Item);
 		//InventoryItems.Add(Item);
 		//CurrentItem = Item;
@@ -75,7 +75,7 @@ bool UInventory::AddItem(AInventoryItem* Item)
 	}
 	else if(Item->Implements<USecondaryWeapon>() && !InventorySlots.Contains(1))
 	{
-		CheckEmptyInventory(1);
+		//CheckEmptyInventory(1);
 		InventorySlots.Add(1, Item);
 		//CurrentItem = Item;
 		//Item->Destroy();  //commented out because it needs adding to hands
@@ -86,7 +86,7 @@ bool UInventory::AddItem(AInventoryItem* Item)
 	}
 	else if (Item->Implements<UFragGrenadeInterface>() && !InventorySlots.Contains(2))
 	{
-		CheckEmptyInventory(2);
+		//CheckEmptyInventory(2);
 		InventorySlots.Add(2, Item);
 		//CurrentItem = Item;
 		//Item->Destroy();  //commented out because it needs adding to hands
@@ -97,7 +97,7 @@ bool UInventory::AddItem(AInventoryItem* Item)
 	}
 	else if (Item->Implements<USmokeGrenadeInterface>() && !InventorySlots.Contains(3))
 	{
-		CheckEmptyInventory(3);
+		//CheckEmptyInventory(3);
 		InventorySlots.Add(3, Item);
 		//CurrentItem = Item;
 		//Item->Destroy();  //commented out because it needs adding to hands
@@ -107,7 +107,7 @@ bool UInventory::AddItem(AInventoryItem* Item)
 	}
 	else if (Item->Implements<UFlashbangInterface>() && !InventorySlots.Contains(4))
 	{
-		CheckEmptyInventory(4);
+		//CheckEmptyInventory(4);
 		InventorySlots.Add(4, Item);
 		//CurrentItem = Item;
 		//Item->Destroy();  //commented out because it needs adding to hands
@@ -117,7 +117,7 @@ bool UInventory::AddItem(AInventoryItem* Item)
 	}
 	else if (Item->Implements<UKnifeInterface>() && !InventorySlots.Contains(5))
 	{
-		CheckEmptyInventory(5);
+		//CheckEmptyInventory(5);
 		InventorySlots.Add(5, Item);
 		//CurrentItem = Item;
 		//Item->Destroy();  //commented out because it needs adding to hands
@@ -192,24 +192,27 @@ void UInventory::UseItem(AInventoryItem* Item)
 		//NextItem();
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Item used! Items left: %d"), InventorySlots.Num()));
 
-		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		{
+		NextItem();
+		
+		
+		//if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+		//{
 			//if (C->CurrentItemInHands)
 			//	C->CurrentItemInHands->Destroy();
 		
-			if (InventorySlots.Num() == 1 && !NextItem())
-			{
-				C->SpawnCurrentWaponInHands();
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Next item equipped!"));
-				return;
-			}
-			else
-				NextItem();
+			//if (InventorySlots.Num() == 1 && !NextItem())
+			//{
+			//	//C->SpawnCurrentWeaponInHands();
+			//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Next item equipped!"));
+			//	//return;
+			//}
+			//else
+			//	NextItem();
 			//if (NextItem())
 			//{
 			//	
 			//}
-		}	
+		//}	
 	}
 	
 }
@@ -224,6 +227,17 @@ bool UInventory::NextItem()
 
 		if (Controller)
 			Controller->EquipWeapon(10);  //no weapon
+
+
+		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(Controller->GetCharacter()))
+		{
+			C->CurrentItemInHands->Destroy();
+			C->CurrentItemInHands = nullptr;
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No weapons in inventory!"));
+		}
+		
+		CurrentInventorySlot = 10;
+		
 		return false;
 	}
 	if(InventorySlots.Num() == 1)
@@ -231,7 +245,7 @@ bool UInventory::NextItem()
 		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
 		//CurrentItem = InventorySlots[CurrentInventorySlot];
 		SetCurrentItemInHands();
-		return false;
+		return true;
 	}
 	if(InventorySlots.Num() > 1)
 	{
@@ -395,14 +409,14 @@ void UInventory::SortInventoryItems()
 
 void UInventory::CheckEmptyInventory(int Index)
 {
-	if (InventorySlots.IsEmpty())
+	if (InventorySlots.Num() == 1)
 	{
 		CurrentInventorySlot = Index;
-		//SetCurrentItemInHands();
+		SetCurrentItemInHands();
 	}
 	//else if (InventorySlots.Num() == 1)
 	//{
-		SetCurrentItemInHands();
+		//SetCurrentItemInHands();
 	//}
 }
 
@@ -413,18 +427,22 @@ void UInventory::SetCurrentItemInHands()
 		//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
 		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
 		{
-			if (InventorySlots.Contains(CurrentInventorySlot))
-			{
+			//if (InventorySlots.Contains(CurrentInventorySlot))
+			//{
 				controller->AnimationIndex = CurrentInventorySlot;  // Animation is lined up with inventory slot
 				controller->EquipWeapon(CurrentInventorySlot);  // Play the animation related to the weapon
 				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
 				CurrentItem = InventorySlots[CurrentInventorySlot];
+
+
+				//C->SpawnCurrentWeaponInHands();
 				//SortInventoryItems();
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("Invalid inventory slot: %d"), CurrentInventorySlot);
-			}
+			//}
+			//else
+			//{
+			//	UE_LOG(LogTemp, Error, TEXT("Invalid inventory slot: %d"), CurrentInventorySlot);
+			//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Invalid inventory slot!"));
+			//}
 				
 		}
 	}

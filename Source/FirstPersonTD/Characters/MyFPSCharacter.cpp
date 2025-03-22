@@ -139,7 +139,7 @@ void AMyFPSCharacter::ThrowGrenade()
 		Gr->bCanExplode = true;
 	}
 	
-	//CurrentItemInHands->Destroy();
+	CurrentItemInHands->Destroy();
 	Inventory->UseItem(Inventory->CurrentItem);
 
 	//if (CurrentItemInHands != nullptr)
@@ -190,7 +190,7 @@ void AMyFPSCharacter::ThrowKnife()
 
 	//Inventory->CurrentItem = nullptr;
 	
-	//CurrentItemInHands->Destroy();
+	CurrentItemInHands->Destroy();
 	//CurrentItemInHands = nullptr;
 	Inventory->UseItem(Inventory->CurrentItem);
 

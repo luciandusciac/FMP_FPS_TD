@@ -248,6 +248,10 @@ bool UInventory::NextItem()
 		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
 		//CurrentItem = InventorySlots[CurrentInventorySlot];
 		SetCurrentItemInHands();
+		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(Controller->GetCharacter()))
+		{
+			C->SpawnCurrentWeaponInHands();
+		}
 		return true;
 	}
 	if(InventorySlots.Num() > 1)

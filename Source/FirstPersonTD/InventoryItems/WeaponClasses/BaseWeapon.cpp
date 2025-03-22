@@ -142,7 +142,6 @@ void ABaseWeapon::OnReload()
 		}
 	}
 	GetWorldTimerManager().ClearTimer(ReloadTimerHandle);
-	//ReserveAmmo--;
 }
 
 void ABaseWeapon::Aim()

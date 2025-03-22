@@ -39,15 +39,12 @@ void ARifle::Tick(float DeltaTime)
 
 void ARifle::Shoot()
 {
-
-
 	if (!bIsShooting)
 	{
 		
 		if (CurrentAmmo > 0)
 		{
 			CurrentAmmo--;
-			//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is shooting"));
 
 			bIsShooting = true;
 		
@@ -62,25 +59,8 @@ void ARifle::Shoot()
 			{
 				Reload();
 			}
-			// else if (CurrentAmmo == 0 && ReserveAmmo == 0)
-			// {
-			// 	//TODO: Play error sound
-			// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No ammo"));
-			// }
 			GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
 		}
-		// else if (CurrentAmmo == 0 && ReserveAmmo == 0)
-		// {
-		// 	//TODO: Play error sound
-		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No reserve ammo"));
-		// }
-		
-
-		
-
-		
-
-		//UE_LOG(LogTemp, Warning, TEXT("Rifle Shot"));
 	}
 }
 

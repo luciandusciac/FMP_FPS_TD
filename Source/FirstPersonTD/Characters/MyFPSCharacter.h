@@ -151,11 +151,27 @@ public:
 
 #pragma region UI
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	TSubclassOf<class UPlayerHUD> HUDClass;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "UI")
 	class UPlayerHUD* HUD;
+
+	UPROPERTY(EditAnywhere, Category="UI")
+	TSubclassOf<UUserWidget> DamageEffectWidgetClass;
+
+	UPROPERTY(EditAnywhere, Category="UI")
+	TSubclassOf<UUserWidget> HealingEffectWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* DamageEffectWidget;
+
+	UPROPERTY()
+	UUserWidget* HealingEffectWidget;
+
+	void DestroyWidget(UUserWidget* Widget);
+
+	FTimerHandle WidgetTimerHandle;
 
 	void UpdateAmmoUI();
 	

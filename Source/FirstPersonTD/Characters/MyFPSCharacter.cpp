@@ -23,6 +23,8 @@
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FragGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/SmokeGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Knives/Knife.h"
+#include "FirstPersonTD/Pickups/BasePickup.h"
+#include "FirstPersonTD/Pickups/HealthPickup.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 class ABaseWeapon;
@@ -735,7 +737,40 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 		}
 		
 	}
+	else if (AHealthPickup* H = Cast<AHealthPickup>(OtherActor))
+	{
+		if (HealingEffectWidgetClass)
+		{
+			HealingEffectWidget = CreateWidget<UUserWidget>(GetWorld(), HealingEffectWidgetClass);
+			if (HealingEffectWidget)
+			{
+				HealingEffectWidget->AddToViewport();
+
+				GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]() { DestroyWidget(HealingEffectWidget); }, 0.5f, false);
+				
+			}
+		}
+		
+	}
+	else if (ABaseProjectile* B = Cast<ABaseProjectile>(OtherActor))
+	{
+		if (DamageEffectWidgetClass)
+		{
+			DamageEffectWidget = CreateWidget<UUserWidget>(GetWorld(), DamageEffectWidgetClass);
+			if (DamageEffectWidget)
+			{
+				DamageEffectWidget->AddToViewport();
+				//DamageEffectWidget->Destruct();
+				GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]{DestroyWidget(DamageEffectWidget);}, 0.5f, false);
+			}
+		}
+	}
 	
+}
+
+void AMyFPSCharacter::DestroyWidget(UUserWidget* Widget)
+{
+	Widget->Destruct();
 }
 
 void AMyFPSCharacter::UpdateAmmoUI()

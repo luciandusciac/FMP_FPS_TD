@@ -19,7 +19,16 @@ void AAmmoPickup::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 {
 	if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
 	{
+		if (!Ch->CurrentItemInHands)
+			return;
+		
 		this->Destroy();
+		
+		if (ABaseWeapon* W = Cast<ABaseWeapon>(Ch->CurrentItemInHands))
+		{
+			W->SetCurrentAmmo(W->GetCurrentAmmo() + 10);
+			Ch->UpdateAmmoUI();
+		}
 		
 		// Increase the player's ammo
 		

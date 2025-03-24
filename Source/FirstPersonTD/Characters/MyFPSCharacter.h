@@ -93,6 +93,8 @@ public:
 
 	void SpawnCurrentWeaponInHands();
 
+	void ResetWalkingSpeed();
+
 	TMap<TSubclassOf<ABaseWeapon>, FAmmoData> AmmoDataMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")

@@ -4,6 +4,8 @@
 #include "SpeedBuff.h"
 
 #include "FirstPersonTD/Characters/MyFPSCharacter.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "Math/UnitConversion.h"
 
 ASpeedBuff::ASpeedBuff()
 {
@@ -18,6 +20,10 @@ ASpeedBuff::ASpeedBuff()
 void ASpeedBuff::OnExpire()
 {
 	//Super::OnExpire();
+
+	AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(GetWorld()->GetFirstPlayerController()->GetCharacter());
+	Ch->GetCharacterMovement()->MaxWalkSpeed = 150.f;
+	GetWorldTimerManager().ClearTimer(TimerHandle);
 }
 
 void ASpeedBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -27,6 +33,10 @@ void ASpeedBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponen
 	if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
 	{
 		this->Destroy();
-		
+
+		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "SpeedBuff Applied");
+		Ch->GetCharacterMovement()->MaxWalkSpeed = 1000.f;
+
+		GetWorldTimerManager().SetTimer(Ch->AnimationTimerHandle, [Ch]() { Ch->ResetWalkingSpeed(); }, 15.f, false);
 	}
 }

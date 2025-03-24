@@ -23,6 +23,7 @@
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FragGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/SmokeGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Knives/Knife.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 class ABaseWeapon;
 
@@ -650,6 +651,12 @@ void AMyFPSCharacter::SpawnCurrentWeaponInHands()
 	}
 
 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Green, TEXT("Weapon spawned and attached!"));
+}
+
+void AMyFPSCharacter::ResetWalkingSpeed()
+{
+	GetCharacterMovement()->MaxWalkSpeed = 150.f;
+	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
 }
 
 

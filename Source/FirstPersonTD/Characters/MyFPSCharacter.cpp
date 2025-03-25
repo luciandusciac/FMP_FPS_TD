@@ -25,6 +25,7 @@
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Knives/Knife.h"
 #include "FirstPersonTD/Pickups/BasePickup.h"
 #include "FirstPersonTD/Pickups/HealthPickup.h"
+#include "FirstPersonTD/Projectiles/RifleBullet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 class ABaseWeapon;
@@ -45,6 +46,8 @@ AMyFPSCharacter::AMyFPSCharacter()
 	HUD = nullptr;
 
 	CurrentItemInHands = nullptr;
+
+	CurrentHealth = MaxHealth;
 	//WeaponTransform = FTransform(FRotator(0, 0, 0));
 }
 
@@ -753,6 +756,20 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 		}
 		
 	}
+	// else if (ARifleBullet* B = Cast<ARifleBullet>(OtherActor))
+	// {
+	// 	if (DamageEffectWidgetClass)
+	// 	{
+	// 		DamageEffectWidget = CreateWidget<UUserWidget>(GetWorld(), DamageEffectWidgetClass);
+	// 		if (DamageEffectWidget)
+	// 		{
+	// 			DamageEffectWidget->AddToViewport();
+	// 			//DamageEffectWidget->Destruct();
+	// 			GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]{DestroyWidget(DamageEffectWidget);}, 0.5f, false);
+	// 		}
+	// 	}
+	// 	OtherActor->Destroy();
+	// }
 	// else if (AHealthPickup* H = Cast<AHealthPickup>(OtherActor))
 	// {
 	// 	if (HealingEffectWidgetClass)
@@ -768,21 +785,6 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 	// 	}
 	// 	OtherActor->Destroy();
 	// }
-	else if (ABaseProjectile* B = Cast<ABaseProjectile>(OtherActor))
-	{
-		if (DamageEffectWidgetClass)
-		{
-			DamageEffectWidget = CreateWidget<UUserWidget>(GetWorld(), DamageEffectWidgetClass);
-			if (DamageEffectWidget)
-			{
-				DamageEffectWidget->AddToViewport();
-				//DamageEffectWidget->Destruct();
-				GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]{DestroyWidget(DamageEffectWidget);}, 0.5f, false);
-			}
-		}
-		OtherActor->Destroy();
-	}
-	
 }
 
 void AMyFPSCharacter::DestroyWidget(UUserWidget* Widget)

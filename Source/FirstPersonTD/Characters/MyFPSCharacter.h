@@ -182,7 +182,7 @@ public:
 #pragma region Health
 
 	float CurrentHealth;
-	float MaxHealth;
+	float MaxHealth = 100.0f;
 	void Heal();
 	void TakeDamage(float Damage);
 	

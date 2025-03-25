@@ -114,6 +114,17 @@ void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 		if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
 		{
 			Ch->TakeDamage(DamageAmount);
+
+			if (Ch->DamageEffectWidgetClass)
+			{
+				Ch->DamageEffectWidget = CreateWidget<UUserWidget>(GetWorld(), Ch->DamageEffectWidgetClass);
+				if (Ch->DamageEffectWidget)
+				{
+					Ch->DamageEffectWidget->AddToViewport();
+					//DamageEffectWidget->Destruct();
+					GetWorldTimerManager().SetTimer(Ch->WidgetTimerHandle, [Ch]{Ch->DestroyWidget(Ch->DamageEffectWidget);}, 0.5f, false);
+				}
+			}
 		}
 		
 		this->Destroy();

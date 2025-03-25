@@ -32,11 +32,11 @@ void ASpeedBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponen
 
 	if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
 	{
-		this->Destroy();
 
 		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "SpeedBuff Applied");
-		Ch->GetCharacterMovement()->MaxWalkSpeed = 1000.f;
+		Ch->GetCharacterMovement()->MaxWalkSpeed *= 2.f;
 
-		GetWorldTimerManager().SetTimer(Ch->AnimationTimerHandle, [Ch]() { Ch->ResetWalkingSpeed(); }, 15.f, false);
+		GetWorldTimerManager().SetTimer(Ch->AnimationTimerHandle, [Ch]() { Ch->ResetWalkingSpeed(); }, 30.f, false);
+		this->Destroy();
 	}
 }

@@ -657,7 +657,23 @@ void AMyFPSCharacter::SpawnCurrentWeaponInHands()
 
 void AMyFPSCharacter::ResetWalkingSpeed()
 {
-	GetCharacterMovement()->MaxWalkSpeed = 150.f;
+	GetCharacterMovement()->MaxWalkSpeed /= 2.f;
+	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
+}
+
+void AMyFPSCharacter::ResetBulletDamage()
+{
+	if (!CurrentItemInHands)
+		return;
+
+	if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+	{
+		if (ABaseProjectile* P = Cast<ABaseProjectile>(W->WeaponBullet))
+		{
+			P->DamageAmount /= 1.1f;
+		}
+	}
+	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Bullet damage reset!"));
 	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
 }
 
@@ -737,21 +753,21 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 		}
 		
 	}
-	else if (AHealthPickup* H = Cast<AHealthPickup>(OtherActor))
-	{
-		if (HealingEffectWidgetClass)
-		{
-			HealingEffectWidget = CreateWidget<UUserWidget>(GetWorld(), HealingEffectWidgetClass);
-			if (HealingEffectWidget)
-			{
-				HealingEffectWidget->AddToViewport();
-
-				GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]() { DestroyWidget(HealingEffectWidget); }, 0.5f, false);
-				
-			}
-		}
-		
-	}
+	// else if (AHealthPickup* H = Cast<AHealthPickup>(OtherActor))
+	// {
+	// 	if (HealingEffectWidgetClass)
+	// 	{
+	// 		HealingEffectWidget = CreateWidget<UUserWidget>(GetWorld(), HealingEffectWidgetClass);
+	// 		if (HealingEffectWidget)
+	// 		{
+	// 			HealingEffectWidget->AddToViewport();
+	// 			Heal();
+	// 			GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]() { DestroyWidget(HealingEffectWidget); }, 0.5f, false);
+	// 			
+	// 		}
+	// 	}
+	// 	OtherActor->Destroy();
+	// }
 	else if (ABaseProjectile* B = Cast<ABaseProjectile>(OtherActor))
 	{
 		if (DamageEffectWidgetClass)
@@ -764,6 +780,7 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 				GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]{DestroyWidget(DamageEffectWidget);}, 0.5f, false);
 			}
 		}
+		OtherActor->Destroy();
 	}
 	
 }
@@ -794,5 +811,21 @@ void AMyFPSCharacter::UpdateAmmoUI()
 		HUD->CurrentAmmoText->SetVisibility(ESlateVisibility::Hidden);
 		HUD->ReserveAmmoText->SetVisibility(ESlateVisibility::Hidden);
 	}
+}
+
+void AMyFPSCharacter::Heal()
+{
+	CurrentHealth += 50;
+	if (CurrentHealth > MaxHealth)
+	{
+		CurrentHealth = MaxHealth;
+	}
+}
+
+void AMyFPSCharacter::TakeDamage(float Damage)
+{
+	CurrentHealth -= Damage;
+	if (CurrentHealth <= 0)
+		Die();
 }
 

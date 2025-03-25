@@ -94,6 +94,7 @@ public:
 	void SpawnCurrentWeaponInHands();
 
 	void ResetWalkingSpeed();
+	void ResetBulletDamage();
 
 	TMap<TSubclassOf<ABaseWeapon>, FAmmoData> AmmoDataMap;
 
@@ -175,7 +176,17 @@ public:
 
 	void UpdateAmmoUI();
 	
-#pragma endregion	
+#pragma endregion
+
+
+#pragma region Health
+
+	float CurrentHealth;
+	float MaxHealth;
+	void Heal();
+	void TakeDamage(float Damage);
+	
+#pragma endregion 
 	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
 	// TArray<class ABaseWeapon*> Weapons;
 	//

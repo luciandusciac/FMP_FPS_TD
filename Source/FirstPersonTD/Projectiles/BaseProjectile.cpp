@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 //#include "FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "Engine/World.h"
+#include "FirstPersonTD/Characters/MyFPSCharacter.h"
 #include "FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "GameFramework/ProjectileMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
@@ -110,6 +111,11 @@ void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 {
 	if(OtherActor != GetOwner())
 	{
+		if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
+		{
+			Ch->TakeDamage(DamageAmount);
+		}
+		
 		this->Destroy();
 		UGameplayStatics::SpawnDecalAtLocation(GetWorld(), BulletHoleDecal, FVector(10, 10, 10), Hit.ImpactPoint, Hit.ImpactNormal.Rotation(), 10.f);
 	}

@@ -22,15 +22,11 @@ void AAmmoPickup::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 		if (!Ch->CurrentItemInHands)
 			return;
 		
-		this->Destroy();
-		
 		if (ABaseWeapon* W = Cast<ABaseWeapon>(Ch->CurrentItemInHands))
 		{
-			W->SetCurrentAmmo(W->GetCurrentAmmo() + 10);
+			W->SetReserveAmmo(W->GetReserveAmmo() + 1);
 			Ch->UpdateAmmoUI();
 		}
-		
-		// Increase the player's ammo
-		
+		this->Destroy();
 	}
 }

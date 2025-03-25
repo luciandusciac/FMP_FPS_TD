@@ -25,7 +25,34 @@ void ADamageBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 {
 	if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
 	{
-		this->Destroy();
+		if (!Ch->CurrentItemInHands)
+			return;
 		
+		if (ABaseWeapon* W = Cast<ABaseWeapon>(Ch->CurrentItemInHands))
+		{
+			if (W->WeaponBullet)
+			{
+				ABaseProjectile* DefaultBullet = W->WeaponBullet->GetDefaultObject<ABaseProjectile>();
+				if (DefaultBullet)
+				{
+					DefaultBullet->DamageAmount *= 1.1f;  // Increase base damage by 10%
+                    
+					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Bullet damage buff applied!"));
+
+					// Reset after 30 seconds
+					GetWorldTimerManager().SetTimer(Ch->AnimationTimerHandle, [DefaultBullet]
+					{
+						//Ch->ResetBulletDamage();
+						DefaultBullet->DamageAmount /= 1.1f;
+						//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Bullet damage buff removed!"));
+					}, 30.f, false);
+				}
+			}
+			else
+			{
+				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("WeaponBullet is NULL!"));
+			}
+		}
+		this->Destroy();
 	}
 }

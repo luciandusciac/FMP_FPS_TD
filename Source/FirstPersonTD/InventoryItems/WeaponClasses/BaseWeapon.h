@@ -45,9 +45,6 @@ protected:
 #pragma endregion
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
-	TSubclassOf<ABaseProjectile> WeaponBullet;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
 	USceneComponent* BulletOrigin;
 
 public:
@@ -61,6 +58,9 @@ public:
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
 	USceneComponent* AimOrigin;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
+	TSubclassOf<ABaseProjectile> WeaponBullet;
 	
 	//INFO: Variable to keep track if the weapon has a scope
 	bool bHasScope;

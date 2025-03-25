@@ -19,9 +19,17 @@ void AHealthPickup::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 {
 	if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
 	{
+		if (Ch->HealingEffectWidgetClass)
+		{
+			Ch->HealingEffectWidget = CreateWidget<UUserWidget>(GetWorld(), Ch->HealingEffectWidgetClass);
+			if (Ch->HealingEffectWidget)
+			{
+				Ch->HealingEffectWidget->AddToViewport();
+				Ch->Heal();
+				GetWorldTimerManager().SetTimer(Ch->WidgetTimerHandle, [Ch]() { Ch->DestroyWidget(Ch->HealingEffectWidget); }, 0.5f, false);
+			}
+		}
+		
 		this->Destroy();
-		
-		// Increase the player's health
-		
 	}
 }

@@ -123,6 +123,8 @@ void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 					Ch->DamageEffectWidget->AddToViewport();
 					//DamageEffectWidget->Destruct();
 					GetWorldTimerManager().SetTimer(Ch->WidgetTimerHandle, [Ch]{Ch->DestroyWidget(Ch->DamageEffectWidget);}, 0.5f, false);
+
+					Ch->HUD->SetHealth(Ch->CurrentHealth, Ch->MaxHealth);
 				}
 			}
 		}

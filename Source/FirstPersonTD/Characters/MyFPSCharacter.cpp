@@ -80,6 +80,8 @@ void AMyFPSCharacter::BeginPlay()
 		}
 	}
 
+	HUD->SetHealth(CurrentHealth, MaxHealth);
+
 	// if (IsPlayerControlled())
 	// {
 	// 	GetMesh()->SetOwnerNoSee(true);  // Hide full-body mesh in first-person

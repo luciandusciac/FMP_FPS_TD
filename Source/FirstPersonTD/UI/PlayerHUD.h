@@ -29,6 +29,12 @@ public:
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	UTextBlock* ReserveAmmoText;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> CrosshairWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* CrosshairWidget;
+
 
 	void SetHealth(float Health, float MaxHealth);
 	void SetKnifeThrowProgress(float Time, float MaxTime);

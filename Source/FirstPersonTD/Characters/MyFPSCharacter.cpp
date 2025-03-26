@@ -78,6 +78,15 @@ void AMyFPSCharacter::BeginPlay()
 				HUD->AddToPlayerScreen();
 			}
 		}
+
+		if (HUD->CrosshairWidgetClass)
+		{
+			HUD->CrosshairWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->CrosshairWidgetClass);
+			if (HUD->CrosshairWidget)
+			{
+				HUD->CrosshairWidget->AddToViewport();
+			}
+		}
 	}
 
 	HUD->SetHealth(CurrentHealth, MaxHealth);

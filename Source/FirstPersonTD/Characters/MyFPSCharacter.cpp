@@ -23,6 +23,7 @@
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FragGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/SmokeGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Knives/Knife.h"
+#include "FirstPersonTD/InventoryItems/WeaponClasses/Snipers/Sniper.h"
 #include "FirstPersonTD/Pickups/BasePickup.h"
 #include "FirstPersonTD/Pickups/HealthPickup.h"
 #include "FirstPersonTD/Projectiles/RifleBullet.h"
@@ -85,6 +86,7 @@ void AMyFPSCharacter::BeginPlay()
 			if (HUD->CrosshairWidget)
 			{
 				HUD->CrosshairWidget->AddToViewport();
+				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
 	}
@@ -431,6 +433,14 @@ void AMyFPSCharacter::NextWeapon()
 					W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
 					W->SetReserveAmmo(NewAmmoData->ClipSize);
 				}
+
+				if (!W->IsA(ASniper::StaticClass()))
+				{
+					if (!HUD->CrosshairWidget->IsVisible())
+					{
+						HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+					}
+				}
 			}
 		}
 
@@ -514,6 +524,11 @@ void AMyFPSCharacter::ThrowWeapon()
 			FAmmoData& CurrentWeaponData = AmmoDataMap.FindOrAdd(W->GetClass());
 			CurrentWeaponData.CurrentAmmo = W->GetCurrentAmmo();
 			CurrentWeaponData.ClipSize = W->GetReserveAmmo();
+
+			if (HUD->CrosshairWidget->IsVisible())
+			{
+				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
 		}
 
 		
@@ -739,15 +754,20 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 			// INFO: Load up the new weapon with the saved data if it exists
 			//if (CurrentItemInHands != nullptr)
 			//{
-				if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+			if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+			{
+				if (const FAmmoData* NewAmmoData = AmmoDataMap.Find(CurrentItemInHands->GetClass()))
 				{
-					if (const FAmmoData* NewAmmoData = AmmoDataMap.Find(CurrentItemInHands->GetClass()))
-					{
-						W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
-						W->SetReserveAmmo(NewAmmoData->ClipSize);
-					}
-					UpdateAmmoUI();
+					W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
+					W->SetReserveAmmo(NewAmmoData->ClipSize);
 				}
+				UpdateAmmoUI();
+
+				if (!W->IsA(ASniper::StaticClass()))
+				{
+					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+				}
+			}
 			//}
 			
 		}
@@ -767,35 +787,6 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 		}
 		
 	}
-	// else if (ARifleBullet* B = Cast<ARifleBullet>(OtherActor))
-	// {
-	// 	if (DamageEffectWidgetClass)
-	// 	{
-	// 		DamageEffectWidget = CreateWidget<UUserWidget>(GetWorld(), DamageEffectWidgetClass);
-	// 		if (DamageEffectWidget)
-	// 		{
-	// 			DamageEffectWidget->AddToViewport();
-	// 			//DamageEffectWidget->Destruct();
-	// 			GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]{DestroyWidget(DamageEffectWidget);}, 0.5f, false);
-	// 		}
-	// 	}
-	// 	OtherActor->Destroy();
-	// }
-	// else if (AHealthPickup* H = Cast<AHealthPickup>(OtherActor))
-	// {
-	// 	if (HealingEffectWidgetClass)
-	// 	{
-	// 		HealingEffectWidget = CreateWidget<UUserWidget>(GetWorld(), HealingEffectWidgetClass);
-	// 		if (HealingEffectWidget)
-	// 		{
-	// 			HealingEffectWidget->AddToViewport();
-	// 			Heal();
-	// 			GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]() { DestroyWidget(HealingEffectWidget); }, 0.5f, false);
-	// 			
-	// 		}
-	// 	}
-	// 	OtherActor->Destroy();
-	// }
 }
 
 void AMyFPSCharacter::DestroyWidget(UUserWidget* Widget)

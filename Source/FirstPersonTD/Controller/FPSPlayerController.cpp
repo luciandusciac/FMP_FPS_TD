@@ -187,7 +187,7 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 			float NormalizedPitch = FMath::Clamp(Pitch / 80.f, -1.f, 1.f);  
 			
 			float DownOffset = FMath::Lerp(0.f, 10.f, NormalizedPitch);
-			float UpOffset = FMath::Lerp(0.f, 40.f, NormalizedPitch);
+			float UpOffset = FMath::Lerp(0.f, 50.f, NormalizedPitch);
 
 			// INFO: Use the correct offset depending on the direction
 			float Offset = (Pitch > 90) ? DownOffset : UpOffset;
@@ -206,14 +206,6 @@ void AFPSPlayerController::NextWeapon()
 {
 	
 	UE_LOG(LogTemp, Warning, TEXT("Swapping to next weapon"));
-	
-	// AnimationIndex++;
-	// if(AnimationIndex > 3)
-	// {
-	// 	AnimationIndex = 0;  //TODO: Replace with the total number of weapons
-	// }
-	//
-	// this->EquipWeapon(AnimationIndex);
 
 	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetCharacter()))
 	{
@@ -224,55 +216,6 @@ void AFPSPlayerController::NextWeapon()
 void AFPSPlayerController::PreviousWeapon()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Swapping to previous weapon"));
-
-	// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetCharacter()))
-	// {
-	// 	if(C->Inventory->InventorySlots.Num() == 0)
-	// 	{
-	// 		UE_LOG(LogTemp, Error, TEXT("No weapons in inventory!"));
-	// 		return;
-	// 	}
-	// 	else if(C->Inventory->InventorySlots.Num() == 1)
-	// 	{
-	// 		return;
-	// 	}
-	// 	else if(C->Inventory->InventorySlots.Num() > 1)
-	// 	{
-	// 		C->Inventory->CurrentInventorySlot--;
-	// 		AnimationIndex = C->Inventory->CurrentInventorySlot;
-	// 		if(C->Inventory->CurrentInventorySlot <= 0)
-	// 		{
-	// 			C->Inventory->CurrentInventorySlot = C->Inventory->InventorySlots.Num();
-	// 		}
-	//
-	// 		if (C->Inventory->InventorySlots.Contains(C->Inventory->CurrentInventorySlot)) 
-	// 		{
-	// 			C->Inventory->CurrentItem = C->Inventory->InventorySlots[C->Inventory->CurrentInventorySlot];
-	//
-	// 			if (C->Inventory->CurrentItem)
-	// 			{
-	// 				UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *C->Inventory->CurrentItem->GetName());
-	// 			}
-	// 			else
-	// 			{
-	// 				UE_LOG(LogTemp, Error, TEXT("Item at slot %d is NULL!"), C->Inventory->CurrentInventorySlot);
-	// 			}
-	// 		}
-	// 		else
-	// 		{
-	// 			UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), C->Inventory->CurrentInventorySlot);
-	// 			C->Inventory->CurrentItem = nullptr;
-	// 		}
-	// 	}
-	// }
-	
-	// AnimationIndex--;
-	// if(AnimationIndex < 0)
-	// {
-	// 	AnimationIndex = 3;  //TODO: Replace with the total number of weapons
-	// }
-	//
-	// this->EquipWeapon(AnimationIndex);
 
 	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetCharacter()))
 	{
@@ -304,36 +247,6 @@ void AFPSPlayerController::EquipWeapon(int Index)
 	}
 
 	AnimationInstance->Modify();
-	//AnimationInstance->MarkPackageDirty();
-
-	// if(Index == 0)
-	// {
-	// 	AnimationInstance->bHasPrimary = true;
-	// 	AnimationInstance->bHasPistol = false;
-	// 	AnimationInstance->bHasGrenade = false;
-	// 	AnimationInstance->bHasKnife = false;
-	// }
-	// else if(Index == 1)
-	// {
-	// 	AnimationInstance->bHasPrimary = false;
-	// 	AnimationInstance->bHasPistol = true;
-	// 	AnimationInstance->bHasGrenade = false;
-	// 	AnimationInstance->bHasKnife = false;
-	// }
-	// else if(Index == 2)
-	// {
-	// 	AnimationInstance->bHasPrimary = false;
-	// 	AnimationInstance->bHasPistol = false;
-	// 	AnimationInstance->bHasGrenade = true;
-	// 	AnimationInstance->bHasKnife = false;
-	// }
-	// else if(Index == 3)
-	// {
-	// 	AnimationInstance->bHasPrimary = false;
-	// 	AnimationInstance->bHasPistol = false;
-	// 	AnimationInstance->bHasGrenade = false;
-	// 	AnimationInstance->bHasKnife = true;
-	// }
 
 	UE_LOG(LogTemp, Warning, TEXT("Weapon index is %d"), Index);
 }
@@ -431,34 +344,7 @@ void AFPSPlayerController::Crouch()
 		//}
 	}
 	
-	// if(!bIsCrouching)
-	// {
-	// 	if(GetCharacter())
-	// 	{
-	// 		GetCharacter()->Crouch();
-	// 		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-	// 		{
-	// 			AnimInstance->bIsCrouching = true;
-	// 			//bIsCrouching = true;
-	// 			UE_LOG(LogTemp, Warning, TEXT("Crouching"));
-	// 		}
-	// 	}
-	// }
-	// else if(bIsCrouching)
-	// {
-	// 	if(GetCharacter())
-	// 	{
-	// 		GetCharacter()->UnCrouch();
-	// 		if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetCharacter()->GetMesh()->GetAnimInstance()))
-	// 		{
-	// 			AnimInstance->bIsCrouching = false;
-	// 			//bIsCrouching = false;
-	// 			UE_LOG(LogTemp, Warning, TEXT("Not Crouching"));
-	// 		}
-	// 	}
-	// }
 
-	//bIsCrouching = !bIsCrouching;
 	
 }
 

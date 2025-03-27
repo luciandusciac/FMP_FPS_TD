@@ -11,6 +11,7 @@
 #include "Net/UnrealNetwork.h"
 #include "../Source/FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "Components/CapsuleComponent.h"
+#include "Components/ProgressBar.h"
 #include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "FirstPersonTD/Animations/SWAT_AnimInstance.h"
 #include "FirstPersonTD/InventoryItems/Interfaces/FlashbangInterface.h"
@@ -77,6 +78,7 @@ void AMyFPSCharacter::BeginPlay()
 			if (HUD)
 			{
 				HUD->AddToPlayerScreen();
+				HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
 
@@ -112,6 +114,41 @@ void AMyFPSCharacter::BeginPlay()
 	if (GEngine)
 	{
 		GEngine->Exec(GetWorld(), TEXT("r.SetNearClipPlane 1"));
+	}
+}
+
+void AMyFPSCharacter::Tick(float DeltaTime)
+{
+	Super::Tick(DeltaTime);
+
+	if (CurrentItemInHands && CurrentItemInHands->IsA(AKnife::StaticClass()) && AnimationInstance->bIsShooting)
+	{
+		if (!HUD->KnifeThrowProgressBar->IsVisible())
+		{
+			HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Visible);
+		}
+		
+		float TotalTime = 1.4f;
+		KnifeThrowElapsedTime += DeltaTime;
+
+		//float Progress = FMath::Clamp(KnifeThrowElapsedTime / TotalTime, 0.f, 1.f);
+		HUD->SetKnifeThrowProgress(KnifeThrowElapsedTime, TotalTime);
+
+		// Hide progress bar when complete
+		if (KnifeThrowElapsedTime >= TotalTime)
+		{
+			HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Hidden);
+			bIsThrowingKnife = false;
+		}
+	}
+	else if (CurrentItemInHands && CurrentItemInHands->IsA(AKnife::StaticClass()) && Inventory->GetNumberOfItems() > 0)
+	{
+		if (HUD->KnifeThrowProgressBar->IsVisible())
+		{
+			HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Hidden);
+		}
+		KnifeThrowElapsedTime = 0.f;
+		HUD->SetKnifeThrowProgress(KnifeThrowElapsedTime, 1.4f);
 	}
 }
 
@@ -207,6 +244,17 @@ void AMyFPSCharacter::OnGrenadeThrown()
 
 void AMyFPSCharacter::ThrowKnife()
 {
+
+	//KnifeThrowElapsedTime = 0.f;
+	//bIsThrowingKnife = true;
+	
+	//HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Visible);
+	//HUD->KnifeThrowProgressBar->InvalidateLayoutAndVolatility();
+	//HUD->SetKnifeThrowProgress(0.f, KnifeThrowAnimation->GetPlayLength());
+	
+	//GetWorldTimerManager().SetTimer(KnifeProgressBarTimer, this, &AMyFPSCharacter::UpdateKnifeThrowProgress, 0.01f, true);
+
+	
 	if (CurrentItemInHands->GetClass()->ImplementsInterface(UKnifeInterface::StaticClass()))
 	{
 		AKnife* Knife = GetWorld()->SpawnActor<AKnife>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
@@ -217,6 +265,7 @@ void AMyFPSCharacter::ThrowKnife()
 		}
 	}
 
+	
 	//Inventory->CurrentItem = nullptr;
 	
 	CurrentItemInHands->Destroy();
@@ -229,6 +278,31 @@ void AMyFPSCharacter::ThrowKnife()
 	//Inventory->NextItem();
 	//GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnKnifeThrown, KnifeThrowAnimation->GetPlayLength(), false);
 
+}
+
+void AMyFPSCharacter::UpdateKnifeThrowProgress()
+{
+	// if (!HUD || !HUD->KnifeThrowProgressBar || !KnifeThrowAnimation)
+	// {
+	// 	UE_LOG(LogTemp, Error, TEXT("HUD, ProgressBar, or KnifeThrowAnimation is NULL!"));
+	// 	return;
+	// }
+
+	float ElapsedTime = GetWorldTimerManager().GetTimerElapsed(KnifeProgressBarTimer);
+	float TotalTime = KnifeThrowAnimation->GetPlayLength();
+
+	UE_LOG(LogTemp, Warning, TEXT("Progress: %f | Elapsed: %f | Total: %f"), ElapsedTime / TotalTime, ElapsedTime, TotalTime);
+
+	float Progress = FMath::Clamp(ElapsedTime / TotalTime, 0.f, 1.f);
+	HUD->SetKnifeThrowProgress(Progress, TotalTime);
+
+	// If Progress is Complete, Hide the Progress Bar
+	if (Progress >= 1.f)
+	{
+		HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Hidden);
+		GetWorldTimerManager().ClearTimer(KnifeProgressBarTimer);
+		UE_LOG(LogTemp, Warning, TEXT("Knife throw progress complete!"));
+	}
 }
 
 void AMyFPSCharacter::OnKnifeThrown()
@@ -374,7 +448,7 @@ void AMyFPSCharacter::StopAiming()
 	Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 	//Camera->SetupAttachment(GetMesh(), "Head");
 	
-	Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 90.f, GetWorld()->GetDeltaSeconds(), 5.0f));
+	Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 100.f, GetWorld()->GetDeltaSeconds(), 5.0f));
 
 	if (HUD->SniperScopeWidget && HUD->SniperScopeWidget->IsVisible())
 	{

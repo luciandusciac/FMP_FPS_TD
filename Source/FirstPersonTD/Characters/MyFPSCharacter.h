@@ -44,6 +44,7 @@ public:
 protected:
 	virtual void BeginPlay() override;
 
+	
 	// virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	//
 	// UPROPERTY(EditDefaultsOnly, Category = "Config")
@@ -58,7 +59,7 @@ protected:
 	
 public:
 	
-	//virtual void Tick(float DeltaTime) override;
+	virtual void Tick(float DeltaTime) override;
 
 	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
@@ -175,6 +176,11 @@ public:
 	FTimerHandle WidgetTimerHandle;
 
 	void UpdateAmmoUI();
+	void UpdateKnifeThrowProgress();
+	FTimerHandle KnifeProgressBarTimer;
+	
+	float KnifeThrowElapsedTime = 0.f;
+	bool bIsThrowingKnife = false;
 	
 #pragma endregion
 

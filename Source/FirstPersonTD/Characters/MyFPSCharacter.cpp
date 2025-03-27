@@ -432,13 +432,6 @@ void AMyFPSCharacter::Aim()
 	}
 }
 
-// void AMyFPSCharacter::StopAiming()
-// {
-// 	Camera->SetRelativeLocation(FMath::VInterpTo(Camera->GetRelativeLocation(), FVector(0.f, 0.f, 0.f), GetWorld()->GetDeltaSeconds(), 100.0f));
-//
-// 	Camera->SetFieldOfView(90.f);
-// }
-
 void AMyFPSCharacter::StopAiming()
 {
 	Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);

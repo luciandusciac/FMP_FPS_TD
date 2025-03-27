@@ -89,6 +89,16 @@ void AMyFPSCharacter::BeginPlay()
 				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
+
+		if (HUD->SniperScopeWidgetClass)
+		{
+			HUD->SniperScopeWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->SniperScopeWidgetClass);
+			if (HUD->SniperScopeWidget)
+			{
+				HUD->SniperScopeWidget->AddToViewport();
+				HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
 	}
 
 	HUD->SetHealth(CurrentHealth, MaxHealth);
@@ -327,12 +337,23 @@ void AMyFPSCharacter::Aim()
 	{
 		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
 		{
+			Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+			
 			Camera->AttachToComponent(W->AimOrigin, FAttachmentTransformRules::SnapToTargetIncludingScale);
 
 			Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 			Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 			
-			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 2.0f));
+			
+			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
+
+			if (W->bHasScope)
+			{
+				if (HUD->SniperScopeWidget && !HUD->SniperScopeWidget->IsVisible())
+				{
+					HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Visible);
+				}
+			}
 		}
 	}
 }
@@ -353,7 +374,12 @@ void AMyFPSCharacter::StopAiming()
 	Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 	//Camera->SetupAttachment(GetMesh(), "Head");
 	
-	Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 90.f, GetWorld()->GetDeltaSeconds(), 2.0f));
+	Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 90.f, GetWorld()->GetDeltaSeconds(), 5.0f));
+
+	if (HUD->SniperScopeWidget && HUD->SniperScopeWidget->IsVisible())
+	{
+		HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void AMyFPSCharacter::Die()

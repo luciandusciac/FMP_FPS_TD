@@ -19,6 +19,10 @@ void AHealthPickup::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompo
 {
 	if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
 	{
+		if (Ch->CurrentHealth == 100.0f)
+			return;
+		
+		
 		if (Ch->HealingEffectWidgetClass)
 		{
 			Ch->HealingEffectWidget = CreateWidget<UUserWidget>(GetWorld(), Ch->HealingEffectWidgetClass);

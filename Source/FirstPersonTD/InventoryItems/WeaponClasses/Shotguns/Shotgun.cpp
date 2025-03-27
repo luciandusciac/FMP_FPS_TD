@@ -81,7 +81,7 @@ void AShotgun::Shoot()
 						RandomRotation.Yaw += FMath::RandRange(-Spread, Spread);
 						RandomRotation.Pitch += FMath::RandRange(-Spread, Spread);
 
-						ABaseProjectile* Projectile = GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), RandomRotation);
+						ABaseProjectile* Projectile = GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), AimDirection);
 					
 					
 						if (Projectile)

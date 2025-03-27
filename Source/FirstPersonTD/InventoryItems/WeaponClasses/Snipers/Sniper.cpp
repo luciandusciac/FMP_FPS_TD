@@ -13,6 +13,7 @@ class AFPSPlayerController;
 ASniper::ASniper()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bHasScope = true;
 }
 
 void ASniper::BeginPlay()

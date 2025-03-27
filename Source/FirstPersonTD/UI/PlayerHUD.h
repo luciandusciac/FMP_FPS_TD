@@ -47,7 +47,11 @@ public:
 	UPROPERTY()
 	UUserWidget* DamageBuffWidget;
 
-	
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> SniperScopeWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* SniperScopeWidget;
 
 	void SetHealth(float Health, float MaxHealth);
 	void SetKnifeThrowProgress(float Time, float MaxTime);

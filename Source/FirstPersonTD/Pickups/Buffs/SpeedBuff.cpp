@@ -36,6 +36,21 @@ void ASpeedBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponen
 		GEngine->AddOnScreenDebugMessage(-1, 5, FColor::Red, "SpeedBuff Applied");
 		Ch->GetCharacterMovement()->MaxWalkSpeed *= 2.f;
 
+		if (Ch->HUD->SpedUpWidgetClass)
+		{
+			/*Ch->HUD->SpedUpWidget*/
+			UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), Ch->HUD->SpedUpWidgetClass);
+			Ch->HUD->SpedUpWidget = Widget;
+			if (Ch->HUD->SpedUpWidget)
+			{
+				Ch->HUD->SpedUpWidget->AddToViewport();
+				GetWorldTimerManager().SetTimer(Ch->WidgetTimerHandle, [Widget]
+				{
+					Widget->RemoveFromParent();
+				}, 30.f, false);
+			}
+		}
+
 		GetWorldTimerManager().SetTimer(Ch->AnimationTimerHandle, [Ch]() { Ch->ResetWalkingSpeed(); }, 30.f, false);
 		this->Destroy();
 	}

@@ -441,6 +441,10 @@ void AMyFPSCharacter::NextWeapon()
 						HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
 					}
 				}
+				else
+				{
+					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
+				}
 			}
 		}
 
@@ -688,6 +692,9 @@ void AMyFPSCharacter::ResetWalkingSpeed()
 {
 	GetCharacterMovement()->MaxWalkSpeed /= 2.f;
 	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
+
+	//if (HUD->SpedUpWidget)
+	//	HUD->SpedUpWidget->RemoveFromParent();
 }
 
 void AMyFPSCharacter::ResetBulletDamage()
@@ -824,6 +831,7 @@ void AMyFPSCharacter::Heal()
 	{
 		CurrentHealth = MaxHealth;
 	}
+	HUD->SetHealth(CurrentHealth, MaxHealth);
 }
 
 void AMyFPSCharacter::TakeDamage(float Damage)

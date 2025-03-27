@@ -39,6 +39,19 @@ void ADamageBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
                     
 					GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Bullet damage buff applied!"));
 
+					if (Ch->HUD->DamageBuffWidgetClass)
+					{
+						Ch->HUD->DamageBuffWidget = CreateWidget<UUserWidget>(GetWorld(), Ch->HUD->DamageBuffWidgetClass);
+						if (Ch->HUD->DamageBuffWidget)
+						{
+							Ch->HUD->DamageBuffWidget->AddToViewport();
+							GetWorldTimerManager().SetTimer(Ch->WidgetTimerHandle, [Ch]
+							{
+								Ch->HUD->DamageBuffWidget->RemoveFromParent();
+							}, 30.f, false);
+						}
+					}
+
 					// Reset after 30 seconds
 					GetWorldTimerManager().SetTimer(Ch->AnimationTimerHandle, [DefaultBullet]
 					{

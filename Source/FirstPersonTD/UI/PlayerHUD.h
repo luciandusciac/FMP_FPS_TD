@@ -35,6 +35,19 @@ public:
 	UPROPERTY()
 	UUserWidget* CrosshairWidget;
 
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> SpedUpWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* SpedUpWidget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> DamageBuffWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* DamageBuffWidget;
+
+	
 
 	void SetHealth(float Health, float MaxHealth);
 	void SetKnifeThrowProgress(float Time, float MaxTime);

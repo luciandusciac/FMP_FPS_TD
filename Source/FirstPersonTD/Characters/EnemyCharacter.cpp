@@ -3,11 +3,16 @@
 
 #include "EnemyCharacter.h"
 
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
+
 
 AEnemyCharacter::AEnemyCharacter()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	SetUpStimulusSource();
+
+	
 	// PerceptionComponent = CreateDefaultSubobject<UAIPerceptionComponent>(TEXT("PerceptionComponent"));
 	//
 	// SightConfig = CreateDefaultSubobject<UAISenseConfig_Sight>(TEXT("SightConfig"));
@@ -28,9 +33,25 @@ AEnemyCharacter::AEnemyCharacter()
 	// PerceptionComponent->OnTargetPerceptionUpdated.AddDynamic(this, &AEnemyCharacter::OnTargetDetected);
 }
 
+UBehaviorTree* AEnemyCharacter::GetBehaviorTree() const
+{
+	return BehaviorTree;
+}
+
+
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+}
+
+void AEnemyCharacter::SetUpStimulusSource()
+{
+	StimulusSource = CreateDefaultSubobject<UAIPerceptionStimuliSourceComponent>(TEXT("StimulusSource"));
+	if (StimulusSource)
+	{
+		StimulusSource->RegisterForSense(TSubclassOf<UAISense_Sight>());
+		StimulusSource->RegisterWithPerceptionSystem();
+	}
 }
 
 // void AEnemyCharacter::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)

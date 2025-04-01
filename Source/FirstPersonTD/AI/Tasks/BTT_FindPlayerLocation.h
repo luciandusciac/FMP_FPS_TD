@@ -21,8 +21,13 @@ class FIRSTPERSONTD_API UBTT_FindPlayerLocation : public UBTTask_BlackboardBase
 	GENERATED_BODY()
 
 public:
-	UBTT_FindPlayerLocation(FObjectInitializer const& ObjectInitializer);
-	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
-	
-	
+	explicit UBTT_FindPlayerLocation(FObjectInitializer const& ObjectInitializer);
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+private:
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI", meta = (AllowPrivateAccess = "true"))
+	float SearchRadius = 150.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="AI", meta = (AllowPrivateAccess = "true"))
+	bool SearchRandom = false;
 };

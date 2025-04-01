@@ -7,10 +7,11 @@
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AISenseConfig_Sight.h"
 #include "Runtime/AIModule/Classes/Perception/AISense_Sight.h"
-#include "Runtime/AIModule/Classes/Perception/AISenseConfig_Hearing.h"
+#include "Perception/AISenseConfig_Hearing.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTree.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BlackboardComponent.h"
 #include "../Controller/EnemyController.h"
+#include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionTypes.h"
 #include "EnemyCharacter.generated.h"
 
@@ -23,11 +24,22 @@ class FIRSTPERSONTD_API AEnemyCharacter : public ACharacter
 public:
 	AEnemyCharacter();
 
+	UBehaviorTree* GetBehaviorTree() const;
+	
 protected:
 	void BeginPlay() override;
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI", meta= (AllowPrivateAccess = "true"))
+	UBehaviorTree* BehaviorTree;
 
-public:
+private:
+	UPROPERTY()
+	UAIPerceptionStimuliSourceComponent* StimulusSource;
 
+	void SetUpStimulusSource();
+
+	
+	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
 	// UBehaviorTree* BehaviorTree;
 	//

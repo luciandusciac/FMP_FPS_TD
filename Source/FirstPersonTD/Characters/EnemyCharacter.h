@@ -11,6 +11,7 @@
 #include "Runtime/AIModule/Classes/BehaviorTree/BehaviorTree.h"
 #include "Runtime/AIModule/Classes/BehaviorTree/BlackboardComponent.h"
 #include "../Controller/EnemyController.h"
+#include "FirstPersonTD/AI/PatrolPath.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionTypes.h"
 #include "EnemyCharacter.generated.h"
@@ -25,12 +26,13 @@ public:
 	AEnemyCharacter();
 
 	UBehaviorTree* GetBehaviorTree() const;
+
+	APatrolPath* GetPatrolPath() const;
 	
 protected:
 	void BeginPlay() override;
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI", meta= (AllowPrivateAccess = "true"))
-	UBehaviorTree* BehaviorTree;
+	
 
 private:
 	UPROPERTY()
@@ -38,6 +40,11 @@ private:
 
 	void SetUpStimulusSource();
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI", meta= (AllowPrivateAccess = "true"))
+	UBehaviorTree* BehaviorTree;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI", meta= (AllowPrivateAccess = "true"))
+	APatrolPath* PatrolPath;
 	
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")

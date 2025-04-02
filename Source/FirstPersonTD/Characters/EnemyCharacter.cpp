@@ -38,6 +38,11 @@ UBehaviorTree* AEnemyCharacter::GetBehaviorTree() const
 	return BehaviorTree;
 }
 
+APatrolPath* AEnemyCharacter::GetPatrolPath() const
+{
+	return PatrolPath;
+}
+
 
 void AEnemyCharacter::BeginPlay()
 {

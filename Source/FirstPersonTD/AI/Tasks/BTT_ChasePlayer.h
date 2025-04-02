@@ -15,6 +15,6 @@ class FIRSTPERSONTD_API UBTT_ChasePlayer : public UBTTask_BlackboardBase
 	GENERATED_BODY()
 
 public:
-	UBTT_ChasePlayer(FObjectInitializer const& ObjectInitializer);
-	EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory);
+	explicit UBTT_ChasePlayer(FObjectInitializer const& ObjectInitializer);
+	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

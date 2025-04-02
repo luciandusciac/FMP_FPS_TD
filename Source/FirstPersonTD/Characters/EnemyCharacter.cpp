@@ -44,6 +44,11 @@ APatrolPath* AEnemyCharacter::GetPatrolPath() const
 }
 
 
+void AEnemyCharacter::Shoot()
+{
+	Weapon->Shoot();
+}
+
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();

@@ -52,60 +52,60 @@ void AShotgun::Shoot()
 			bIsShooting = true;
 
 			
-			if(AFPSPlayerController* PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
-			{
-				if (!PC) return;
-				FVector Start, Direction;
-				FVector2D ViewportSize;
-				int32 ViewportSizeX, ViewportSizeY;
-				PC->GetViewportSize(ViewportSizeX, ViewportSizeY);
-				ViewportSize.X = static_cast<float>(ViewportSizeX);
-				ViewportSize.Y = static_cast<float>(ViewportSizeY);
-				PC->DeprojectScreenPositionToWorld(
-					ViewportSize.X * 0.5f,
-					ViewportSize.Y * 0.5f,
-					Start,
-					Direction
-				);
-				FVector End = Start + (Direction * 10000.f); // Target position far ahead
-			
-				// Spawn Projectile
-				if (WeaponBullet)
-				{
-					FVector MuzzleLocation = BulletOrigin->GetComponentLocation(); // Get Gun's Muzzle Position
-					FRotator AimDirection = (End - MuzzleLocation).Rotation(); // Aim at target
-
-					for(int i = 0; i<=PelletCount;  ++i)
-					{
-						FRotator RandomRotation = BulletOrigin->GetComponentRotation();
-						RandomRotation.Yaw += FMath::RandRange(-Spread, Spread);
-						RandomRotation.Pitch += FMath::RandRange(-Spread, Spread);
-
-						ABaseProjectile* Projectile = GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), AimDirection);
-					
-					
-						if (Projectile)
-						{
-							Projectile->SetOwner(this);
-						}
-					}
-				}
-			}
+			// if(AFPSPlayerController* PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+			// {
+			// 	if (!PC) return;
+			// 	FVector Start, Direction;
+			// 	FVector2D ViewportSize;
+			// 	int32 ViewportSizeX, ViewportSizeY;
+			// 	PC->GetViewportSize(ViewportSizeX, ViewportSizeY);
+			// 	ViewportSize.X = static_cast<float>(ViewportSizeX);
+			// 	ViewportSize.Y = static_cast<float>(ViewportSizeY);
+			// 	PC->DeprojectScreenPositionToWorld(
+			// 		ViewportSize.X * 0.5f,
+			// 		ViewportSize.Y * 0.5f,
+			// 		Start,
+			// 		Direction
+			// 	);
+			// 	FVector End = Start + (Direction * 10000.f); // Target position far ahead
+			//
+			// 	// Spawn Projectile
+			// 	if (WeaponBullet)
+			// 	{
+			// 		FVector MuzzleLocation = BulletOrigin->GetComponentLocation(); // Get Gun's Muzzle Position
+			// 		FRotator AimDirection = (End - MuzzleLocation).Rotation(); // Aim at target
+			//
+			// 		for(int i = 0; i<=PelletCount;  ++i)
+			// 		{
+			// 			FRotator RandomRotation = BulletOrigin->GetComponentRotation();
+			// 			RandomRotation.Yaw += FMath::RandRange(-Spread, Spread);
+			// 			RandomRotation.Pitch += FMath::RandRange(-Spread, Spread);
+			//
+			// 			ABaseProjectile* Projectile = GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), AimDirection);
+			// 		
+			// 		
+			// 			if (Projectile)
+			// 			{
+			// 				Projectile->SetOwner(this);
+			// 			}
+			// 		}
+			// 	}
+			// }
 			
 	
-			// FActorSpawnParameters SpawnParams;
-			// SpawnParams.Owner = this;
-			// SpawnParams.Instigator = GetInstigator();
+			FActorSpawnParameters SpawnParams;
+			SpawnParams.Owner = this;
+			SpawnParams.Instigator = GetInstigator();
 
-			// for(int i = 0; i<=PelletCount;  ++i)
-			// {
-			//
-			// 	FRotator RandomRotation = BulletOrigin->GetComponentRotation();
-			// 	RandomRotation.Yaw += FMath::RandRange(-Spread, Spread);
-			// 	RandomRotation.Pitch += FMath::RandRange(-Spread, Spread);
-			//
-			// 	GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), RandomRotation, SpawnParams);
-			// }
+			for(int i = 0; i<=PelletCount;  ++i)
+			{
+			
+				FRotator RandomRotation = BulletOrigin->GetComponentRotation();
+				RandomRotation.Yaw += FMath::RandRange(-Spread, Spread);
+				RandomRotation.Pitch += FMath::RandRange(-Spread, Spread);
+			
+				GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), RandomRotation, SpawnParams);
+			}
 
 			Super::Shoot();
 			

@@ -28,6 +28,10 @@ public:
 	UBehaviorTree* GetBehaviorTree() const;
 
 	APatrolPath* GetPatrolPath() const;
+
+	ABaseWeapon* GetWeapon() const { return Weapon; }
+	void SetWeapon(ABaseWeapon* NewWeapon) { Weapon = NewWeapon; }
+	void Shoot();
 	
 protected:
 	void BeginPlay() override;
@@ -45,7 +49,10 @@ private:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI", meta= (AllowPrivateAccess = "true"))
 	APatrolPath* PatrolPath;
-	
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gun", meta= (AllowPrivateAccess = "true"))
+	ABaseWeapon* Weapon;
+
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
 	// UBehaviorTree* BehaviorTree;

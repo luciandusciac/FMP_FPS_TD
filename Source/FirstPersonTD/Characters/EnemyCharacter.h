@@ -12,6 +12,7 @@
 #include "Runtime/AIModule/Classes/BehaviorTree/BlackboardComponent.h"
 #include "../Controller/EnemyController.h"
 #include "FirstPersonTD/AI/PatrolPath.h"
+#include "FirstPersonTD/InventoryItems/WeaponClasses/Rifles/Rifle.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 #include "Runtime/AIModule/Classes/Perception/AIPerceptionTypes.h"
 #include "EnemyCharacter.generated.h"
@@ -29,9 +30,13 @@ public:
 
 	APatrolPath* GetPatrolPath() const;
 
-	ABaseWeapon* GetWeapon() const { return Weapon; }
-	void SetWeapon(ABaseWeapon* NewWeapon) { Weapon = NewWeapon; }
-	void Shoot();
+	//ARifle* GetWeapon() const { return Weapon; }
+	//void SetWeapon(ABaseWeapon* NewWeapon) { Weapon = NewWeapon; }
+	void Shoot() const;
+
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gun", meta= (AllowPrivateAccess = "true"))
+	TObjectPtr<ABaseWeapon> Weapon;
 	
 protected:
 	void BeginPlay() override;
@@ -50,8 +55,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI", meta= (AllowPrivateAccess = "true"))
 	APatrolPath* PatrolPath;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gun", meta= (AllowPrivateAccess = "true"))
-	ABaseWeapon* Weapon;
+	
 
 	
 	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")

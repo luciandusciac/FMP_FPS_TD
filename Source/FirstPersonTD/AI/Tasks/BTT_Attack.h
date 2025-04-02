@@ -14,6 +14,7 @@ class FIRSTPERSONTD_API UBTT_Attack : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
-	UBTT_Attack(FObjectInitializer const& ObjectInitializer);
+public:
+	explicit UBTT_Attack(FObjectInitializer const& ObjectInitializer);
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 };

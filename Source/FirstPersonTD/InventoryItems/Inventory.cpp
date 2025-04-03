@@ -155,28 +155,28 @@ void UInventory::ThrowItem()
 		//CurrentItem = nullptr;
 	
 
-		if(GetNumberOfItems() > 0)
+		//if(GetNumberOfItems() > 0)
 			NextItem();
-		else
-		{
-			CurrentItem = nullptr;
-
-			//CurrentInventorySlot = NULL;
-			
-			if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-			{
-				//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-				if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-				{
-					controller->AnimationIndex = 10;  //Animation is lined up with inventory slot
-					controller->EquipWeapon(controller->AnimationIndex);  //Play the animation related to the weapon
-					
-					//C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
-				}
-			}
-		}
-		if(CurrentItem)
-			UE_LOG(LogTemp, Warning, TEXT("Current item: %s"), *CurrentItem->GetName());
+		// else
+		// {
+		// 	CurrentItem->Destroy();
+		// 	CurrentItem = nullptr;
+		// 	//CurrentInventorySlot = NULL;
+		// 	
+		// 	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+		// 	{
+		// 		//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
+		// 		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
+		// 		{
+		// 			controller->AnimationIndex = 10;  //Animation is lined up with inventory slot
+		// 			controller->EquipWeapon(controller->AnimationIndex);  //Play the animation related to the weapon
+		// 			
+		// 			//C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
+		// 		}
+		// 	}
+		// }
+		// if(CurrentItem)
+		// 	UE_LOG(LogTemp, Warning, TEXT("Current item: %s"), *CurrentItem->GetName());
 	}
 }
 
@@ -248,10 +248,10 @@ bool UInventory::NextItem()
 		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
 		//CurrentItem = InventorySlots[CurrentInventorySlot];
 		SetCurrentItemInHands();
-		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(Controller->GetCharacter()))
-		{
-			C->SpawnCurrentWeaponInHands();
-		}
+		// if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(Controller->GetCharacter()))
+		// {
+		// 	C->SpawnCurrentWeaponInHands();
+		// }
 		return true;
 	}
 	if(InventorySlots.Num() > 1)

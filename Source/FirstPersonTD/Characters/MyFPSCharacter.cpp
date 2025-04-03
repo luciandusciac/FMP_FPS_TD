@@ -1,6 +1,7 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 #include "MyFPSCharacter.h"
 
+#include "EnemyCharacter.h"
 #include "Components/InputComponent.h"
 #include "EnhancedInputComponent.h"
 #include "TimerManager.h"
@@ -648,17 +649,19 @@ void AMyFPSCharacter::ThrowWeapon()
 			MeshComponent->AddImpulse(GetActorForwardVector() * 50.f + FVector(0.f, 0.f, 400.f));
 			MeshComponent->SetWorldRotation(FRotator(0, 0, 0));
 			//CurrentItemInHands = nullptr;
-			
 		}
-		
-		CurrentItemInHands->Destroy();
-		CurrentItemInHands = nullptr;
+
+		if (CurrentItemInHands->Destroy())
+		{
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item destroyed!"));
+		}
+		//CurrentItemInHands = nullptr;
 		Inventory->ThrowItem();
 		
 		if (Inventory->GetNumberOfItems() > 0)
 		{
 			SpawnCurrentWeaponInHands();
-			
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("One more item in inventory!"));
 		}
 			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
 			//CurrentItemInHands->SetActorRotation(GetActorRotation());
@@ -818,7 +821,7 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 		return;
 	}
 
-	if (OtherActor->GetOwner() != nullptr)
+	if (OtherActor->GetOwner() && OtherActor->GetOwner()->IsA(AEnemyCharacter::StaticClass()))
 		return;
 	
 	if(AInventoryItem* It = Cast<AInventoryItem>(OtherActor))

@@ -6,6 +6,7 @@
 #include "Components/SphereComponent.h"
 //#include "FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "Engine/World.h"
+#include "FirstPersonTD/Characters/EnemyCharacter.h"
 #include "FirstPersonTD/Characters/MyFPSCharacter.h"
 #include "FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
 #include "GameFramework/ProjectileMovementComponent.h"
@@ -127,6 +128,10 @@ void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 					Ch->HUD->SetHealth(Ch->CurrentHealth, Ch->MaxHealth);
 				}
 			}
+		}
+		else if (AEnemyCharacter* En = Cast<AEnemyCharacter>(OtherActor))
+		{
+			En->TakeDamage(DamageAmount);
 		}
 		
 		this->Destroy();

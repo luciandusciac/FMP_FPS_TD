@@ -7,7 +7,7 @@
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 
 
-AEnemyCharacter::AEnemyCharacter()
+AEnemyCharacter::AEnemyCharacter() : CurrentHealth(100.f)
 {
 	PrimaryActorTick.bCanEverTick = true;
 
@@ -42,6 +42,19 @@ void AEnemyCharacter::Shoot()
 		GetWorldTimerManager().SetTimer(ShootTimerHandle, this, &AEnemyCharacter::ResetShoot, 1.5f, false);
 	}
 	//Cast<ABaseWeapon>(Weapon)->Shoot();
+}
+
+void AEnemyCharacter::TakeDamage(float DamageAmount)
+{
+	CurrentHealth -= DamageAmount;
+	if (CurrentHealth <= 0)
+		Die();
+}
+
+void AEnemyCharacter::Die()
+{
+	this->Weapon->Destroy();
+	this->Destroy();
 }
 
 void AEnemyCharacter::BeginPlay()

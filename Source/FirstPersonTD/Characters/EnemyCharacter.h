@@ -29,9 +29,12 @@ public:
 	UBehaviorTree* GetBehaviorTree() const;
 
 	APatrolPath* GetPatrolPath() const;
+
+	float CurrentHealth;
 	
 	void Shoot();	
-
+	void TakeDamage(float DamageAmount);
+	void Die();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gun", meta= (AllowPrivateAccess = "true"))
 	TObjectPtr<ABaseWeapon> Weapon;

@@ -29,19 +29,18 @@ public:
 	UBehaviorTree* GetBehaviorTree() const;
 
 	APatrolPath* GetPatrolPath() const;
-
-	//ARifle* GetWeapon() const { return Weapon; }
-	//void SetWeapon(ABaseWeapon* NewWeapon) { Weapon = NewWeapon; }
-	void Shoot() const;
+	
+	void Shoot();	
 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gun", meta= (AllowPrivateAccess = "true"))
 	TObjectPtr<ABaseWeapon> Weapon;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gun", meta= (AllowPrivateAccess = "true"))
+	FVector WeaponOffset;
 	
 protected:
 	void BeginPlay() override;
-	
-	
 
 private:
 	UPROPERTY()
@@ -55,21 +54,7 @@ private:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI", meta= (AllowPrivateAccess = "true"))
 	APatrolPath* PatrolPath;
 
-	
-
-	
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
-	// UBehaviorTree* BehaviorTree;
-	//
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
-	// UAIPerceptionComponent* PerceptionComponent;
-	//
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
-	// UAISenseConfig_Sight* SightConfig;
-	//
-	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Enemy AI")
-	// UAISenseConfig_Hearing* HearingConfig;
-	//
-	// UFUNCTION()
-	// void OnTargetDetected(AActor* Actor, FAIStimulus Stimulus);
+	bool bCanShoot = true;
+	FTimerHandle ShootTimerHandle;
+	void ResetShoot();
 };

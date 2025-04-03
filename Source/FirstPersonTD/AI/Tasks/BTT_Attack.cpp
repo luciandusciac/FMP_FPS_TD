@@ -20,7 +20,7 @@ EBTNodeResult::Type UBTT_Attack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, 
 	}
 
 	auto const* const AIController = Cast<AEnemyController>(OwnerComp.GetAIOwner());
-	auto const* const Char = Cast<AEnemyCharacter>(AIController->GetPawn());
+	auto* Char = Cast<AEnemyCharacter>(AIController->GetPawn());
 
 	if (AIController && Char && Char->Weapon)
 		Char->Shoot();

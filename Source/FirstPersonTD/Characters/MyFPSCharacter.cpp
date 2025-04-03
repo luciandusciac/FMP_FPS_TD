@@ -746,6 +746,8 @@ void AMyFPSCharacter::SpawnCurrentWeaponInHands()
 	AInventoryItem* SpawnedWeapon = GetWorld()->SpawnActor<AInventoryItem>(WeaponClass, GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
 	CurrentItemInHands = SpawnedWeapon;
 
+	SpawnedWeapon->SetOwner(this);
+
 	if (!SpawnedWeapon)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Failed to spawn weapon!"));
@@ -815,6 +817,9 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 		UE_LOG(LogTemp, Error, TEXT("Inventory is NULL! Cannot add item."));
 		return;
 	}
+
+	if (OtherActor->GetOwner() != nullptr)
+		return;
 	
 	if(AInventoryItem* It = Cast<AInventoryItem>(OtherActor))
 	{
@@ -847,6 +852,8 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 				// MeshComp->SetRelativeRotation(WeaponRotation);
 			
 				MeshComp->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
+
+				OtherActor->SetOwner(this);
 			}
 
 			//CurrentItemInHands = OtherActor;

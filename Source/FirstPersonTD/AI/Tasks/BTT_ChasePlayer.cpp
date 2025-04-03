@@ -20,7 +20,13 @@ EBTNodeResult::Type UBTT_ChasePlayer::ExecuteTask(UBehaviorTreeComponent& OwnerC
 	{
 		auto const PlayerLocation = OwnerComp.GetBlackboardComponent()->GetValueAsVector(GetSelectedBlackboardKey());
 
-		UAIBlueprintHelperLibrary::SimpleMoveToLocation(AIController, PlayerLocation);
+		FVector const AICharacterLocation = AIController->GetPawn()->GetActorLocation();
+		FRotator const LookAtRotation = (PlayerLocation - AICharacterLocation).Rotation();
+		AIController->GetPawn()->SetActorRotation(LookAtRotation);
+		
+		
+		UAIBlueprintHelperLibrary::SimpleMoveToLocation(AIController, PlayerLocation / 3);
+		
 
 		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
 		return EBTNodeResult::Succeeded;

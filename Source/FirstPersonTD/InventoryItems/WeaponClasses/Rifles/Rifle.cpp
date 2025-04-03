@@ -5,6 +5,7 @@
 
 #include "Components/StaticMeshComponent.h"
 #include "Engine/World.h"
+#include "FirstPersonTD/Characters/EnemyCharacter.h"
 #include "FirstPersonTD/Characters/MyFPSCharacter.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -54,35 +55,74 @@ void ARifle::Shoot()
 			// AMyFPSCharacter* Player = Cast<AMyFPSCharacter>(GetOwner());
 			// if (!Player || !Player->GetController()) return;
 
+			
 			if(AFPSPlayerController* PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
 			{
 				if (!PC) return;
-				FVector Start, Direction;
-				FVector2D ViewportSize;
-				int32 ViewportSizeX, ViewportSizeY;
-				PC->GetViewportSize(ViewportSizeX, ViewportSizeY);
-				ViewportSize.X = static_cast<float>(ViewportSizeX);
-				ViewportSize.Y = static_cast<float>(ViewportSizeY);
-				PC->DeprojectScreenPositionToWorld(
-					ViewportSize.X * 0.5f,
-					ViewportSize.Y * 0.5f,
-					Start,
-					Direction
-				);
-				FVector End = Start + (Direction * 10000.f); // Target position far ahead
-			
-				// Spawn Projectile
-				if (WeaponBullet)
-				{
-					FVector MuzzleLocation = BulletOrigin->GetComponentLocation(); // Get Gun's Muzzle Position
-					FRotator AimDirection = (End - MuzzleLocation).Rotation(); // Aim at target
 
-					ABaseProjectile* Projectile = GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, MuzzleLocation, AimDirection);
-					if (Projectile)
+				if (this->GetOwner() == PC->GetCharacter())
+				{
+					FVector Start, Direction;
+					FVector2D ViewportSize;
+					int32 ViewportSizeX, ViewportSizeY;
+					PC->GetViewportSize(ViewportSizeX, ViewportSizeY);
+					ViewportSize.X = static_cast<float>(ViewportSizeX);
+					ViewportSize.Y = static_cast<float>(ViewportSizeY);
+					PC->DeprojectScreenPositionToWorld(
+						ViewportSize.X * 0.5f,
+						ViewportSize.Y * 0.5f,
+						Start,
+						Direction
+					);
+					FVector End = Start + (Direction * 10000.f); // Target position far ahead
+			
+					// Spawn Projectile
+					if (WeaponBullet)
 					{
-						Projectile->SetOwner(this);
+						FVector MuzzleLocation = BulletOrigin->GetComponentLocation(); // Get Gun's Muzzle Position
+						FRotator AimDirection = (End - MuzzleLocation).Rotation(); // Aim at target
+
+						ABaseProjectile* Projectile = GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, MuzzleLocation, AimDirection);
+						if (Projectile)
+						{
+							Projectile->SetOwner(this);
+						}
 					}
 				}
+				else
+				{
+					FVector MuzzleLocation = BulletOrigin->GetComponentLocation(); // Get Gun's Muzzle Position
+					FRotator AimDirection = BulletOrigin->GetComponentRotation(); // Aim at target
+					ABaseProjectile* Projectile = GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, MuzzleLocation, AimDirection);
+				}
+
+				
+				// FVector Start, Direction;
+				// FVector2D ViewportSize;
+				// int32 ViewportSizeX, ViewportSizeY;
+				// PC->GetViewportSize(ViewportSizeX, ViewportSizeY);
+				// ViewportSize.X = static_cast<float>(ViewportSizeX);
+				// ViewportSize.Y = static_cast<float>(ViewportSizeY);
+				// PC->DeprojectScreenPositionToWorld(
+				// 	ViewportSize.X * 0.5f,
+				// 	ViewportSize.Y * 0.5f,
+				// 	Start,
+				// 	Direction
+				// );
+				// FVector End = Start + (Direction * 10000.f); // Target position far ahead
+				//
+				// // Spawn Projectile
+				// if (WeaponBullet)
+				// {
+				// 	FVector MuzzleLocation = BulletOrigin->GetComponentLocation(); // Get Gun's Muzzle Position
+				// 	FRotator AimDirection = (End - MuzzleLocation).Rotation(); // Aim at target
+				//
+				// 	ABaseProjectile* Projectile = GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, MuzzleLocation, AimDirection);
+				// 	if (Projectile)
+				// 	{
+				// 		Projectile->SetOwner(this);
+				// 	}
+				// }
 			}
 
 
@@ -121,6 +161,21 @@ void ARifle::Shoot()
 
 void ARifle::Reload()
 {
+	// if(AFPSPlayerController* PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	// {
+	// 	if (!PC) return;
+	//
+	// 	if (this->GetOwner() != PC->GetCharacter())
+	// 	{
+	// 		if (AEnemyCharacter* En = Cast<AEnemyCharacter>(this->GetOwner()))
+	// 		{
+	// 			if (USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(En->GetMesh()->GetAnimInstance()))
+	// 			{
+	// 				AnimInstance->bIsReloading = true;
+	// 			}
+	// 		}
+	// 	}
+	// }
 	Super::Reload();
 }
 

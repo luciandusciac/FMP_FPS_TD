@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "Blueprint/UserWidget.h"
+#include "Components/Image.h"
 #include "Components/TextBlock.h"
 #include "PlayerHUD.generated.h"
 
@@ -47,11 +48,11 @@ public:
 	UPROPERTY()
 	UUserWidget* DamageBuffWidget;
 
-	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> SniperScopeWidgetClass;
+	//UPROPERTY(EditAnywhere)
+	//TSubclassOf<UUserWidget> SniperScopeWidgetClass;
 
-	UPROPERTY()
-	UUserWidget* SniperScopeWidget;
+	UPROPERTY(EditAnywhere, meta=(BindWidget))
+	UImage* SniperScopeWidget;
 
 	void SetHealth(float Health, float MaxHealth);
 	void SetKnifeThrowProgress(float Time, float MaxTime);

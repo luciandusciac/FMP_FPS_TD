@@ -11,6 +11,8 @@
 #include "GameFramework/Controller.h"
 #include "Net/UnrealNetwork.h"
 #include "../Source/FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
+#include "Blueprint/WidgetLayoutLibrary.h"
+#include "Components/CanvasPanelSlot.h"
 #include "Components/CapsuleComponent.h"
 #include "Components/ProgressBar.h"
 #include "EntitySystem/MovieSceneEntitySystemRunner.h"
@@ -73,33 +75,35 @@ void AMyFPSCharacter::BeginPlay()
 	if (HUDClass)
 	{
 		AFPSPlayerController* PlayerController = Cast<AFPSPlayerController>(GetController());
+		
 		if (PlayerController)
 		{
 			HUD = CreateWidget<UPlayerHUD>(PlayerController, HUDClass);
 			if (HUD)
 			{
-				HUD->AddToPlayerScreen();
+				HUD->AddToPlayerScreen(10);
 				HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Hidden);
+				HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
+
+		// if (HUD->SniperScopeWidgetClass)
+		// {
+		// 	HUD->SniperScopeWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->SniperScopeWidgetClass);
+		// 	if (HUD->SniperScopeWidget)
+		// 	{
+		// 		HUD->SniperScopeWidget->AddToPlayerScreen(-1);
+		// 		HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Hidden);
+		// 	}
+		// }
 
 		if (HUD->CrosshairWidgetClass)
 		{
 			HUD->CrosshairWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->CrosshairWidgetClass);
 			if (HUD->CrosshairWidget)
 			{
-				HUD->CrosshairWidget->AddToViewport();
+				HUD->CrosshairWidget->AddToPlayerScreen();
 				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
-			}
-		}
-
-		if (HUD->SniperScopeWidgetClass)
-		{
-			HUD->SniperScopeWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->SniperScopeWidgetClass);
-			if (HUD->SniperScopeWidget)
-			{
-				HUD->SniperScopeWidget->AddToViewport();
-				HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
 	}
@@ -420,14 +424,20 @@ void AMyFPSCharacter::Aim()
 			Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 			
 			
-			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
 
 			if (W->bHasScope)
 			{
 				if (HUD->SniperScopeWidget && !HUD->SniperScopeWidget->IsVisible())
 				{
+					// HUD->SniperScopeWidget->RemoveFromParent();
+					// HUD->SniperScopeWidget->AddToViewport(-1);
 					HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Visible);
 				}
+			}
+			else
+			{
+				// INFO: Aiming without scope
+				Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
 			}
 		}
 	}
@@ -655,7 +665,7 @@ void AMyFPSCharacter::ThrowWeapon()
 		{
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item destroyed!"));
 		}
-		//CurrentItemInHands = nullptr;
+		CurrentItemInHands = nullptr;
 		Inventory->ThrowItem();
 		
 		if (Inventory->GetNumberOfItems() > 0)

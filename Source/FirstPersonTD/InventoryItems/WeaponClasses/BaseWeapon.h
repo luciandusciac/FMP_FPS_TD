@@ -55,6 +55,12 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	class UStaticMeshComponent* Mesh;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	USceneComponent* ShellOrigin;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TSubclassOf<AActor> BulletShell;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
 	USceneComponent* AimOrigin;
@@ -62,8 +68,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
 	TSubclassOf<ABaseProjectile> WeaponBullet;
 	
-	//INFO: Variable to keep track if the weapon has a scope
+	// INFO: Variable to keep track if the weapon has a scope
 	bool bHasScope;
+
+	// INFO: Variable to keep track if the weapon has a physical magazine
+	bool bHasMagazine;
 
 #pragma region WeaponFunctions
 

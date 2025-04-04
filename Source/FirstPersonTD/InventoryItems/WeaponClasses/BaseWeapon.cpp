@@ -30,6 +30,9 @@ ABaseWeapon::ABaseWeapon()
 	AimOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("AimOrigin"));
 	AimOrigin->SetupAttachment(Mesh);
 
+	ShellOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("ShellOrigin"));
+	ShellOrigin->SetupAttachment(Mesh);
+
 	bIsShooting = false;
 }
 
@@ -58,34 +61,44 @@ void ABaseWeapon::Shoot()
 	{
 		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(controller->GetCharacter()))
 		{
-			//C->AnimationInstance->bIsReloading = false;
 			C->UpdateAmmoUI();
 		}
 	}
-	// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-	// {
-	// 	//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-	// 	if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-	// 	{
-	// 		controller->Shoot();
-	// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is shooting"));
-	// 		//C->Shoot();
-	// 	}
-	// }
-	// if (CurrentAmmo > 0)
- //    {
- //     	CurrentAmmo--;
- //    }
- //    else if (CurrentAmmo == 0 && ReserveAmmo > 0)
- //    {
- //     	Reload();
- //    }
- //    else
- //    {
- //     	//TODO: Play error sound
- //     	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No ammo"));
- //    	
- //    }
+
+	// INFO: Instantiate bullet shell
+	 if (BulletShell && ShellOrigin)
+	 {
+	 	FActorSpawnParameters SpawnParams;
+	 	SpawnParams.Owner = this;
+	 	SpawnParams.Instigator = GetInstigator();
+	
+	 	FVector SpawnLocation = ShellOrigin->GetComponentLocation();
+	 	FRotator SpawnRotation = ShellOrigin->GetComponentRotation();
+	 	AActor* SpawnedBulletShell = GetWorld()->SpawnActor<AActor>(BulletShell, SpawnLocation, SpawnRotation, SpawnParams);
+	
+	 	if (SpawnedBulletShell)
+	 	{
+	 		if (UStaticMeshComponent* MeshComponent = SpawnedBulletShell->FindComponentByClass<UStaticMeshComponent>())
+	 		{
+	 			//MeshComponent->SetSimulatePhysics(true);
+	 			//MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	 			//MeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
+	 			//MeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
+	
+	 			FVector LocalImpulse = FVector(200.f, 50.0f, 600.0f);
+	 			
+	 			FVector WorldImpulse = ShellOrigin->GetComponentTransform().TransformVector(LocalImpulse * 2);
+	 			
+	 			MeshComponent->AddImpulse(WorldImpulse);
+	
+	 			
+	 			//MeshComponent->AddImpulse(FVector(150.f, 0.0f, 100.0f));
+	 		}
+	 	}
+	}
+
+	
+	//TODO: Play shoot sound
 }
 
 void ABaseWeapon::OnShoot()

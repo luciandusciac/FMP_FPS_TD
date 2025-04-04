@@ -40,9 +40,6 @@ void AShotgun::Tick(float DeltaTime)
 
 void AShotgun::Shoot()
 {
-	Super::Shoot();
-
-
 	if (!bIsShooting)
 	{
 		if (CurrentAmmo > 0)
@@ -50,6 +47,8 @@ void AShotgun::Shoot()
 			CurrentAmmo--;
 			bIsShooting = true;
 
+			Super::Shoot();
+			
 			FActorSpawnParameters SpawnParams;
 			SpawnParams.Owner = this;
 			SpawnParams.Instigator = GetInstigator();
@@ -85,7 +84,7 @@ void AShotgun::Shoot()
 				GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, MuzzleLocation, FinalShotRotation, SpawnParams);
 			}
 
-			Super::Shoot();
+			
 
 			if (CurrentAmmo == 0)
 				Reload();

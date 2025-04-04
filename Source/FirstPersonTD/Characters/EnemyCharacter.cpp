@@ -4,6 +4,8 @@
 #include "EnemyCharacter.h"
 
 
+#include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 
 
@@ -53,8 +55,22 @@ void AEnemyCharacter::TakeDamage(float DamageAmount)
 
 void AEnemyCharacter::Die()
 {
-	this->Weapon->Destroy();
-	this->Destroy();
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetSimulatePhysics(true);
+	
+	FVector Impulse = FVector(0, 0, 1000); 
+	GetMesh()->AddImpulse(Impulse, NAME_None, true);
+	
+	SetLifeSpan(10.0f);
+
+	this->Weapon->Mesh->SetSimulatePhysics(true);
+	this->Weapon->Mesh->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	this->Weapon->Mesh->SetCollisionProfileName(TEXT("Ragdoll"));
+	
+	this->Weapon->SetOwner(nullptr);
+	
+	//this->Weapon->Destroy();
+	//this->Destroy();
 }
 
 void AEnemyCharacter::BeginPlay()

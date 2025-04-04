@@ -14,6 +14,7 @@ ASniper::ASniper()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	bHasScope = true;
+	bHasMagazine = true;
 }
 
 void ASniper::BeginPlay()

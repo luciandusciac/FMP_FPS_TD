@@ -12,6 +12,7 @@
 APistol::APistol()
 {
 	PrimaryActorTick.bCanEverTick = true;
+	bHasMagazine = true;
 }
 
 void APistol::BeginPlay()

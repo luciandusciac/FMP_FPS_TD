@@ -33,6 +33,12 @@ ABaseWeapon::ABaseWeapon()
 	ShellOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("ShellOrigin"));
 	ShellOrigin->SetupAttachment(Mesh);
 
+	//if (bHasMagazine)
+	//{
+		MagazineOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("MagazineOrigin"));
+		MagazineOrigin->SetupAttachment(Mesh);
+	//}
+
 	bIsShooting = false;
 }
 
@@ -80,19 +86,12 @@ void ABaseWeapon::Shoot()
 	 	{
 	 		if (UStaticMeshComponent* MeshComponent = SpawnedBulletShell->FindComponentByClass<UStaticMeshComponent>())
 	 		{
-	 			//MeshComponent->SetSimulatePhysics(true);
-	 			//MeshComponent->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	 			//MeshComponent->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Block);
-	 			//MeshComponent->SetCollisionProfileName(TEXT("PhysicsActor"));
 	
 	 			FVector LocalImpulse = FVector(200.f, 50.0f, 600.0f);
 	 			
 	 			FVector WorldImpulse = ShellOrigin->GetComponentTransform().TransformVector(LocalImpulse * 2);
 	 			
 	 			MeshComponent->AddImpulse(WorldImpulse);
-	
-	 			
-	 			//MeshComponent->AddImpulse(FVector(150.f, 0.0f, 100.0f));
 	 		}
 	 	}
 	}
@@ -114,24 +113,31 @@ void ABaseWeapon::Reload()
 		//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
 		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
 		{
-			//C->Reload();
-			// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOwner()))
-			// {
-			// 	C->UpdateAmmoUI();
-			// }
-			
-			
 			if(ReserveAmmo > 0)
 			{
 				GetWorldTimerManager().SetTimer(ReloadTimerHandle, this, &ABaseWeapon::OnReload, ReloadTime, false);
-				//CurrentAmmo = ClipSize;
 				ReserveAmmo--;
 				if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(controller->GetCharacter()))
 				{
 					C->AnimationInstance->bIsReloading = true;
-					//C->UpdateAmmoUI();
 				}
-				//controller->Reload();
+
+				// INFO: Spawn magazine
+				if (bHasMagazine)
+				{
+					if (MagazineOrigin && Magazine)
+					{
+						FActorSpawnParameters SpawnParams;
+						SpawnParams.Owner = this;
+						SpawnParams.Instigator = GetInstigator();
+	
+						FVector SpawnLocation = MagazineOrigin->GetComponentLocation();
+						FRotator SpawnRotation = MagazineOrigin->GetComponentRotation();
+
+						AActor* SpawnedMagazine = GetWorld()->SpawnActor<AActor>(Magazine, SpawnLocation, SpawnRotation, SpawnParams);
+						
+					}
+				}
 			}
 			else
 			{

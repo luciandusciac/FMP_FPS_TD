@@ -61,6 +61,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	TSubclassOf<AActor> BulletShell;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	USceneComponent* MagazineOrigin;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	TSubclassOf<AActor> Magazine;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
 	USceneComponent* AimOrigin;

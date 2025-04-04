@@ -15,6 +15,7 @@ ARifle::ARifle()
 {
 	PrimaryActorTick.bCanEverTick = true;
 
+	bHasMagazine = true;
 	
 }
 
@@ -46,13 +47,9 @@ void ARifle::Shoot()
 		
 		if (CurrentAmmo > 0)
 		{
-
-
-
 			CurrentAmmo--;
 
 			bIsShooting = true;
-
 
 			//
 			// AMyFPSCharacter* Player = Cast<AMyFPSCharacter>(GetOwner());
@@ -99,24 +96,6 @@ void ARifle::Shoot()
 					ABaseProjectile* Projectile = GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, MuzzleLocation, AimDirection);
 				}
 			}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 			
 			// FActorSpawnParameters SpawnParams;
 			// SpawnParams.Owner = this;

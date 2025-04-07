@@ -74,69 +74,74 @@ void AFragGrenade::OnExplode()
 {
 
 	//Super::OnExplode();
-
-	
-	
-	TArray<FOverlapResult> OverlapResults;
-	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this);
-	
-	bool bHasHit = GetWorld()->OverlapMultiByChannel(
-		OverlapResults,
-		GetActorLocation(),
-		FQuat::Identity,
-		ECC_WorldDynamic,
-		FCollisionShape::MakeSphere(300.f), // radius of the explosion, may need some tweaking
-		CollisionParams
-	);
-	
-	if (bHasHit)
+	if (UStaticMeshComponent* MeshComp = this->FindComponentByClass<UStaticMeshComponent>())
 	{
-		// for (FOverlapResult Result : OverlapResults)
-		// {
-		// 	AActor* OverlappingActor = Result.GetActor();
-		// 	if (OverlappingActor && OverlappingActor != this)
-		// 	{
-		// 		UE_LOG(LogTemp, Warning, TEXT("Overlapping Actor: %s"), *OverlappingActor->GetName());
-		// 		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(OverlappingActor))
-		// 		{
-		// 			C->TakeDamage(60.f);
-		// 		}
-		// 		else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OverlappingActor))
-		// 		{
-		// 			Enemy->TakeDamage(60.f);
-		// 		}
-		// 	}
-		// }
+		TArray<FOverlapResult> OverlapResults;
+		FCollisionQueryParams CollisionParams;
+		CollisionParams.AddIgnoredActor(this);
 
-		TSet<AActor*> DamagedActors;
-
-		for (FOverlapResult Result : OverlapResults)
+		bool bHasHit = GetWorld()->OverlapMultiByChannel(
+			OverlapResults,
+			MeshComp->GetComponentLocation(),
+			FQuat::Identity,
+			ECC_WorldDynamic,
+			FCollisionShape::MakeSphere(300.f), // radius of the explosion, may need some tweaking
+			CollisionParams
+		);
+	
+	
+		if (bHasHit)
 		{
-			AActor* OverlappingActor = Result.GetActor();
-			if (OverlappingActor && OverlappingActor != this && !DamagedActors.Contains(OverlappingActor))
+			// for (FOverlapResult Result : OverlapResults)
+			// {
+			// 	AActor* OverlappingActor = Result.GetActor();
+			// 	if (OverlappingActor && OverlappingActor != this)
+			// 	{
+			// 		UE_LOG(LogTemp, Warning, TEXT("Overlapping Actor: %s"), *OverlappingActor->GetName());
+			// 		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(OverlappingActor))
+			// 		{
+			// 			C->TakeDamage(60.f);
+			// 		}
+			// 		else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OverlappingActor))
+			// 		{
+			// 			Enemy->TakeDamage(60.f);
+			// 		}
+			// 	}
+			// }
+
+			TSet<AActor*> DamagedActors;
+
+			for (FOverlapResult Result : OverlapResults)
 			{
-				DamagedActors.Add(OverlappingActor);
-
-				UE_LOG(LogTemp, Warning, TEXT("Overlapping Actor: %s"), *OverlappingActor->GetName());
-
-				if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(OverlappingActor))
+				AActor* OverlappingActor = Result.GetActor();
+				if (OverlappingActor && OverlappingActor != this && !DamagedActors.Contains(OverlappingActor))
 				{
-					C->TakeDamage(60.f);
-				}
-				else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OverlappingActor))
-				{
-					Enemy->TakeDamage(60.f);
+					DamagedActors.Add(OverlappingActor);
+
+					UE_LOG(LogTemp, Warning, TEXT("Overlapping Actor: %s"), *OverlappingActor->GetName());
+
+					if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(OverlappingActor))
+					{
+						C->TakeDamage(60.f);
+					}
+					else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OverlappingActor))
+					{
+						Enemy->TakeDamage(60.f);
+					}
 				}
 			}
 		}
+	
+		GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
+
+		//if (UStaticMeshComponent* MeshComp = this->FindComponentByClass<UStaticMeshComponent>())
+		//{
+			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), MeshComp->GetComponentLocation());
+		//}
+	
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Frag grenade exploded!"));
+		this->Destroy();
 	}
-	
-	GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), this->GetActorLocation());
-	
-	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Frag grenade exploded!"));
-	this->Destroy();
 }
 
 void AFragGrenade::Use()

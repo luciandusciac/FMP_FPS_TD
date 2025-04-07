@@ -42,7 +42,12 @@ void ASmokeGrenade::Explode()
 void ASmokeGrenade::OnExplode()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Smoke Explosion"));
-	UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), GetActorLocation());
+
+	if (UStaticMeshComponent* MeshComp = this->FindComponentByClass<UStaticMeshComponent>())
+	{
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), MeshComp->GetComponentLocation());
+		
+	}
 
 	this->Destroy();
 }

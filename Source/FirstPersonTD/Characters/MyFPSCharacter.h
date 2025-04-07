@@ -84,6 +84,15 @@ public:
 	float DeathTime;
 	void OnDeath();
 
+	void Respawn();
+	FVector StartDeathCamLocation;
+	FVector EndDeathCamLocation;
+	FRotator StartDeathCamRotation;
+	FRotator EndDeathCamRotation;
+	float CameraLerpAlpha;
+	bool bIsDeathCameraMoving;
+	FVector PlayerStartLocation;
+
 	void Reload();
 	float ReloadingTime;
 	void OnReload();

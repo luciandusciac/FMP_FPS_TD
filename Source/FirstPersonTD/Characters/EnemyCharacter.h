@@ -35,6 +35,7 @@ public:
 	void Shoot();	
 	void TakeDamage(float DamageAmount);
 	void Die();
+	void Respawn();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gun", meta= (AllowPrivateAccess = "true"))
 	TObjectPtr<ABaseWeapon> Weapon;

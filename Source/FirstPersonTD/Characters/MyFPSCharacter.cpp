@@ -32,6 +32,7 @@
 #include "FirstPersonTD/Pickups/HealthPickup.h"
 #include "FirstPersonTD/Projectiles/RifleBullet.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 class ABaseWeapon;
 
@@ -97,7 +98,7 @@ void AMyFPSCharacter::BeginPlay()
 		// 	}
 		// }
 
-		if (HUD->CrosshairWidgetClass)
+		if (HUD && HUD->CrosshairWidgetClass)
 		{
 			HUD->CrosshairWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->CrosshairWidgetClass);
 			if (HUD->CrosshairWidget)
@@ -120,6 +121,8 @@ void AMyFPSCharacter::BeginPlay()
 	{
 		GEngine->Exec(GetWorld(), TEXT("r.SetNearClipPlane 1"));
 	}
+
+	PlayerStartLocation = GetActorLocation();
 }
 
 void AMyFPSCharacter::Tick(float DeltaTime)
@@ -154,6 +157,24 @@ void AMyFPSCharacter::Tick(float DeltaTime)
 		}
 		KnifeThrowElapsedTime = 0.f;
 		HUD->SetKnifeThrowProgress(KnifeThrowElapsedTime, 1.4f);
+	}
+
+
+	if (bIsDeathCameraMoving)
+	{
+		CameraLerpAlpha += GetWorld()->GetDeltaSeconds() / 2.0f; // Adjust timing here
+		CameraLerpAlpha = FMath::Clamp(CameraLerpAlpha, 0.f, 1.f);
+
+		FVector NewLocation = FMath::Lerp(StartDeathCamLocation, EndDeathCamLocation, CameraLerpAlpha);
+		FRotator NewRotation = FMath::Lerp(StartDeathCamRotation, EndDeathCamRotation, CameraLerpAlpha);
+
+		Camera->SetWorldLocation(NewLocation);
+		Camera->SetWorldRotation(NewRotation);
+
+		if (CameraLerpAlpha >= 1.f)
+		{
+			bIsDeathCameraMoving = false;
+		}
 	}
 }
 
@@ -462,11 +483,66 @@ void AMyFPSCharacter::StopAiming()
 
 void AMyFPSCharacter::Die()
 {
-	GetMesh()->PlayAnimation(DeathAnimation, false);
+	GetMesh()->SetCollisionProfileName(TEXT("Ragdoll"));
+	GetMesh()->SetSimulatePhysics(true);
+	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
+
+
+	Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	
+	StartDeathCamLocation = Camera->GetComponentLocation();
+	EndDeathCamLocation = StartDeathCamLocation - Camera->GetForwardVector() * 300.f + FVector(0.f, 0.f, 100.f);
+	StartDeathCamRotation = Camera->GetComponentRotation();
+	EndDeathCamRotation = (GetActorLocation() - EndDeathCamLocation).Rotation();
+	CameraLerpAlpha = 0.f;
+	bIsDeathCameraMoving = true;
+	
+	FTimerHandle RespawnTimer;
+	GetWorldTimerManager().SetTimer(RespawnTimer, this, &AMyFPSCharacter::Respawn, 3.0f, false);
+	//GetMesh()->PlayAnimation(DeathAnimation, false);
 }
 
 void AMyFPSCharacter::OnDeath()
 {
+}
+
+void AMyFPSCharacter::Respawn()
+{
+	FName CurrentLevel = *UGameplayStatics::GetCurrentLevelName(GetWorld());
+	UGameplayStatics::OpenLevel(this, CurrentLevel);
+	// CurrentHealth = 100.f;
+	// GetMesh()->SetSimulatePhysics(false);
+	// GetMesh()->SetCollisionProfileName(TEXT("Pawn"));
+	// GetMesh()->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	//
+	// // Reset character state
+	// CurrentHealth = MaxHealth; // Assuming you have a MaxHealth variable
+	//
+	// // Re-enable input if needed
+	// AController* PlayerController = GetController();
+	// if (PlayerController)
+	// {
+	// 	EnableInput(Cast<APlayerController>(PlayerController));
+	// }
+	//
+	// // Reset movement
+	// GetCharacterMovement()->DisableMovement();
+	// SetActorLocation(PlayerStartLocation);
+	// //GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	//
+	// // Reset mesh pose
+	// GetMesh()->SetAllBodiesSimulatePhysics(false);
+	// GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	// GetMesh()->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
+	// GetMesh()->SetRelativeLocation(FVector::ZeroVector);
+	// GetMesh()->SetRelativeRotation(FRotator::ZeroRotator);
+	//
+	// // Reset camera
+	// Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Head"));
+	// Camera->SetRelativeLocation(FVector::ZeroVector);
+	// //Camera->SetRelativeRotation(FRotator::ZeroRotator);
+	
+	
 }
 
 void AMyFPSCharacter::Reload()

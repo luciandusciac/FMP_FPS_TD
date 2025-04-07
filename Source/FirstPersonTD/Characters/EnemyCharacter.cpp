@@ -6,6 +6,7 @@
 
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
 
 
@@ -68,9 +69,18 @@ void AEnemyCharacter::Die()
 	this->Weapon->Mesh->SetCollisionProfileName(TEXT("Ragdoll"));
 	
 	this->Weapon->SetOwner(nullptr);
+
+	FTimerHandle RespawnTimer;
+	GetWorldTimerManager().SetTimer(RespawnTimer, this, &AEnemyCharacter::Respawn, 3.0f, false);
 	
 	//this->Weapon->Destroy();
 	//this->Destroy();
+}
+
+void AEnemyCharacter::Respawn()
+{
+	FName CurrentLevel = *UGameplayStatics::GetCurrentLevelName(GetWorld());
+	UGameplayStatics::OpenLevel(this, CurrentLevel);
 }
 
 void AEnemyCharacter::BeginPlay()
@@ -81,6 +91,8 @@ void AEnemyCharacter::BeginPlay()
 
 	Weapon = GetWorld()->SpawnActor<ABaseWeapon>(Weapon.GetClass(), GetActorLocation(), GetActorRotation(), SpawnParams);
 	
+	if (!Weapon)
+		return;
 	
 	Weapon->Mesh->SetSimulatePhysics(false);
 	Weapon->Mesh->SetCollisionEnabled(ECollisionEnabled::NoCollision);

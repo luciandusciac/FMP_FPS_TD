@@ -86,18 +86,48 @@ void AFragGrenade::OnExplode()
 		GetActorLocation(),
 		FQuat::Identity,
 		ECC_WorldDynamic,
-		FCollisionShape::MakeSphere(100.f),
+		FCollisionShape::MakeSphere(300.f), // radius of the explosion, may need some tweaking
 		CollisionParams
 	);
 	
 	if (bHasHit)
 	{
+		// for (FOverlapResult Result : OverlapResults)
+		// {
+		// 	AActor* OverlappingActor = Result.GetActor();
+		// 	if (OverlappingActor && OverlappingActor != this)
+		// 	{
+		// 		UE_LOG(LogTemp, Warning, TEXT("Overlapping Actor: %s"), *OverlappingActor->GetName());
+		// 		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(OverlappingActor))
+		// 		{
+		// 			C->TakeDamage(60.f);
+		// 		}
+		// 		else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OverlappingActor))
+		// 		{
+		// 			Enemy->TakeDamage(60.f);
+		// 		}
+		// 	}
+		// }
+
+		TSet<AActor*> DamagedActors;
+
 		for (FOverlapResult Result : OverlapResults)
 		{
 			AActor* OverlappingActor = Result.GetActor();
-			if (OverlappingActor && OverlappingActor != this && (Cast<AMyFPSCharacter>(OverlappingActor) || Cast<AEnemyCharacter>(OverlappingActor)))
+			if (OverlappingActor && OverlappingActor != this && !DamagedActors.Contains(OverlappingActor))
 			{
+				DamagedActors.Add(OverlappingActor);
+
 				UE_LOG(LogTemp, Warning, TEXT("Overlapping Actor: %s"), *OverlappingActor->GetName());
+
+				if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(OverlappingActor))
+				{
+					C->TakeDamage(60.f);
+				}
+				else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OverlappingActor))
+				{
+					Enemy->TakeDamage(60.f);
+				}
 			}
 		}
 	}

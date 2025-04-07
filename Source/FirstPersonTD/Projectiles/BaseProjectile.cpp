@@ -116,18 +116,18 @@ void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 		{
 			Ch->TakeDamage(DamageAmount);
 
-			if (Ch->DamageEffectWidgetClass)
-			{
-				Ch->DamageEffectWidget = CreateWidget<UUserWidget>(GetWorld(), Ch->DamageEffectWidgetClass);
-				if (Ch->DamageEffectWidget)
-				{
-					Ch->DamageEffectWidget->AddToViewport();
-					//DamageEffectWidget->Destruct();
-					GetWorldTimerManager().SetTimer(Ch->WidgetTimerHandle, [Ch]{Ch->DestroyWidget(Ch->DamageEffectWidget);}, 0.5f, false);
-
-					Ch->HUD->SetHealth(Ch->CurrentHealth, Ch->MaxHealth);
-				}
-			}
+			// if (Ch->DamageEffectWidgetClass)
+			// {
+			// 	Ch->DamageEffectWidget = CreateWidget<UUserWidget>(GetWorld(), Ch->DamageEffectWidgetClass);
+			// 	if (Ch->DamageEffectWidget)
+			// 	{
+			// 		Ch->DamageEffectWidget->AddToViewport();
+			// 		//DamageEffectWidget->Destruct();
+			// 		GetWorldTimerManager().SetTimer(Ch->WidgetTimerHandle, [Ch]{Ch->DestroyWidget(Ch->DamageEffectWidget);}, 0.5f, false);
+			//
+			// 		//Ch->HUD->SetHealth(Ch->CurrentHealth, Ch->MaxHealth);
+			// 	}
+			// }
 		}
 		else if (AEnemyCharacter* En = Cast<AEnemyCharacter>(OtherActor))
 		{

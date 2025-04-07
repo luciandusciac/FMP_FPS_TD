@@ -199,7 +199,7 @@ void AMyFPSCharacter::ThrowGrenade()
 			MeshComp->SetSimulatePhysics(true);
 			MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			MeshComp->BodyInstance.SetUseCCD(true);
-			MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
+			MeshComp->AddImpulse(GetActorForwardVector() * 1000.f + FVector(0.f, 0.f, 800.f));
 		}
 		Gr->bCanExplode = true;
 		//CurrentItemInHands->Destroy();
@@ -1040,5 +1040,20 @@ void AMyFPSCharacter::TakeDamage(float Damage)
 	CurrentHealth -= Damage;
 	if (CurrentHealth <= 0)
 		Die();
+
+	HUD->SetHealth(CurrentHealth, MaxHealth);
+
+	if (DamageEffectWidgetClass)
+	{
+		DamageEffectWidget = CreateWidget<UUserWidget>(GetWorld(), DamageEffectWidgetClass);
+		if (DamageEffectWidget)
+		{
+			DamageEffectWidget->AddToViewport();
+			//DamageEffectWidget->Destruct();
+			GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]{DestroyWidget(DamageEffectWidget);}, 0.5f, false);
+
+			//Ch->HUD->SetHealth(Ch->CurrentHealth, Ch->MaxHealth);
+		}
+	}
 }
 

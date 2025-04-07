@@ -26,5 +26,7 @@ public:
 
 	virtual void Explode() override;
 	virtual void OnExplode() override;
+
+	FTimerHandle FlashbangTimer;
 	
 };

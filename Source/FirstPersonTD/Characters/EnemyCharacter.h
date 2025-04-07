@@ -36,6 +36,7 @@ public:
 	void TakeDamage(float DamageAmount);
 	void Die();
 	void Respawn();
+	void ResetCanSeePlayer();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gun", meta= (AllowPrivateAccess = "true"))
 	TObjectPtr<ABaseWeapon> Weapon;

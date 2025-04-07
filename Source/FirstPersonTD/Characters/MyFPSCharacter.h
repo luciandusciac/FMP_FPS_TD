@@ -174,11 +174,17 @@ public:
 	UPROPERTY(EditAnywhere, Category="UI")
 	TSubclassOf<UUserWidget> HealingEffectWidgetClass;
 
+	UPROPERTY(EditAnywhere, Category="UI")
+	TSubclassOf<UUserWidget> FlashbangWidgetClass;
+	
 	UPROPERTY()
 	UUserWidget* DamageEffectWidget;
 
 	UPROPERTY()
 	UUserWidget* HealingEffectWidget;
+
+	UPROPERTY()
+	UUserWidget* FlashbangWidget;
 
 	void DestroyWidget(UUserWidget* Widget);
 

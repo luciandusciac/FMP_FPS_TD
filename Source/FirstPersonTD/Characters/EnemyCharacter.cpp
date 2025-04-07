@@ -83,6 +83,18 @@ void AEnemyCharacter::Respawn()
 	UGameplayStatics::OpenLevel(this, CurrentLevel);
 }
 
+void AEnemyCharacter::ResetCanSeePlayer()
+{
+	
+	if (AEnemyController* AIController = Cast<AEnemyController>(GetController()))
+	{
+		if (UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent())
+		{
+			BlackboardComp->SetValueAsBool(TEXT("CanSeePlayer"), true);
+		}
+	}
+}
+
 void AEnemyCharacter::BeginPlay()
 {
 	FActorSpawnParameters SpawnParams;

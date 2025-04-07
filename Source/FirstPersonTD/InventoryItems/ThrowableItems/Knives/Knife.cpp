@@ -3,6 +3,8 @@
 
 #include "Knife.h"
 
+#include "FirstPersonTD/Characters/EnemyCharacter.h"
+
 
 // Sets default values
 AKnife::AKnife()
@@ -24,4 +26,5 @@ void AKnife::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 }
+
 

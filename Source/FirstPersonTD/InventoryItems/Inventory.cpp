@@ -232,6 +232,11 @@ bool UInventory::NextItem()
 			Controller->EquipWeapon(10);  //no weapon
 
 
+		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+		{
+			if (C->HUD->CrosshairWidget->IsVisible())
+				C->HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
 		// if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(Controller->GetCharacter()))
 		// {
 		// 	C->CurrentItemInHands->Destroy();

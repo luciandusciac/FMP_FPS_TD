@@ -5,6 +5,7 @@
 
 
 #include "Components/CapsuleComponent.h"
+#include "FirstPersonTD/InventoryItems/ThrowableItems/Knives/Knife.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "Perception/AIPerceptionStimuliSourceComponent.h"
@@ -15,6 +16,8 @@ AEnemyCharacter::AEnemyCharacter() : CurrentHealth(100.f)
 	PrimaryActorTick.bCanEverTick = true;
 
 	SetUpStimulusSource();
+
+	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnComponentBeginOverlap);
 	
 	// Weapon = CreateDefaultSubobject<USceneComponent>(TEXT("Weapon"));
 	// Weapon->SetupAttachment(GetMesh(), TEXT("RightHand"));
@@ -83,18 +86,6 @@ void AEnemyCharacter::Respawn()
 	UGameplayStatics::OpenLevel(this, CurrentLevel);
 }
 
-void AEnemyCharacter::ResetCanSeePlayer()
-{
-	
-	if (AEnemyController* AIController = Cast<AEnemyController>(GetController()))
-	{
-		if (UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent())
-		{
-			BlackboardComp->SetValueAsBool(TEXT("CanSeePlayer"), true);
-		}
-	}
-}
-
 void AEnemyCharacter::BeginPlay()
 {
 	FActorSpawnParameters SpawnParams;
@@ -137,6 +128,17 @@ void AEnemyCharacter::ResetShoot()
 {
 	bCanShoot = true;
 	GetWorldTimerManager().ClearTimer(ShootTimerHandle);
+}
+
+void AEnemyCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if (OtherActor->IsA(AKnife::StaticClass()))
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Knife hit!"));
+		Die();
+		OtherActor->Destroy();
+	}
 }
 
 // void AEnemyCharacter::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)

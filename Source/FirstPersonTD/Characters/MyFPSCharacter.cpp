@@ -270,40 +270,51 @@ void AMyFPSCharacter::OnGrenadeThrown()
 
 void AMyFPSCharacter::ThrowKnife()
 {
+	// if (CurrentItemInHands->GetClass()->ImplementsInterface(UKnifeInterface::StaticClass()))
+	// {
+	// 	AKnife* Knife = GetWorld()->SpawnActor<AKnife>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
+	// 	UStaticMeshComponent* MeshComp = Knife->FindComponentByClass<UStaticMeshComponent>();
+	// 	
+	// 	if (MeshComp)
+	// 	{
+	// 		MeshComp->AddImpulse(GetActorForwardVector() * 5000.f);
+	// 	}
+	// }
 
-	//KnifeThrowElapsedTime = 0.f;
-	//bIsThrowingKnife = true;
-	
-	//HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Visible);
-	//HUD->KnifeThrowProgressBar->InvalidateLayoutAndVolatility();
-	//HUD->SetKnifeThrowProgress(0.f, KnifeThrowAnimation->GetPlayLength());
-	
-	//GetWorldTimerManager().SetTimer(KnifeProgressBarTimer, this, &AMyFPSCharacter::UpdateKnifeThrowProgress, 0.01f, true);
+	if (!CurrentItemInHands) return;
 
-	
 	if (CurrentItemInHands->GetClass()->ImplementsInterface(UKnifeInterface::StaticClass()))
 	{
-		AKnife* Knife = GetWorld()->SpawnActor<AKnife>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
-		UStaticMeshComponent* MeshComp = Knife->FindComponentByClass<UStaticMeshComponent>();
-		if (MeshComp)
+		// Deproject screen center to world direction
+		int32 ViewportX, ViewportY;
+
+		if(AFPSPlayerController* PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
 		{
-			MeshComp->AddImpulse(GetActorForwardVector() * 5000.f);
+			PC->GetViewportSize(ViewportX, ViewportY);
+
+			FVector WorldLocation;
+			FVector WorldDirection;
+			PC->DeprojectScreenPositionToWorld(ViewportX / 2.0f, ViewportY / 2.0f, WorldLocation, WorldDirection);
+
+			// Spawn the knife slightly in front of the player
+			FVector SpawnLocation = Camera->GetComponentLocation() + WorldDirection * 100.f;
+			FRotator SpawnRotation = WorldDirection.Rotation();
+
+			AKnife* Knife = GetWorld()->SpawnActor<AKnife>(CurrentItemInHands->GetClass(), SpawnLocation, SpawnRotation);
+			if (Knife)
+			{
+				if (UStaticMeshComponent* MeshComp = Knife->FindComponentByClass<UStaticMeshComponent>())
+				{
+					// Launch toward the center of screen
+					MeshComp->AddImpulse(WorldDirection * 5000.f);
+				}
+			}
 		}
 	}
-
-	
-	//Inventory->CurrentItem = nullptr;
 	
 	CurrentItemInHands->Destroy();
 	//CurrentItemInHands = nullptr;
 	Inventory->UseItem(Inventory->CurrentItem);
-
-	//if (CurrentItemInHands)
-	//	SpawnCurrentWeaponInHands();
-	
-	//Inventory->NextItem();
-	//GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnKnifeThrown, KnifeThrowAnimation->GetPlayLength(), false);
-
 }
 
 void AMyFPSCharacter::UpdateKnifeThrowProgress()
@@ -912,6 +923,7 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 	
 	if(AInventoryItem* It = Cast<AInventoryItem>(OtherActor))
 	{
+		HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
 			//INFO: Add weapon to inventory
 		if (/*(Inventory->CurrentItem == nullptr || CurrentItemInHands == nullptr)*/Inventory->GetNumberOfItems() == 0 && Inventory->AddItem(It))
 		{

@@ -36,7 +36,6 @@ public:
 	void TakeDamage(float DamageAmount);
 	void Die();
 	void Respawn();
-	void ResetCanSeePlayer();
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category="Gun", meta= (AllowPrivateAccess = "true"))
 	TObjectPtr<ABaseWeapon> Weapon;
@@ -62,4 +61,8 @@ private:
 	bool bCanShoot = true;
 	FTimerHandle ShootTimerHandle;
 	void ResetShoot();
+
+	UFUNCTION()
+	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+		UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 };

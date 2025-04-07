@@ -31,4 +31,5 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	FTransform AttachmentTransform;
+	
 };

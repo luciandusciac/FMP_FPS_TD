@@ -159,6 +159,20 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Holding")
 	FTransform WeaponTransform;
 
+#pragma region Sounds
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	class USoundBase* DeathSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	class USoundBase* TakeDamageSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	class USoundBase* PickupSound;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	class USoundBase* HealingSound;
+
+#pragma endregion
 
 #pragma region UI
 	

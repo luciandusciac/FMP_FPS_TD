@@ -268,24 +268,7 @@ bool UInventory::NextItem()
 		CurrentInventorySlot = GunValues[CurrentIndex];
 		
 		SetCurrentItemInHands();
-		// if (InventorySlots.Contains(CurrentInventorySlot)) 
-		// {
-		// 	CurrentItem = InventorySlots[CurrentInventorySlot];
-		//
-		// 	if (CurrentItem)
-		// 	{
-		// 		UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *CurrentItem->GetName());
-		// 	}
-		// 	else
-		// 	{
-		// 		UE_LOG(LogTemp, Error, TEXT("Item at slot %d is NULL!"), CurrentInventorySlot);
-		// 	}
-		// }
-		// else
-		// {
-		// 	UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
-		// 	CurrentItem = nullptr;
-		// }
+		
 		return true;
 	}
 	return false;
@@ -317,7 +300,6 @@ bool UInventory::PreviousItem()
 
 	if(InventorySlots.Num() > 1)
 	{
-
 		TArray<int> GunValues;
 		InventorySlots.GenerateKeyArray(GunValues);
 		int CurrentIndex = GunValues.Find(CurrentInventorySlot);
@@ -326,82 +308,8 @@ bool UInventory::PreviousItem()
 		
 		SetCurrentItemInHands();
 		
-		// if (InventorySlots.Contains(CurrentInventorySlot)) 
-		// {
-		// 	CurrentItem = InventorySlots[CurrentInventorySlot]; //????????????????????????????????????????????????
-		//
-		// 	if (CurrentItem)
-		// 	{
-		// 		UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *CurrentItem->GetName());
-		// 	}
-		// 	else
-		// 	{
-		// 		UE_LOG(LogTemp, Error, TEXT("Item at slot %d is NULL!"), CurrentInventorySlot);
-		// 	}
-		// }
-		// else
-		// {
-		// 	UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
-		// 	CurrentItem = nullptr;
-		// }
 		return true;
 	}
-	
-	// if(InventorySlots.Num() > 1)
-	// {
-	// 	TArray<int> Keys;
-	// 	TArray<AInventoryItem*> Items;
-	// 	//InventorySlots.GenerateKeyArray(Keys);
-	// 	InventorySlots.GenerateValueArray(Items);
-	//
-	// 	//int CurrentIndex = Keys.IndexOfByKey(CurrentInventorySlot);
-	// 	int CurrentIndex = Items.IndexOfByKey(CurrentItem);
-	// 	if (Items.Num()>0)
-	// 	CurrentIndex = (CurrentIndex - 1 + Items.Num()) % Items.Num();
-	// 	//CurrentInventorySlot = Keys[CurrentIndex];
-	// 	CurrentInventorySlot = CurrentIndex;
-	// 	CurrentItem = InventorySlots[CurrentInventorySlot];
-	// 	
-	// 	// CurrentInventorySlot--;
-	// 	// if(CurrentInventorySlot < 0)
-	// 	// {
-	// 	// 	CurrentInventorySlot = InventorySlots.Num()-1;
-	// 	// }
-	//
-	//
-	// 	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-	// 	{
-	// 		//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-	// 		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-	// 		{
-	// 			C->CurrentItemInHands->Destroy();
-	// 			controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
-	// 			controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
-	// 			C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
-	// 		}
-	// 	}
-	// 	
-	// 	if (InventorySlots.Contains(CurrentInventorySlot)) 
-	// 	{
-	// 		CurrentItem = InventorySlots[CurrentInventorySlot];
-	//
-	// 		if (CurrentItem)
-	// 		{
-	// 			UE_LOG(LogTemp, Warning, TEXT("Switched to item: %s"), *CurrentItem->GetName());
-	// 		}
-	// 		else
-	// 		{
-	// 			UE_LOG(LogTemp, Error, TEXT("Item at slot %d is NULL!"), CurrentInventorySlot);
-	// 		}
-	// 	}
-	// 	else
-	// 	{
-	// 		UE_LOG(LogTemp, Error, TEXT("Invalid index %d when switching inventory item!"), CurrentInventorySlot);
-	// 		CurrentItem = nullptr;
-	// 	}
-	//
-	// 	return true;
-	// }
 
 	return false;
 }

@@ -689,13 +689,69 @@ void AMyFPSCharacter::PreviousWeapon()
 {
 	if (Inventory->GetNumberOfItems() == 1 || Inventory->GetNumberOfItems() == 0)
 		return;
-	
-	CurrentItemInHands->Destroy();
+
+		
+	if (CurrentItemInHands)
+	{
+		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+		{
+			FAmmoData& CurrentWeaponData = AmmoDataMap.FindOrAdd(W->GetClass());
+			CurrentWeaponData.CurrentAmmo = W->GetCurrentAmmo();
+			CurrentWeaponData.ClipSize = W->GetReserveAmmo();
+		}
+		CurrentItemInHands->Destroy();
+	}
+		
+	//CurrentItemInHands->Destroy();
 
 	if (Inventory->PreviousItem())
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item destroyed, previous weapon!"));
+		
+		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item destroyed, next weapon!"));
+
+		SpawnCurrentWeaponInHands();
+
+		if (CurrentItemInHands)
+		{
+			// INFO: Load up the new weapon with the saved data if it exists
+			if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+			{
+				if (const FAmmoData* NewAmmoData = AmmoDataMap.Find(CurrentItemInHands->GetClass()))
+				{
+					W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
+					W->SetReserveAmmo(NewAmmoData->ClipSize);
+				}
+
+				if (!W->IsA(ASniper::StaticClass()))
+				{
+					if (!HUD->CrosshairWidget->IsVisible())
+					{
+						HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+					}
+				}
+				else
+				{
+					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
+				}
+			}
+		}
 	}
+
+	UpdateAmmoUI();
+
+
+
+
+
+	// if (Inventory->GetNumberOfItems() == 1 || Inventory->GetNumberOfItems() == 0)
+	// 	return;
+	//
+	// CurrentItemInHands->Destroy();
+	//
+	// if (Inventory->PreviousItem())
+	// {
+	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item destroyed, previous weapon!"));
+	// }
 }
 
 void AMyFPSCharacter::ThrowWeapon()

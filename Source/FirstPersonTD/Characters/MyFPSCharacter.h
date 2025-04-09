@@ -172,6 +172,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
 	class USoundBase* HealingSound;
 
+	bool bHasPlayed = false;
+
 #pragma endregion
 
 #pragma region UI

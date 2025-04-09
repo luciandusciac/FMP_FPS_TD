@@ -504,6 +504,11 @@ void AMyFPSCharacter::Die()
 	GetMesh()->SetSimulatePhysics(true);
 	GetMesh()->SetCollisionEnabled(ECollisionEnabled::PhysicsOnly);
 
+	if (!bHasPlayed)
+	{
+		bHasPlayed = true;
+		UGameplayStatics::PlaySoundAtLocation(this, DeathSound, GetActorLocation());
+	}
 
 	Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 	
@@ -999,7 +1004,7 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item added to inventory!"));
 			OtherActor->Destroy();
 		}
-		
+		UGameplayStatics::PlaySoundAtLocation(this, PickupSound, GetActorLocation());
 	}
 }
 
@@ -1034,6 +1039,9 @@ void AMyFPSCharacter::UpdateAmmoUI()
 void AMyFPSCharacter::Heal()
 {
 	CurrentHealth += 50;
+
+	UGameplayStatics::PlaySoundAtLocation(this, HealingSound, GetActorLocation());
+	
 	if (CurrentHealth > MaxHealth)
 	{
 		CurrentHealth = MaxHealth;
@@ -1045,7 +1053,14 @@ void AMyFPSCharacter::TakeDamage(float Damage)
 {
 	CurrentHealth -= Damage;
 	if (CurrentHealth <= 0)
+	{
 		Die();
+		
+	}
+	else
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, TakeDamageSound, GetActorLocation());
+	}
 
 	HUD->SetHealth(CurrentHealth, MaxHealth);
 

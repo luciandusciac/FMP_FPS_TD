@@ -199,9 +199,12 @@ void AMyFPSCharacter::ThrowGrenade()
 			MeshComp->SetSimulatePhysics(true);
 			MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			MeshComp->BodyInstance.SetUseCCD(true);
-			MeshComp->AddImpulse(GetActorForwardVector() * 1000.f + FVector(0.f, 0.f, 800.f));
+			MeshComp->AddImpulse(GetActorForwardVector() * 1000.f + FVector(0.f, 0.f, 600.f));
 		}
 		Gr->bCanExplode = true;
+
+		// INFO: Play grenade throw sound
+		UGameplayStatics::PlaySoundAtLocation(this, Gr->ThrowSound, GetActorLocation());
 		//CurrentItemInHands->Destroy();
 	}
 	else if (CurrentItemInHands->GetClass()->ImplementsInterface(UFlashbangInterface::StaticClass()))
@@ -213,9 +216,12 @@ void AMyFPSCharacter::ThrowGrenade()
 			MeshComp->SetSimulatePhysics(true);
 			MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			MeshComp->BodyInstance.SetUseCCD(true);
-			MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
+			MeshComp->AddImpulse(GetActorForwardVector() * 1000.f + FVector(0.f, 0.f, 600.f));
 		}
 		Gr->bCanExplode = true;
+
+		// INFO: Play grenade throw sound
+		UGameplayStatics::PlaySoundAtLocation(this, Gr->ThrowSound, GetActorLocation());
 	}
 	else if (CurrentItemInHands->GetClass()->ImplementsInterface(USmokeGrenadeInterface::StaticClass()))
 	{
@@ -226,9 +232,12 @@ void AMyFPSCharacter::ThrowGrenade()
 			MeshComp->SetSimulatePhysics(true);
 			MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
 			MeshComp->BodyInstance.SetUseCCD(true);
-			MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
+			MeshComp->AddImpulse(GetActorForwardVector() * 1000.f + FVector(0.f, 0.f, 600.f));
 		}
 		Gr->bCanExplode = true;
+		
+		// INFO: Play grenade throw sound
+		UGameplayStatics::PlaySoundAtLocation(this, Gr->ThrowSound, GetActorLocation());
 	}
 	
 	CurrentItemInHands->Destroy();
@@ -307,6 +316,9 @@ void AMyFPSCharacter::ThrowKnife()
 				{
 					// Launch toward the center of screen
 					MeshComp->AddImpulse(WorldDirection * 5000.f);
+
+					// INFO: Play knife throw sound
+					UGameplayStatics::PlaySoundAtLocation(this, Knife->ThrowSound, GetActorLocation());
 				}
 			}
 		}
@@ -379,12 +391,6 @@ void AMyFPSCharacter::Shoot()
 			if (AInventoryItem* i =  Cast<AInventoryItem>(CurrentItemInHands))
 			{
 				i->Use();
-				
-				//if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
-				//{
-					//if (W->GetCurrentAmmo() >= 0 && !AnimInstance->bIsReloading)
-						//UpdateAmmoUI();
-				//}
 			}
 		}
 	}

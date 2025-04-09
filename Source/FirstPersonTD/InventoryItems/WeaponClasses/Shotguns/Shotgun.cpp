@@ -93,6 +93,10 @@ void AShotgun::Shoot()
 
 			GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
 		}
+		else
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, EmptySound, GetActorLocation());
+		}
 	}
 	
 

@@ -97,7 +97,8 @@ void ABaseWeapon::Shoot()
 	}
 
 	
-	//TODO: Play shoot sound
+	// INFO: Play shoot sound
+	UGameplayStatics::PlaySoundAtLocation(this, ShootSound, GetActorLocation());
 }
 
 void ABaseWeapon::OnShoot()
@@ -122,6 +123,9 @@ void ABaseWeapon::Reload()
 					C->AnimationInstance->bIsReloading = true;
 				}
 
+				// INFO: Play reload sound
+				UGameplayStatics::PlaySoundAtLocation(this, ReloadSound, GetActorLocation());	
+
 				// INFO: Spawn magazine
 				if (bHasMagazine)
 				{
@@ -141,8 +145,9 @@ void ABaseWeapon::Reload()
 			}
 			else
 			{
-				//TODO: Play error sound
+				// INFO: Play error sound
 				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No reserve ammo"));
+				UGameplayStatics::PlaySoundAtLocation(this, EmptySound, GetActorLocation());
 			}
 		}
 	//}

@@ -26,4 +26,7 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	virtual void Use() override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
+	class USoundBase* ThrowSound;
 };

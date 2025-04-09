@@ -52,6 +52,8 @@ void AFlashbangGrenade::OnExplode()
 	TArray<AActor*> FoundActors;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ACharacter::StaticClass(), FoundActors);
 
+	UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
+
 	for (AActor* Actor : FoundActors)
 	{
 		FVector DirectionToExplosion = (GetActorLocation() - Actor->GetActorLocation()).GetSafeNormal();

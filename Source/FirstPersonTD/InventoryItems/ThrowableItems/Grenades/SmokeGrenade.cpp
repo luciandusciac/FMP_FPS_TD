@@ -3,6 +3,8 @@
 
 #include "SmokeGrenade.h"
 
+#include "Kismet/GameplayStatics.h"
+
 
 // Sets default values
 ASmokeGrenade::ASmokeGrenade()
@@ -45,8 +47,8 @@ void ASmokeGrenade::OnExplode()
 
 	if (UStaticMeshComponent* MeshComp = this->FindComponentByClass<UStaticMeshComponent>())
 	{
+		UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), MeshComp->GetComponentLocation());
-		
 	}
 
 	this->Destroy();

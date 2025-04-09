@@ -103,18 +103,10 @@ void APistol::Shoot()
 			GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
 			
 		}
-		// else if (CurrentAmmo == 0 && ReserveAmmo > 0)
-		// {
-		// 	//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is reloading"));
-		// 	Reload();
-		// }
-		// else
-		// {
-		// 	//TODO: Play error sound
-		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No ammo"));
-		// }
-
-		//UE_LOG(LogTemp, Warning, TEXT("Pistol Shot"));
+		else
+		{
+			UGameplayStatics::PlaySoundAtLocation(this, EmptySound, GetActorLocation());
+		}
 	}
 
 	

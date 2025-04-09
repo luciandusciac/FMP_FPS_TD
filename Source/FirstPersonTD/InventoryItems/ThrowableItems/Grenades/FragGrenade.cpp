@@ -8,6 +8,7 @@
 #include "Engine/OverlapResult.h"
 #include "FirstPersonTD/Characters/EnemyCharacter.h"
 #include "FirstPersonTD/Characters/MyFPSCharacter.h"
+#include "Kismet/GameplayStatics.h"
 
 
 // Sets default values
@@ -138,7 +139,7 @@ void AFragGrenade::OnExplode()
 		//{
 			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), MeshComp->GetComponentLocation());
 		//}
-	
+		UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Frag grenade exploded!"));
 		this->Destroy();
 	}

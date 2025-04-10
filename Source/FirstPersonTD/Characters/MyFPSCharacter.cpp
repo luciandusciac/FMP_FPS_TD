@@ -475,7 +475,8 @@ void AMyFPSCharacter::Aim()
 			else
 			{
 				// INFO: Aiming without scope
-				Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
+				//Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
+				Camera->SetFieldOfView(50.f);
 			}
 		}
 	}
@@ -490,7 +491,8 @@ void AMyFPSCharacter::StopAiming()
 	Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 	//Camera->SetupAttachment(GetMesh(), "Head");
 	
-	Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 100.f, GetWorld()->GetDeltaSeconds(), 5.0f));
+	//Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 100.f, GetWorld()->GetDeltaSeconds(), 5.0f));
+	Camera->SetFieldOfView(90.f);
 
 	if (HUD->SniperScopeWidget && HUD->SniperScopeWidget->IsVisible())
 	{
@@ -532,39 +534,6 @@ void AMyFPSCharacter::Respawn()
 {
 	FName CurrentLevel = *UGameplayStatics::GetCurrentLevelName(GetWorld());
 	UGameplayStatics::OpenLevel(this, CurrentLevel);
-	// CurrentHealth = 100.f;
-	// GetMesh()->SetSimulatePhysics(false);
-	// GetMesh()->SetCollisionProfileName(TEXT("Pawn"));
-	// GetMesh()->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	//
-	// // Reset character state
-	// CurrentHealth = MaxHealth; // Assuming you have a MaxHealth variable
-	//
-	// // Re-enable input if needed
-	// AController* PlayerController = GetController();
-	// if (PlayerController)
-	// {
-	// 	EnableInput(Cast<APlayerController>(PlayerController));
-	// }
-	//
-	// // Reset movement
-	// GetCharacterMovement()->DisableMovement();
-	// SetActorLocation(PlayerStartLocation);
-	// //GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	//
-	// // Reset mesh pose
-	// GetMesh()->SetAllBodiesSimulatePhysics(false);
-	// GetMesh()->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	// GetMesh()->AttachToComponent(GetRootComponent(), FAttachmentTransformRules::SnapToTargetNotIncludingScale);
-	// GetMesh()->SetRelativeLocation(FVector::ZeroVector);
-	// GetMesh()->SetRelativeRotation(FRotator::ZeroRotator);
-	//
-	// // Reset camera
-	// Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Head"));
-	// Camera->SetRelativeLocation(FVector::ZeroVector);
-	// //Camera->SetRelativeRotation(FRotator::ZeroRotator);
-	
-	
 }
 
 void AMyFPSCharacter::Reload()
@@ -647,6 +616,10 @@ void AMyFPSCharacter::NextWeapon()
 				{
 					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
 				}
+			}
+			else if (Cast<ABaseGrenade>(CurrentItemInHands))
+			{
+				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
 			}
 		}
 
@@ -734,6 +707,10 @@ void AMyFPSCharacter::PreviousWeapon()
 					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
 				}
 			}
+			else if (Cast<ABaseGrenade>(CurrentItemInHands))
+			{
+				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+			}
 		}
 	}
 
@@ -786,13 +763,17 @@ void AMyFPSCharacter::ThrowWeapon()
 			FAmmoData& CurrentWeaponData = AmmoDataMap.FindOrAdd(W->GetClass());
 			CurrentWeaponData.CurrentAmmo = W->GetCurrentAmmo();
 			CurrentWeaponData.ClipSize = W->GetReserveAmmo();
-
+			// INFO: Hide crosshair when throwing a weapon
 			if (HUD->CrosshairWidget->IsVisible())
 			{
 				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
 
+		if (Cast<ABaseGrenade>(CurrentItemInHands) && HUD->CrosshairWidget->IsVisible())
+		{
+			HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
 		
 		FActorSpawnParameters SpawnParams;
 		SpawnParams.Owner = this;
@@ -826,6 +807,18 @@ void AMyFPSCharacter::ThrowWeapon()
 		{
 			SpawnCurrentWeaponInHands();
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("One more item in inventory!"));
+
+			if (Cast<ABaseWeapon>(CurrentItemInHands) && !CurrentItemInHands->IsA(ASniper::StaticClass()))
+			{
+				if (!HUD->CrosshairWidget->IsVisible())
+				{
+					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+				}
+			}
+			else if (Cast<ABaseGrenade>(CurrentItemInHands))
+			{
+				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+			}
 		}
 			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
 			//CurrentItemInHands->SetActorRotation(GetActorRotation());
@@ -990,7 +983,6 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 	
 	if(AInventoryItem* It = Cast<AInventoryItem>(OtherActor))
 	{
-		HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
 			//INFO: Add weapon to inventory
 		if (/*(Inventory->CurrentItem == nullptr || CurrentItemInHands == nullptr)*/Inventory->GetNumberOfItems() == 0 && Inventory->AddItem(It))
 		{
@@ -1022,6 +1014,11 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 				MeshComp->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
 
 				OtherActor->SetOwner(this);
+
+				if (Cast<ABaseGrenade>(OtherActor))
+				{
+					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+				}
 			}
 
 			//CurrentItemInHands = OtherActor;

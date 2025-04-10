@@ -457,12 +457,24 @@ void AMyFPSCharacter::Aim()
 			Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 			
 			Camera->AttachToComponent(W->AimOrigin, FAttachmentTransformRules::SnapToTargetIncludingScale);
-
+	
 			Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 			Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 			
+			// FVector CameraLoc = Camera->GetComponentLocation();
+			// FVector CameraDir = Camera->GetForwardVector();
+			// FVector TraceEnd = CameraLoc + (CameraDir * -10000.f);
+			//
+			// // Socket location on the weapon (e.g. the sight)
+			// FVector SightLoc = W->Mesh->GetSocketLocation("AimOrigin");
+			//
+			// // Rotation from sight to where the camera is looking
+			// FRotator DesiredRot = (TraceEnd - SightLoc).Rotation();
+			//
+			// // Option 1: Rotate the whole weapon
+			// W->Mesh->SetWorldRotation(DesiredRot + FRotator(0.f, 0.f, 90.f));
 			
-
+	
 			if (W->bHasScope)
 			{
 				if (HUD->SniperScopeWidget && !HUD->SniperScopeWidget->IsVisible())

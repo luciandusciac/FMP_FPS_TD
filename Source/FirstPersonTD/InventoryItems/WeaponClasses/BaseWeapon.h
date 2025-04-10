@@ -71,6 +71,9 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
 	USceneComponent* AimOrigin;
 
+	// UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
+	// USceneComponent* WeaponPivot;
+
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Bullet")
 	TSubclassOf<ABaseProjectile> WeaponBullet;
 

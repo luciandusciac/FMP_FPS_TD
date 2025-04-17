@@ -162,7 +162,7 @@ void AMyFPSCharacter::Tick(float DeltaTime)
 
 	if (bIsDeathCameraMoving)
 	{
-		CameraLerpAlpha += GetWorld()->GetDeltaSeconds() / 2.0f; // Adjust timing here
+		CameraLerpAlpha += GetWorld()->GetDeltaSeconds() / 2.0f;
 		CameraLerpAlpha = FMath::Clamp(CameraLerpAlpha, 0.f, 1.f);
 
 		FVector NewLocation = FMath::Lerp(StartDeathCamLocation, EndDeathCamLocation, CameraLerpAlpha);
@@ -176,6 +176,17 @@ void AMyFPSCharacter::Tick(float DeltaTime)
 			bIsDeathCameraMoving = false;
 		}
 	}
+
+	// if (bIsAiming && CurrentItemInHands)
+	// {
+	// 	if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+	// 	{
+	// 		// Align the weapon to follow control rotation (not camera's up/down)
+	// 		FRotator ControlRot = GetActorRotation();
+	// 		ControlRot.Pitch = 0.f; // flatten out any up/down tilt
+	// 		W->Mesh->SetWorldRotation(ControlRot);
+	// 	}
+	// }
 }
 
 
@@ -460,6 +471,9 @@ void AMyFPSCharacter::Aim()
 	
 			Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 			Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+
+
+			bIsAiming = true;
 			
 			// FVector CameraLoc = Camera->GetComponentLocation();
 			// FVector CameraDir = Camera->GetForwardVector();
@@ -505,6 +519,8 @@ void AMyFPSCharacter::StopAiming()
 	
 	//Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 100.f, GetWorld()->GetDeltaSeconds(), 5.0f));
 	Camera->SetFieldOfView(90.f);
+
+	bIsAiming = false;
 
 	if (HUD->SniperScopeWidget && HUD->SniperScopeWidget->IsVisible())
 	{

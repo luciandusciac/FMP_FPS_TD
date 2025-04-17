@@ -35,38 +35,26 @@
 
 void UStepNotify::Notify(USkeletalMeshComponent* MeshComp, UAnimSequenceBase* Animation)
 {
-    
     if (!MeshComp) return;
-
     AActor* Owner = MeshComp->GetOwner();
     if (!Owner) return;
-    
-    //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("StepNotify::Notify Triggered"));
 
     FVector SocketLocation = MeshComp->GetSocketLocation(FootSocketName);
     FHitResult Hit;
     FCollisionQueryParams Params;
     Params.bReturnPhysicalMaterial = true;
-    Params.AddIgnoredActor(Owner); // Ignore the actor itself
-    
+    Params.AddIgnoredActor(Owner);
     //DrawDebugLine(Owner->GetWorld(), SocketLocation, SocketLocation - FVector(0, 0, 1000.f), FColor::Blue, false, 2.f, 0, 1.f);
-
-    
     bool bHit = Owner->GetWorld()->LineTraceSingleByChannel(Hit, SocketLocation, SocketLocation - FVector(0, 0, 1000.f), ECC_Visibility, Params);
-
     
     if (bHit)
     {
-        //GEngine->AddOnScreenDebugMessage(-1, 2.f, FColor::Green, TEXT("Hit something!"));
-        
         if (Hit.PhysMaterial.IsValid())
         {
             EPhysicalSurface SurfaceType = UPhysicalMaterial::DetermineSurfaceType(Hit.PhysMaterial.Get());
-            
             if (SurfaceSounds.Contains(SurfaceType))
             {
                 UGameplayStatics::PlaySoundAtLocation(Owner, SurfaceSounds[SurfaceType], Hit.Location);
-                //GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Footstep sound played!"));
             }
             else
             {

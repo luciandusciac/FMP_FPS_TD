@@ -79,6 +79,7 @@ public:
 
 	void Aim();
 	void StopAiming();
+	bool bIsAiming = false;
 
 	void Die();
 	float DeathTime;

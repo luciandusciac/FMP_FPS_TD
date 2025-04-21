@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "PrimaryWeaponWidget.h"
 #include "Blueprint/UserWidget.h"
 #include "Components/Image.h"
 #include "Components/TextBlock.h"
@@ -49,20 +50,26 @@ public:
 	UUserWidget* DamageBuffWidget;
 
 	// INFO: Widget for primary weapon
+	//UPROPERTY(EditAnywhere)
+	//TSubclassOf<UUserWidget> PrimaryWeaponWidgetClass;
+	//
+	//UPROPERTY()
+	//UUserWidget* PrimaryWeaponWidget;
+
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> PrimaryWeaponWidgetClass;
+	UPrimaryWeaponWidget* PrimaryWeaponWidgetInstance;
 
-	UPROPERTY()
-	UUserWidget* PrimaryWeaponWidget;
+	// UPROPERTY(meta = (BindWidget))
+	// UImage* WeaponImage;
 
-	UPROPERTY(EditAnywhere, meta=(BindWidget))
-	UImage* AKImage;
+	UPROPERTY(EditAnywhere)
+	UTexture2D* AK47;
 
-	UPROPERTY(EditAnywhere, meta=(BindWidget))
-	UImage* ShotgunImage;
+	UPROPERTY(EditAnywhere)
+	UTexture2D* Shotgun;
 
-	UPROPERTY(EditAnywhere, meta=(BindWidget))
-	UImage* SniperImage;
+	UPROPERTY(EditAnywhere)
+	UTexture2D* Sniper;
 
 	
 	// INFO: Widget for secondary weapon

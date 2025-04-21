@@ -30,3 +30,4 @@ void UPlayerHUD::UpdateAmmoValues(int CurrentAmmo, int ReserveAmmo)
 	// 	ReserveAmmoText->SetText(FText::FromString("0"));
 	// }
 }
+

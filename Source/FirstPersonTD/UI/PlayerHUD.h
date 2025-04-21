@@ -48,6 +48,57 @@ public:
 	UPROPERTY()
 	UUserWidget* DamageBuffWidget;
 
+	// INFO: Widget for primary weapon
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> PrimaryWeaponWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* PrimaryWeaponWidget;
+
+	UPROPERTY(EditAnywhere, meta=(BindWidget))
+	UImage* AKImage;
+
+	UPROPERTY(EditAnywhere, meta=(BindWidget))
+	UImage* ShotgunImage;
+
+	UPROPERTY(EditAnywhere, meta=(BindWidget))
+	UImage* SniperImage;
+
+	
+	// INFO: Widget for secondary weapon
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> SecondaryWeaponWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* SecondaryWeaponWidget;
+
+	// INFO: Widget for grenade
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> FragGrenadeWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* FragGrenadeWidget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> FlashbangGrenadeWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* FlashbangGrenadeWidget;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> SmokeGrenadeWidgetClass;
+
+	UPROPERTY()
+	UUserWidget* SmokeGrenadeWidget;
+
+	// INFO: Widget for knife
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> KnifeWidgetClass;
+	
+	UPROPERTY()
+	UUserWidget* KnifeWidget;
+	
+
 	//UPROPERTY(EditAnywhere)
 	//TSubclassOf<UUserWidget> SniperScopeWidgetClass;
 

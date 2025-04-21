@@ -169,23 +169,8 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(GetPawn()))
 	{
 		const FVector2D LookValue = Value.Get<FVector2D>();
-		// PlayerCharacter->AddControllerYawInput(LookValue.X);
-		// PlayerCharacter->AddControllerPitchInput(-LookValue.Y);
-
-		//FRotator ControlRot = PlayerCharacter->GetControlRotation();
 		PlayerCharacter->AddControllerYawInput(LookValue.X);
-		float CurrentPitch = PlayerCharacter->GetControlRotation().Pitch;
-
-		// Convert pitch to -180 to 180 range if needed
-		CurrentPitch = FRotator::ClampAxis(CurrentPitch);
-		if (CurrentPitch > 180.f)
-			CurrentPitch -= 360.f;
-
-		float DesiredPitch = CurrentPitch - LookValue.Y;
-		if (DesiredPitch >= -60.f && DesiredPitch <= 60.f)
-		{
-			PlayerCharacter->AddControllerPitchInput(-LookValue.Y);
-		}
+		PlayerCharacter->AddControllerPitchInput(-LookValue.Y);
 		
 		// if (UCameraComponent* Camera = PlayerCharacter->FindComponentByClass<UCameraComponent>())
 		// {
@@ -203,10 +188,10 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 			float NormalizedPitch = FMath::Clamp(Pitch / 80.f, -1.f, 1.f);  
 			
 			float DownOffset = FMath::Lerp(0.f, 10.f, NormalizedPitch);
-			float UpOffset = FMath::Lerp(0.f, 100.f, NormalizedPitch);
+			float UpOffset = FMath::Lerp(0.f, 80.f, NormalizedPitch);
 
 			// INFO: Use the correct offset depending on the direction
-			float Offset = Pitch >= 90 ? DownOffset : UpOffset;
+			float Offset = Pitch > 89 ? DownOffset : UpOffset;
 			//float Offset = FMath::Lerp(0.f, 10.f, (NormalizedPitch + 1.f) / 2.f); // Map NormalizedPitch to -20.f to 20.f
 
 			FVector NewLocation = Camera->GetRelativeLocation();
@@ -215,7 +200,7 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 		}
 
 		AnimationInstance->VerticalBend = FMath::Lerp(AnimationInstance->VerticalBend, LookValue.Y * 50.f,  DeltaT * 2.f);
-		AnimationInstance->VerticalBend = FMath::Clamp(AnimationInstance->VerticalBend, -50.f, 50.f);
+		//AnimationInstance->VerticalBend = FMath::Clamp(AnimationInstance->VerticalBend, -50.f, 50.f);
 	}
 }
 

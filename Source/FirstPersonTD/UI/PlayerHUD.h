@@ -52,13 +52,13 @@ public:
 	// INFO: Widget for primary weapon
 	//UPROPERTY(EditAnywhere)
 	//TSubclassOf<UUserWidget> PrimaryWeaponWidgetClass;
-	//
-	//UPROPERTY()
-	//UUserWidget* PrimaryWeaponWidget;
 
 	UPROPERTY(EditAnywhere)
-	UPrimaryWeaponWidget* PrimaryWeaponWidgetInstance;
-
+	TSubclassOf<UPrimaryWeaponWidget> PrimaryWeaponWidgetClass;
+	
+	UPROPERTY()
+	UPrimaryWeaponWidget* PrimaryWeaponWidget;
+	
 	// UPROPERTY(meta = (BindWidget))
 	// UImage* WeaponImage;
 

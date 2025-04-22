@@ -27,6 +27,7 @@
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FragGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/SmokeGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Knives/Knife.h"
+#include "FirstPersonTD/InventoryItems/WeaponClasses/Shotguns/Shotgun.h"
 #include "FirstPersonTD/InventoryItems/WeaponClasses/Snipers/Sniper.h"
 #include "FirstPersonTD/Pickups/BasePickup.h"
 #include "FirstPersonTD/Pickups/HealthPickup.h"
@@ -105,6 +106,16 @@ void AMyFPSCharacter::BeginPlay()
 			{
 				HUD->CrosshairWidget->AddToPlayerScreen();
 				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+		// INFO: Create all weapon widgets
+		if (HUD && HUD->PrimaryWeaponWidgetClass)
+		{
+			HUD->PrimaryWeaponWidget = CreateWidget<UPrimaryWeaponWidget>(GetWorld(), HUD->PrimaryWeaponWidgetClass);
+			if (HUD->PrimaryWeaponWidget)
+			{
+				HUD->PrimaryWeaponWidget->AddToPlayerScreen();
+				HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
 	}
@@ -796,6 +807,11 @@ void AMyFPSCharacter::ThrowWeapon()
 			{
 				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
+
+			if (W->Implements<UPrimaryWeapon>())
+			{
+				HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
 		}
 
 		if (Cast<ABaseGrenade>(CurrentItemInHands) && HUD->CrosshairWidget->IsVisible())
@@ -1066,6 +1082,27 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 				if (!W->IsA(ASniper::StaticClass()))
 				{
 					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+				}
+
+				if (W->Implements<UPrimaryWeapon>())
+				{
+					HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
+
+					if (W->IsA(ASniper::StaticClass()))
+					{
+						HUD->PrimaryWeaponWidget->SetWeaponImage(HUD->Sniper);
+						//HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
+					}
+					else if (W->IsA(ARifle::StaticClass()))
+					{
+						HUD->PrimaryWeaponWidget->SetWeaponImage(HUD->AK47);
+						//HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
+					}
+					else if (W->IsA(AShotgun::StaticClass()))
+					{
+						HUD->PrimaryWeaponWidget->SetWeaponImage(HUD->Shotgun);
+						//HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
+					}
 				}
 			}
 			//}

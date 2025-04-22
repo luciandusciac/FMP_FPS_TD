@@ -20,6 +20,6 @@ public:
 	void SetWeaponImage(UTexture2D* NewTexture);
 
 protected:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, meta = (BindWidget))
 	UImage* WeaponImage;
 };

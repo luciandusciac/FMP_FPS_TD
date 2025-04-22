@@ -118,6 +118,18 @@ void AMyFPSCharacter::BeginPlay()
 				HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
+
+		if (HUD && HUD->SecondaryWeaponWidgetClass)
+		{
+			HUD->SecondaryWeaponWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->SecondaryWeaponWidgetClass);
+			if (HUD->SecondaryWeaponWidget)
+			{
+				HUD->SecondaryWeaponWidget->AddToPlayerScreen();
+				HUD->SecondaryWeaponWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+
+		
 	}
 
 	HUD->SetHealth(CurrentHealth, MaxHealth);
@@ -655,6 +667,17 @@ void AMyFPSCharacter::NextWeapon()
 				{
 					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
 				}
+
+				if (W->Implements<UPrimaryWeapon>() && HUD->PrimaryWeaponWidget->IsVisible())
+				{
+					HUD->PrimaryWeaponWidget->SetRenderOpacity(1.f);
+					HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
+				}
+				else if (W->Implements<USecondaryWeapon>() && HUD->SecondaryWeaponWidget->IsVisible())
+				{
+					HUD->PrimaryWeaponWidget->SetRenderOpacity(0.5f);
+					HUD->SecondaryWeaponWidget->SetRenderOpacity(1.f);
+				}
 			}
 			else if (Cast<ABaseGrenade>(CurrentItemInHands))
 			{
@@ -812,6 +835,10 @@ void AMyFPSCharacter::ThrowWeapon()
 			{
 				HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
+			else if (W->Implements<USecondaryWeapon>())
+			{
+				HUD->SecondaryWeaponWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
 		}
 
 		if (Cast<ABaseGrenade>(CurrentItemInHands) && HUD->CrosshairWidget->IsVisible())
@@ -852,11 +879,21 @@ void AMyFPSCharacter::ThrowWeapon()
 			SpawnCurrentWeaponInHands();
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("One more item in inventory!"));
 
-			if (Cast<ABaseWeapon>(CurrentItemInHands) && !CurrentItemInHands->IsA(ASniper::StaticClass()))
+			
+			if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
 			{
-				if (!HUD->CrosshairWidget->IsVisible())
+				if (!HUD->CrosshairWidget->IsVisible() && !CurrentItemInHands->IsA(ASniper::StaticClass()))
 				{
 					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+				}
+				
+				if (W->Implements<UPrimaryWeapon>())
+				{
+					HUD->PrimaryWeaponWidget->SetRenderOpacity(1.f);
+				}
+				else if (W->Implements<USecondaryWeapon>())
+				{
+					HUD->SecondaryWeaponWidget->SetRenderOpacity(1.f);
 				}
 			}
 			else if (Cast<ABaseGrenade>(CurrentItemInHands))
@@ -1091,18 +1128,20 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 					if (W->IsA(ASniper::StaticClass()))
 					{
 						HUD->PrimaryWeaponWidget->SetWeaponImage(HUD->Sniper);
-						//HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
 					}
 					else if (W->IsA(ARifle::StaticClass()))
 					{
 						HUD->PrimaryWeaponWidget->SetWeaponImage(HUD->AK47);
-						//HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
 					}
 					else if (W->IsA(AShotgun::StaticClass()))
 					{
 						HUD->PrimaryWeaponWidget->SetWeaponImage(HUD->Shotgun);
-						//HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
 					}
+				}
+				else if (W->Implements<USecondaryWeapon>())
+				{
+					HUD->SecondaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
+					//HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
 				}
 			}
 			//}
@@ -1116,6 +1155,30 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 				{
 					W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
 					W->SetReserveAmmo(NewAmmoData->ClipSize);
+				}
+
+				if (W->Implements<UPrimaryWeapon>())
+				{
+					HUD->PrimaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
+					HUD->PrimaryWeaponWidget->SetRenderOpacity(0.5f);
+
+					if (W->IsA(ASniper::StaticClass()))
+					{
+						HUD->PrimaryWeaponWidget->SetWeaponImage(HUD->Sniper);
+					}
+					else if (W->IsA(ARifle::StaticClass()))
+					{
+						HUD->PrimaryWeaponWidget->SetWeaponImage(HUD->AK47);
+					}
+					else if (W->IsA(AShotgun::StaticClass()))
+					{
+						HUD->PrimaryWeaponWidget->SetWeaponImage(HUD->Shotgun);
+					}
+				}
+				else if (W->Implements<USecondaryWeapon>())
+				{
+					HUD->SecondaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
+					HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
 				}
 			}
 			

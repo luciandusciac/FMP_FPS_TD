@@ -129,6 +129,45 @@ void AMyFPSCharacter::BeginPlay()
 			}
 		}
 
+		if (HUD && HUD->FragGrenadeWidgetClass)
+		{
+			HUD->FragGrenadeWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->FragGrenadeWidgetClass);
+			if (HUD->FragGrenadeWidget)
+			{
+				HUD->FragGrenadeWidget->AddToPlayerScreen();
+				HUD->FragGrenadeWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+
+		if (HUD && HUD->FlashbangGrenadeWidgetClass)
+		{
+			HUD->FlashbangGrenadeWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->FlashbangGrenadeWidgetClass);
+			if (HUD->FlashbangGrenadeWidget)
+			{
+				HUD->FlashbangGrenadeWidget->AddToPlayerScreen();
+				HUD->FlashbangGrenadeWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+
+		if (HUD && HUD->SmokeGrenadeWidgetClass)
+		{
+			HUD->SmokeGrenadeWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->SmokeGrenadeWidgetClass);
+			if (HUD->SmokeGrenadeWidget)
+			{
+				HUD->SmokeGrenadeWidget->AddToPlayerScreen();
+				HUD->SmokeGrenadeWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+
+		if (HUD && HUD->KnifeWidgetClass)
+		{
+			HUD->KnifeWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->KnifeWidgetClass);
+			if (HUD->KnifeWidget)
+			{
+				HUD->KnifeWidget->AddToPlayerScreen();
+				HUD->KnifeWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
 		
 	}
 
@@ -239,7 +278,11 @@ void AMyFPSCharacter::ThrowGrenade()
 
 		// INFO: Play grenade throw sound
 		UGameplayStatics::PlaySoundAtLocation(this, Gr->ThrowSound, GetActorLocation());
-		//CurrentItemInHands->Destroy();
+
+		if (HUD->FragGrenadeWidget->IsVisible())
+		{
+			HUD->FragGrenadeWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 	else if (CurrentItemInHands->GetClass()->ImplementsInterface(UFlashbangInterface::StaticClass()))
 	{
@@ -256,6 +299,11 @@ void AMyFPSCharacter::ThrowGrenade()
 
 		// INFO: Play grenade throw sound
 		UGameplayStatics::PlaySoundAtLocation(this, Gr->ThrowSound, GetActorLocation());
+
+		if (HUD->FlashbangGrenadeWidget->IsVisible())
+		{
+			HUD->FlashbangGrenadeWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 	else if (CurrentItemInHands->GetClass()->ImplementsInterface(USmokeGrenadeInterface::StaticClass()))
 	{
@@ -272,6 +320,11 @@ void AMyFPSCharacter::ThrowGrenade()
 		
 		// INFO: Play grenade throw sound
 		UGameplayStatics::PlaySoundAtLocation(this, Gr->ThrowSound, GetActorLocation());
+
+		if (HUD->SmokeGrenadeWidget->IsVisible())
+		{
+			HUD->SmokeGrenadeWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
 	}
 	
 	CurrentItemInHands->Destroy();
@@ -356,6 +409,11 @@ void AMyFPSCharacter::ThrowKnife()
 				}
 			}
 		}
+	}
+	
+	if (HUD->KnifeWidget->IsVisible())
+	{
+		HUD->KnifeWidget->SetVisibility(ESlateVisibility::Hidden);
 	}
 	
 	CurrentItemInHands->Destroy();
@@ -671,17 +729,63 @@ void AMyFPSCharacter::NextWeapon()
 				if (W->Implements<UPrimaryWeapon>() && HUD->PrimaryWeaponWidget->IsVisible())
 				{
 					HUD->PrimaryWeaponWidget->SetRenderOpacity(1.f);
+					
 					HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
+					HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->KnifeWidget->SetRenderOpacity(0.5f);
 				}
 				else if (W->Implements<USecondaryWeapon>() && HUD->SecondaryWeaponWidget->IsVisible())
 				{
-					HUD->PrimaryWeaponWidget->SetRenderOpacity(0.5f);
 					HUD->SecondaryWeaponWidget->SetRenderOpacity(1.f);
+
+					HUD->PrimaryWeaponWidget->SetRenderOpacity(0.5f);
+					HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->KnifeWidget->SetRenderOpacity(0.5f);
 				}
 			}
-			else if (Cast<ABaseGrenade>(CurrentItemInHands))
+			else if (ABaseGrenade* G = Cast<ABaseGrenade>(CurrentItemInHands))
 			{
 				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+
+				if (G->IsA(AFragGrenade::StaticClass()))
+				{
+					HUD->FragGrenadeWidget->SetRenderOpacity(1.f);
+					
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
+				}
+				else if (G->IsA(AFlashbangGrenade::StaticClass()))
+				{
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(1.f);
+
+					HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
+				}
+				else if (G->IsA(ASmokeGrenade::StaticClass()))
+				{
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(1.f);
+
+					HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+				}
+
+				HUD->PrimaryWeaponWidget->SetRenderOpacity(0.5f);
+				HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
+				HUD->KnifeWidget->SetRenderOpacity(0.5f);
+			}
+			else if (Cast<AKnife>(CurrentItemInHands))
+			{
+				HUD->KnifeWidget->SetRenderOpacity(1.f);
+				
+				HUD->PrimaryWeaponWidget->SetRenderOpacity(0.5f);
+				HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
+				HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+				HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+				HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
 			}
 		}
 
@@ -841,9 +945,28 @@ void AMyFPSCharacter::ThrowWeapon()
 			}
 		}
 
-		if (Cast<ABaseGrenade>(CurrentItemInHands) && HUD->CrosshairWidget->IsVisible())
+		if (ABaseGrenade* G = Cast<ABaseGrenade>(CurrentItemInHands))
 		{
-			HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
+			if ( HUD->CrosshairWidget->IsVisible())
+				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
+
+			if (G->IsA(AFragGrenade::StaticClass()))
+			{
+				HUD->FragGrenadeWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+			else if (G->IsA(AFlashbangGrenade::StaticClass()))
+			{
+				HUD->FlashbangGrenadeWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+			else if (G->IsA(ASmokeGrenade::StaticClass()))
+			{
+				HUD->SmokeGrenadeWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
+		}
+
+		if (Cast<AKnife>(CurrentItemInHands))
+		{
+			HUD->KnifeWidget->SetVisibility(ESlateVisibility::Hidden);
 		}
 		
 		FActorSpawnParameters SpawnParams;
@@ -896,9 +1019,26 @@ void AMyFPSCharacter::ThrowWeapon()
 					HUD->SecondaryWeaponWidget->SetRenderOpacity(1.f);
 				}
 			}
-			else if (Cast<ABaseGrenade>(CurrentItemInHands))
+			else if (ABaseGrenade* G = Cast<ABaseGrenade>(CurrentItemInHands))
 			{
 				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+
+				if (G->IsA(AFragGrenade::StaticClass()))
+				{
+					HUD->FragGrenadeWidget->SetRenderOpacity(1.f);
+				}
+				else if (G->IsA(AFlashbangGrenade::StaticClass()))
+				{
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(1.f);
+				}
+				else if (G->IsA(ASmokeGrenade::StaticClass()))
+				{
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(1.f);
+				}
+			}
+			else if (Cast<AKnife>(CurrentItemInHands))
+			{
+				HUD->KnifeWidget->SetRenderOpacity(1.f);
 			}
 		}
 			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
@@ -1144,6 +1284,25 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 					//HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
 				}
 			}
+			else if (ABaseGrenade* G = Cast<ABaseGrenade>(CurrentItemInHands))
+			{
+				if (G->IsA(AFragGrenade::StaticClass()))
+				{
+					HUD->FragGrenadeWidget->SetVisibility(ESlateVisibility::Visible);
+				}
+				else if (G->IsA(AFlashbangGrenade::StaticClass()))
+				{
+					HUD->FlashbangGrenadeWidget->SetVisibility(ESlateVisibility::Visible);
+				}
+				else if (G->IsA(ASmokeGrenade::StaticClass()))
+				{
+					HUD->SmokeGrenadeWidget->SetVisibility(ESlateVisibility::Visible);
+				}
+			}
+			else if (Cast<AKnife>(CurrentItemInHands))
+			{
+				HUD->KnifeWidget->SetVisibility(ESlateVisibility::Visible);
+			}
 			//}
 			
 		}
@@ -1180,6 +1339,29 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 					HUD->SecondaryWeaponWidget->SetVisibility(ESlateVisibility::Visible);
 					HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
 				}
+			}
+			else if (ABaseGrenade* G = Cast<ABaseGrenade>(It))
+			{
+				if (G->IsA(AFragGrenade::StaticClass()))
+				{
+					HUD->FragGrenadeWidget->SetVisibility(ESlateVisibility::Visible);
+					HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+				}
+				else if (G->IsA(AFlashbangGrenade::StaticClass()))
+				{
+					HUD->FlashbangGrenadeWidget->SetVisibility(ESlateVisibility::Visible);
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+				}
+				else if (G->IsA(ASmokeGrenade::StaticClass()))
+				{
+					HUD->SmokeGrenadeWidget->SetVisibility(ESlateVisibility::Visible);
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
+				}
+			}
+			else if (Cast<AKnife>(It))
+			{
+				HUD->KnifeWidget->SetVisibility(ESlateVisibility::Visible);
+				HUD->KnifeWidget->SetRenderOpacity(0.5f);
 			}
 			
 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item added to inventory!"));

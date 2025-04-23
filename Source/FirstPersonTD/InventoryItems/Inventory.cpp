@@ -294,7 +294,7 @@ bool UInventory::PreviousItem()
 		//CurrentItem = InventorySlots[CurrentInventorySlot];
 		
 		SetCurrentItemInHands();
-		return false;
+		return true;
 	}
 
 

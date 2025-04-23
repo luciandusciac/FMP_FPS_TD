@@ -112,6 +112,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	class UCameraComponent* Camera;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
+	USceneComponent* ADSPosComponent;
+
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimSequence* ShootingAnimation;
 
@@ -239,4 +242,8 @@ public:
 	//
 	// UFUNCTION(BlueprintCallable)
 	// void EquipWeapon(const int32 Index);
+
+private:
+	FVector PreviousLocation;
+	FRotator PreviousRotation;
 };

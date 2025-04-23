@@ -46,6 +46,9 @@ AMyFPSCharacter::AMyFPSCharacter()
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
 	Camera->bUsePawnControlRotation = true;
 	Camera->SetupAttachment(GetMesh(), "Head");
+
+	ADSPosComponent = CreateDefaultSubobject<USceneComponent>(TEXT("ADS"));
+	ADSPosComponent->SetupAttachment(Camera);
 	
 	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AMyFPSCharacter::OnComponentBeginOverlap);
 
@@ -209,6 +212,11 @@ void AMyFPSCharacter::Tick(float DeltaTime)
 		{
 			HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Hidden);
 			bIsThrowingKnife = false;
+
+			if (HUD->KnifeWidget->IsVisible())
+			{
+				HUD->KnifeWidget->SetVisibility(ESlateVisibility::Hidden);
+			}
 		}
 	}
 	else if (CurrentItemInHands && CurrentItemInHands->IsA(AKnife::StaticClass()) && Inventory->GetNumberOfItems() > 0)
@@ -217,6 +225,7 @@ void AMyFPSCharacter::Tick(float DeltaTime)
 		{
 			HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Hidden);
 		}
+		
 		KnifeThrowElapsedTime = 0.f;
 		HUD->SetKnifeThrowProgress(KnifeThrowElapsedTime, 1.4f);
 	}
@@ -454,6 +463,8 @@ void AMyFPSCharacter::OnKnifeThrown()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Knife animinstance changed!"));
 	}
 
+	
+
 	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
 }
 
@@ -546,28 +557,30 @@ void AMyFPSCharacter::Aim()
 	{
 		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
 		{
-			Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-			
-			Camera->AttachToComponent(W->AimOrigin, FAttachmentTransformRules::SnapToTargetIncludingScale);
-	
-			Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
-			Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+			// Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+			//
+			// Camera->AttachToComponent(W->AimOrigin, FAttachmentTransformRules::SnapToTargetIncludingScale);
+			//
+			// Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+			// Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 
+
+			W->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+			W->Mesh->AttachToComponent(ADSPosComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+
+			PreviousLocation = W->Mesh->GetRelativeLocation();
+			PreviousRotation = W->Mesh->GetRelativeRotation();
+			
+			W->Mesh->SetWorldLocation(ADSPosComponent->GetComponentLocation());
+			W->Mesh->SetWorldRotation(ADSPosComponent->GetComponentRotation());
+			
+
+			//W->Mesh->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
 
 			bIsAiming = true;
 			
-			// FVector CameraLoc = Camera->GetComponentLocation();
-			// FVector CameraDir = Camera->GetForwardVector();
-			// FVector TraceEnd = CameraLoc + (CameraDir * -10000.f);
-			//
-			// // Socket location on the weapon (e.g. the sight)
-			// FVector SightLoc = W->Mesh->GetSocketLocation("AimOrigin");
-			//
-			// // Rotation from sight to where the camera is looking
-			// FRotator DesiredRot = (TraceEnd - SightLoc).Rotation();
-			//
-			// // Option 1: Rotate the whole weapon
-			// W->Mesh->SetWorldRotation(DesiredRot + FRotator(0.f, 0.f, 90.f));
+			
 			
 	
 			if (W->bHasScope)
@@ -591,12 +604,20 @@ void AMyFPSCharacter::Aim()
 
 void AMyFPSCharacter::StopAiming()
 {
-	Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-	
-	Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Head"));
-	Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
-	Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
-	//Camera->SetupAttachment(GetMesh(), "Head");
+	// Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+	//
+	// Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Head"));
+	// Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+	// Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
+
+
+	if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
+	{
+		//W->Mesh->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
+
+		W->Mesh->SetRelativeLocation(PreviousLocation);
+		W->Mesh->SetRelativeRotation(PreviousRotation);
+	}
 	
 	//Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 100.f, GetWorld()->GetDeltaSeconds(), 5.0f));
 	Camera->SetFieldOfView(90.f);
@@ -860,23 +881,73 @@ void AMyFPSCharacter::PreviousWeapon()
 					W->SetCurrentAmmo(NewAmmoData->CurrentAmmo);
 					W->SetReserveAmmo(NewAmmoData->ClipSize);
 				}
-
-				if (!W->IsA(ASniper::StaticClass()))
-				{
-					if (!HUD->CrosshairWidget->IsVisible())
-					{
-						HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
-					}
-				}
 				else
 				{
 					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
 				}
+
+				if (W->Implements<UPrimaryWeapon>() && HUD->PrimaryWeaponWidget->IsVisible())
+				{
+					HUD->PrimaryWeaponWidget->SetRenderOpacity(1.f);
+					
+					HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
+					HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->KnifeWidget->SetRenderOpacity(0.5f);
+				}
+				else if (W->Implements<USecondaryWeapon>() && HUD->SecondaryWeaponWidget->IsVisible())
+				{
+					HUD->SecondaryWeaponWidget->SetRenderOpacity(1.f);
+
+					HUD->PrimaryWeaponWidget->SetRenderOpacity(0.5f);
+					HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->KnifeWidget->SetRenderOpacity(0.5f);
+				}
 			}
-			else if (Cast<ABaseGrenade>(CurrentItemInHands))
+			else if (ABaseGrenade* G = Cast<ABaseGrenade>(CurrentItemInHands))
 			{
 				HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
+
+				if (G->IsA(AFragGrenade::StaticClass()))
+				{
+					HUD->FragGrenadeWidget->SetRenderOpacity(1.f);
+					
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
+				}
+				else if (G->IsA(AFlashbangGrenade::StaticClass()))
+				{
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(1.f);
+
+					HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
+				}
+				else if (G->IsA(ASmokeGrenade::StaticClass()))
+				{
+					HUD->SmokeGrenadeWidget->SetRenderOpacity(1.f);
+
+					HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+					HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+				}
+
+				HUD->PrimaryWeaponWidget->SetRenderOpacity(0.5f);
+				HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
+				HUD->KnifeWidget->SetRenderOpacity(0.5f);
 			}
+			else if (Cast<AKnife>(CurrentItemInHands))
+			{
+				HUD->KnifeWidget->SetRenderOpacity(1.f);
+				
+				HUD->PrimaryWeaponWidget->SetRenderOpacity(0.5f);
+				HUD->SecondaryWeaponWidget->SetRenderOpacity(0.5f);
+				HUD->FragGrenadeWidget->SetRenderOpacity(0.5f);
+				HUD->FlashbangGrenadeWidget->SetRenderOpacity(0.5f);
+				HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
+			}
+		
 		}
 	}
 

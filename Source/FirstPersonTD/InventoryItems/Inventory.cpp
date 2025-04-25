@@ -185,7 +185,7 @@ void UInventory::UseItem(AInventoryItem* Item)
 	//Item->Use();
 
 	// If item is consumable, remove from inventory
-	if(Item->bIsConsumable)
+	if(Item && Item->bIsConsumable)
 	{
 		InventorySlots.Remove(CurrentInventorySlot);
 		//if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
@@ -197,6 +197,8 @@ void UInventory::UseItem(AInventoryItem* Item)
 
 		NextItem();
 		
+		//NEEDS FIXING
+
 		
 		//if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
 		//{

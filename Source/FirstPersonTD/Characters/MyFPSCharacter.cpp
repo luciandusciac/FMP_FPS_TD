@@ -263,7 +263,7 @@ void AMyFPSCharacter::Tick(float DeltaTime)
 
 void AMyFPSCharacter::ThrowGrenade()
 {
-	//GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnGrenadeThrown, GrenadeThrowTime, false);
+	GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnGrenadeThrown, GrenadeThrowTime, false);
 
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
@@ -346,7 +346,7 @@ void AMyFPSCharacter::ThrowGrenade()
 
 void AMyFPSCharacter::OnGrenadeThrown()
 {
-	//GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
+	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
 	
 	// if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	// {
@@ -357,16 +357,16 @@ void AMyFPSCharacter::OnGrenadeThrown()
 		
 	
 
-	AFragGrenade* Gr = GetWorld()->SpawnActor<AFragGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
-	UStaticMeshComponent* MeshComp = Gr->FindComponentByClass<UStaticMeshComponent>();
-	if (MeshComp)
-	{
-		MeshComp->SetSimulatePhysics(true);
-		MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-		MeshComp->BodyInstance.SetUseCCD(true);
-		MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
-	}
-	Gr->bCanExplode = true;
+	// AFragGrenade* Gr = GetWorld()->SpawnActor<AFragGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
+	// UStaticMeshComponent* MeshComp = Gr->FindComponentByClass<UStaticMeshComponent>();
+	// if (MeshComp)
+	// {
+	// 	MeshComp->SetSimulatePhysics(true);
+	// 	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
+	// 	MeshComp->BodyInstance.SetUseCCD(true);
+	// 	MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
+	// }
+	// Gr->bCanExplode = true;
 	
 
 	//AnimationInstance->bHasGrenade = false;
@@ -565,15 +565,7 @@ void AMyFPSCharacter::Aim()
 			// Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 
 
-			W->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
-			W->Mesh->AttachToComponent(ADSPosComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
-
-
-			PreviousLocation = W->Mesh->GetRelativeLocation();
-			PreviousRotation = W->Mesh->GetRelativeRotation();
 			
-			W->Mesh->SetWorldLocation(ADSPosComponent->GetComponentLocation());
-			W->Mesh->SetWorldRotation(ADSPosComponent->GetComponentRotation());
 			
 
 			//W->Mesh->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
@@ -590,6 +582,13 @@ void AMyFPSCharacter::Aim()
 					// HUD->SniperScopeWidget->RemoveFromParent();
 					// HUD->SniperScopeWidget->AddToViewport(-1);
 					HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Visible);
+
+					Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+					
+					Camera->AttachToComponent(W->AimOrigin, FAttachmentTransformRules::SnapToTargetIncludingScale);
+					
+					Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+					Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 				}
 			}
 			else
@@ -597,6 +596,16 @@ void AMyFPSCharacter::Aim()
 				// INFO: Aiming without scope
 				//Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
 				Camera->SetFieldOfView(50.f);
+
+				W->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+				W->Mesh->AttachToComponent(ADSPosComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+
+
+				PreviousLocation = W->Mesh->GetRelativeLocation();
+				PreviousRotation = W->Mesh->GetRelativeRotation();
+			
+				W->Mesh->SetWorldLocation(ADSPosComponent->GetComponentLocation());
+				W->Mesh->SetWorldRotation(ADSPosComponent->GetComponentRotation());
 			}
 		}
 	}

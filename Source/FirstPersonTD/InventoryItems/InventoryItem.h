@@ -31,5 +31,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
 	FTransform AttachmentTransform;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Components")
+	FTransform AimingTransform;
 	
 };

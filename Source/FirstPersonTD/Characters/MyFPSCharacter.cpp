@@ -598,14 +598,16 @@ void AMyFPSCharacter::Aim()
 				Camera->SetFieldOfView(50.f);
 
 				W->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
-				W->Mesh->AttachToComponent(ADSPosComponent, FAttachmentTransformRules::SnapToTargetIncludingScale);
+				W->Mesh->AttachToComponent(ADSPosComponent,
+					FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true));
+				W->Mesh->SetRelativeTransform(Inventory->CurrentItem->AimingTransform);
 
 
 				PreviousLocation = W->Mesh->GetRelativeLocation();
 				PreviousRotation = W->Mesh->GetRelativeRotation();
 			
-				W->Mesh->SetWorldLocation(ADSPosComponent->GetComponentLocation());
-				W->Mesh->SetWorldRotation(ADSPosComponent->GetComponentRotation());
+				//W->Mesh->SetWorldLocation(ADSPosComponent->GetComponentLocation());
+				//W->Mesh->SetWorldRotation(ADSPosComponent->GetComponentRotation());
 			}
 		}
 	}
@@ -624,8 +626,15 @@ void AMyFPSCharacter::StopAiming()
 	{
 		//W->Mesh->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
 
-		W->Mesh->SetRelativeLocation(PreviousLocation);
-		W->Mesh->SetRelativeRotation(PreviousRotation);
+		// W->Mesh->SetRelativeLocation(PreviousLocation);
+		// W->Mesh->SetRelativeRotation(PreviousRotation);
+
+		W->Mesh->AttachToComponent(
+			GetMesh(),
+			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true),
+			FName("WeaponSocket")
+		);
+		W->Mesh->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
 	}
 	
 	//Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 100.f, GetWorld()->GetDeltaSeconds(), 5.0f));

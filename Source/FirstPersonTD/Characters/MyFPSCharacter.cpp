@@ -27,6 +27,7 @@
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/FragGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Grenades/SmokeGrenade.h"
 #include "FirstPersonTD/InventoryItems/ThrowableItems/Knives/Knife.h"
+#include "FirstPersonTD/InventoryItems/WeaponClasses/Pistols/Pistol.h"
 #include "FirstPersonTD/InventoryItems/WeaponClasses/Shotguns/Shotgun.h"
 #include "FirstPersonTD/InventoryItems/WeaponClasses/Snipers/Sniper.h"
 #include "FirstPersonTD/Pickups/BasePickup.h"
@@ -603,11 +604,10 @@ void AMyFPSCharacter::Aim()
 				W->Mesh->SetRelativeTransform(Inventory->CurrentItem->AimingTransform);
 
 
-				PreviousLocation = W->Mesh->GetRelativeLocation();
-				PreviousRotation = W->Mesh->GetRelativeRotation();
-			
-				//W->Mesh->SetWorldLocation(ADSPosComponent->GetComponentLocation());
-				//W->Mesh->SetWorldRotation(ADSPosComponent->GetComponentRotation());
+				if (W->IsA(APistol::StaticClass()))
+				{
+					GetMesh()->SetVisibility(false);
+				}
 			}
 		}
 	}
@@ -645,6 +645,11 @@ void AMyFPSCharacter::StopAiming()
 	if (HUD->SniperScopeWidget && HUD->SniperScopeWidget->IsVisible())
 	{
 		HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Hidden);
+	}
+
+	if (!(GetMesh()->IsVisible()))
+	{
+		GetMesh()->SetVisibility(true);
 	}
 }
 

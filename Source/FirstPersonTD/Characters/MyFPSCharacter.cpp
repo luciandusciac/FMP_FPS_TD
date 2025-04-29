@@ -35,6 +35,7 @@
 #include "FirstPersonTD/Projectiles/RifleBullet.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "NavMesh/NavMeshBoundsVolume.h"
 
 class ABaseWeapon;
 
@@ -189,6 +190,23 @@ void AMyFPSCharacter::BeginPlay()
 	}
 
 	PlayerStartLocation = GetActorLocation();
+
+
+	// INFO: Draw navmesh bounds
+	TArray<AActor*> FoundVolumes;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ANavMeshBoundsVolume::StaticClass(), FoundVolumes);
+
+	for (AActor* Actor : FoundVolumes)
+	{
+		if (ANavMeshBoundsVolume* Volume = Cast<ANavMeshBoundsVolume>(Actor))
+		{
+			const FBoxSphereBounds Bounds = Volume->GetBounds();
+			const FVector Origin = Bounds.Origin;
+			const FVector Extent = Bounds.BoxExtent;
+
+			DrawDebugBox(GetWorld(), Origin, Extent, FColor::Red, true, -1.f, 0, 5.f);
+		}
+	}
 }
 
 void AMyFPSCharacter::Tick(float DeltaTime)

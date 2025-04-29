@@ -602,6 +602,9 @@ void AMyFPSCharacter::Aim()
 					// HUD->SniperScopeWidget->AddToViewport(-1);
 					HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Visible);
 
+					Camera->SetFieldOfView(50.f);
+					
+
 					Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 					
 					Camera->AttachToComponent(W->AimOrigin, FAttachmentTransformRules::SnapToTargetIncludingScale);
@@ -663,6 +666,12 @@ void AMyFPSCharacter::StopAiming()
 	if (HUD->SniperScopeWidget && HUD->SniperScopeWidget->IsVisible())
 	{
 		HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Hidden);
+
+		Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
+		
+		Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Head"));
+		Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
+		Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 	}
 
 	if (!(GetMesh()->IsVisible()))

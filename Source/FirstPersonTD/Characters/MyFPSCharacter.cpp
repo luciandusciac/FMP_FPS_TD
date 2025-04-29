@@ -36,6 +36,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NavMesh/NavMeshBoundsVolume.h"
+#include "UniversalObjectLocators/AnimInstanceLocatorFragment.h"
 
 class ABaseWeapon;
 
@@ -277,6 +278,15 @@ void AMyFPSCharacter::Tick(float DeltaTime)
 	// 		W->Mesh->SetWorldRotation(ControlRot);
 	// 	}
 	// }
+
+	// if (CurrentItemInHands->IsA(ABaseGrenade::StaticClass()))
+	// {
+	// 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
+	// 	{
+	// 		//AnimInstance->bIsThrowingGrenade = true;
+	// 		AnimInstance->bHasGrenade = true;
+	// 	}
+	// }
 }
 
 
@@ -286,8 +296,8 @@ void AMyFPSCharacter::ThrowGrenade()
 
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
-		AnimInstance->bIsThrowingGrenade = false;
-		AnimInstance->bHasGrenade = false;
+		AnimInstance->bIsThrowingGrenade = true;
+		//AnimInstance->bHasGrenade = false;
 	
 	}
 	
@@ -373,7 +383,18 @@ void AMyFPSCharacter::OnGrenadeThrown()
 	// 	AnimInstance->bHasGrenade = false;
 	//
 	// }
-		
+
+	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		AnimInstance->bIsThrowingGrenade = false;
+		AnimInstance->bHasGrenade = false;
+
+		if (CurrentItemInHands->IsA(AFragGrenade::StaticClass()) || CurrentItemInHands->IsA(AFlashbangGrenade::StaticClass()) || CurrentItemInHands->IsA(ASmokeGrenade::StaticClass()))
+		{
+			AnimInstance->bHasGrenade = false;
+		}
+	}
+
 	
 
 	// AFragGrenade* Gr = GetWorld()->SpawnActor<AFragGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());

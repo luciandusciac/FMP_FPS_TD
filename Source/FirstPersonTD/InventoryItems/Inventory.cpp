@@ -196,7 +196,11 @@ void UInventory::UseItem(AInventoryItem* Item)
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Item used! Items left: %d"), InventorySlots.Num()));
 
 		NextItem();
-		
+
+		if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+		{
+			C->SpawnCurrentWeaponInHands();
+		}
 		//NEEDS FIXING
 
 		
@@ -356,8 +360,10 @@ void UInventory::SetCurrentItemInHands()
 				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
 				CurrentItem = InventorySlots[CurrentInventorySlot];
 
+			
 
-				//C->SpawnCurrentWeaponInHands();
+			//C->SpawnCurrentWeaponInHands();
+			
 				//SortInventoryItems();
 			// }
 			// else

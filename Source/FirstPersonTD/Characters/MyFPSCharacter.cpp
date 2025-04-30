@@ -208,6 +208,17 @@ void AMyFPSCharacter::BeginPlay()
 			DrawDebugBox(GetWorld(), Origin, Extent, FColor::Red, true, -1.f, 0, 5.f);
 		}
 	}
+
+
+	if (InstructionsWidgetClass)
+	{
+		InstructionsWidget = CreateWidget<UUserWidget>(GetWorld(), InstructionsWidgetClass);
+		if (InstructionsWidget)
+		{
+			InstructionsWidget->AddToViewport();
+			InstructionsWidget->SetVisibility(ESlateVisibility::Hidden);
+		}
+	}
 }
 
 void AMyFPSCharacter::Tick(float DeltaTime)

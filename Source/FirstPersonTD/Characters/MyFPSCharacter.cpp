@@ -296,7 +296,7 @@ void AMyFPSCharacter::ThrowGrenade()
 
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
-		AnimInstance->bIsThrowingGrenade = true;
+		//AnimInstance->bIsThrowingGrenade = true;
 		//AnimInstance->bHasGrenade = false;
 	
 	}
@@ -366,6 +366,7 @@ void AMyFPSCharacter::ThrowGrenade()
 	}
 	
 	CurrentItemInHands->Destroy();
+	//CurrentItemInHands = nullptr;
 	Inventory->UseItem(Inventory->CurrentItem);
 
 	//if (CurrentItemInHands != nullptr)
@@ -388,13 +389,9 @@ void AMyFPSCharacter::OnGrenadeThrown()
 	{
 		AnimInstance->bIsThrowingGrenade = false;
 		AnimInstance->bHasGrenade = false;
-
-		if (CurrentItemInHands->IsA(AFragGrenade::StaticClass()) || CurrentItemInHands->IsA(AFlashbangGrenade::StaticClass()) || CurrentItemInHands->IsA(ASmokeGrenade::StaticClass()))
-		{
-			AnimInstance->bHasGrenade = false;
-		}
 	}
 
+	GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::CheckGrenadeInHand, 0.1f, false);
 	
 
 	// AFragGrenade* Gr = GetWorld()->SpawnActor<AFragGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
@@ -411,6 +408,25 @@ void AMyFPSCharacter::OnGrenadeThrown()
 
 	//AnimationInstance->bHasGrenade = false;
 	//Inventory->NextItem();
+}
+
+void AMyFPSCharacter::CheckGrenadeInHand()
+{
+	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
+	{
+		if (CurrentItemInHands != nullptr && Inventory->GetNumberOfItems() > 0 &&
+			(CurrentItemInHands->IsA(AFragGrenade::StaticClass()) || CurrentItemInHands->IsA(AFlashbangGrenade::StaticClass()) ||
+				CurrentItemInHands->IsA(ASmokeGrenade::StaticClass())))
+		{
+			AnimInstance->bHasGrenade = true;
+		}
+		else
+		{
+			AnimInstance->bHasGrenade = false;
+		}
+	}
+
+	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
 }
 
 void AMyFPSCharacter::ThrowKnife()

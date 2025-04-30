@@ -68,6 +68,7 @@ public:
 	void ThrowGrenade();
 	float GrenadeThrowTime;
 	void OnGrenadeThrown();
+	void CheckGrenadeInHand();
 
 	void ThrowKnife();
 	void OnKnifeThrown();

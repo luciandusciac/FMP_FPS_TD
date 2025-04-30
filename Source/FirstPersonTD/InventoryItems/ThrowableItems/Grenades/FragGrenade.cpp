@@ -3,7 +3,6 @@
 
 #include "FragGrenade.h"
 
-#include "SWarningOrErrorBox.h"
 #include "Components/SphereComponent.h"
 #include "Engine/OverlapResult.h"
 #include "FirstPersonTD/Characters/EnemyCharacter.h"

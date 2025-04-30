@@ -36,7 +36,7 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "NavMesh/NavMeshBoundsVolume.h"
-#include "UniversalObjectLocators/AnimInstanceLocatorFragment.h"
+
 
 class ABaseWeapon;
 

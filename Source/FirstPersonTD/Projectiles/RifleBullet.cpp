@@ -3,6 +3,8 @@
 
 #include "RifleBullet.h"
 
+#include "FirstPersonTD/Characters/MyFPSCharacter.h"
+
 
 // Sets default values
 ARifleBullet::ARifleBullet()
@@ -18,7 +20,6 @@ ARifleBullet::ARifleBullet()
 void ARifleBullet::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame

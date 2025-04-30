@@ -119,21 +119,6 @@ void ARifle::Shoot()
 
 void ARifle::Reload()
 {
-	// if(AFPSPlayerController* PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
-	// {
-	// 	if (!PC) return;
-	//
-	// 	if (this->GetOwner() != PC->GetCharacter())
-	// 	{
-	// 		if (AEnemyCharacter* En = Cast<AEnemyCharacter>(this->GetOwner()))
-	// 		{
-	// 			if (USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(En->GetMesh()->GetAnimInstance()))
-	// 			{
-	// 				AnimInstance->bIsReloading = true;
-	// 			}
-	// 		}
-	// 	}
-	// }
 	Super::Reload();
 }
 

@@ -202,7 +202,7 @@ void UInventory::UseItem(AInventoryItem* Item)
 				C->SpawnCurrentWeaponInHands();
 			}
 		}
-		//NEEDS FIXING
+		
 
 		
 		//if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))

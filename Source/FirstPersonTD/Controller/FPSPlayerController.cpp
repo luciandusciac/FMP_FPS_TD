@@ -181,22 +181,40 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 		// 	NewLocation.Z = Offset;
 		// 	Camera->SetRelativeLocation(NewLocation);
 		// }
+		float Pitch = 0.f;
 
-		if (UCameraComponent* Camera = PlayerCharacter->FindComponentByClass<UCameraComponent>())
+		if (AMyFPSCharacter* Pl = Cast<AMyFPSCharacter>(PlayerCharacter))
 		{
-			float Pitch = PlayerCharacter->GetControlRotation().Pitch;
-			float NormalizedPitch = FMath::Clamp(Pitch / 80.f, -1.f, 1.f);  
+			if (Pl->Inventory->GetNumberOfItems() == 0)
+			{
+				if (UCameraComponent* Camera = PlayerCharacter->FindComponentByClass<UCameraComponent>())
+				{
+					Pitch = PlayerCharacter->GetControlRotation().Pitch;
+					float NormalizedPitch = FMath::Clamp(Pitch / 80.f, -1.f, 1.f);  
 			
-			float DownOffset = FMath::Lerp(0.f, 10.f, NormalizedPitch);
-			float UpOffset = FMath::Lerp(0.f, 80.f, NormalizedPitch);
+					float DownOffset = FMath::Lerp(0.f, 10.f, NormalizedPitch);
+					float UpOffset = FMath::Lerp(0.f, 80.f, NormalizedPitch);
 
-			// INFO: Use the correct offset depending on the direction
-			float Offset = Pitch > 89 ? DownOffset : UpOffset;
-			//float Offset = FMath::Lerp(0.f, 10.f, (NormalizedPitch + 1.f) / 2.f); // Map NormalizedPitch to -20.f to 20.f
+					// INFO: Use the correct offset depending on the direction
+					float Offset = Pitch > 89 ? DownOffset : UpOffset;
 
-			FVector NewLocation = Camera->GetRelativeLocation();
-			NewLocation.Z = Offset;
-			Camera->SetRelativeLocation(NewLocation);
+					
+					//float Offset = FMath::Lerp(0.f, 10.f, (NormalizedPitch + 1.f) / 2.f); // Map NormalizedPitch to -20.f to 20.f
+
+					FVector NewLocation = Camera->GetRelativeLocation();
+					NewLocation.Z = Offset;
+					Camera->SetRelativeLocation(NewLocation);
+				}
+				if (Pitch <= 90)
+				{
+					Pl->GetMesh()->SetVisibility(false);
+				}
+				else
+				{
+					Pl->GetMesh()->SetVisibility(true);
+				}
+			}
+			
 		}
 
 		AnimationInstance->VerticalBend = FMath::Lerp(AnimationInstance->VerticalBend, LookValue.Y * 50.f,  DeltaT * 2.f);

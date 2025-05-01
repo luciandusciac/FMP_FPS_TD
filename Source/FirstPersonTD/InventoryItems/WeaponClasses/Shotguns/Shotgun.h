@@ -39,7 +39,7 @@ private:
 
 	int32 PelletsFired = 0;
 	
-	float PelletSpawnInterval = 0.015f; // time between each pellet
+	float PelletSpawnInterval = 0.02f; // time between each pellet
 	FTimerHandle PelletSpawnTimerHandle;
 
 	void SpawnPellet();

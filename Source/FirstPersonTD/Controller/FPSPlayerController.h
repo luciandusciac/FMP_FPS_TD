@@ -91,8 +91,6 @@ protected:
 	float RotationSpeed = 100.0f;
 #pragma endregion
 
-	//TMap<int, bool> AnimationStates;
-	//TArray<bool> AnimationBooleans;
 	UPROPERTY()
 	USWAT_AnimInstance* AnimationInstance;
 

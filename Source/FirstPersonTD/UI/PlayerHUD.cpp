@@ -19,15 +19,7 @@ void UPlayerHUD::SetKnifeThrowProgress(float Time, float MaxTime)
 
 void UPlayerHUD::UpdateAmmoValues(int CurrentAmmo, int ReserveAmmo)
 {
-	//if (CurrentAmmo && ReserveAmmo)
-	//{
-		CurrentAmmoText->SetText(FText::FromString(FString::FromInt(CurrentAmmo)));
-		ReserveAmmoText->SetText(FText::FromString(FString::FromInt(ReserveAmmo)));
-	//}
-	// else
-	// {
-	// 	CurrentAmmoText->SetText(FText::FromString("0"));
-	// 	ReserveAmmoText->SetText(FText::FromString("0"));
-	// }
+	CurrentAmmoText->SetText(FText::FromString(FString::FromInt(CurrentAmmo)));
+	ReserveAmmoText->SetText(FText::FromString(FString::FromInt(ReserveAmmo)));
 }
 

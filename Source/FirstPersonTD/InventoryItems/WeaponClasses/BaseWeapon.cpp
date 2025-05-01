@@ -12,11 +12,6 @@ ABaseWeapon::ABaseWeapon()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
-
-	// //FSetActorReplicates Replicates = FSetActorReplicates(cast<AActor>(this), true);
-	// bReplicates = true;
-	// bNetLoadOnClient = true;
-	// SetReplicates(true);
 	
 	Root = CreateDefaultSubobject<USceneComponent>(TEXT("Root"));
 	RootComponent = Root;
@@ -32,12 +27,9 @@ ABaseWeapon::ABaseWeapon()
 
 	ShellOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("ShellOrigin"));
 	ShellOrigin->SetupAttachment(Mesh);
-
-	//if (bHasMagazine)
-	//{
-		MagazineOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("MagazineOrigin"));
-		MagazineOrigin->SetupAttachment(Mesh);
-	//}
+	
+	MagazineOrigin = CreateDefaultSubobject<USceneComponent>(TEXT("MagazineOrigin"));
+	MagazineOrigin->SetupAttachment(Mesh);
 
 	bIsShooting = false;
 }
@@ -48,11 +40,6 @@ void ABaseWeapon::BeginPlay()
 	Super::BeginPlay();
 
 	CurrentAmmo = ClipSize;
-	
-	
-	// if(!CurrentOwner)
-	// 	Mesh->SetVisibility(false);
-	//Mesh->IgnoreActorWhenMoving(Cast<AActor>(WeaponBullet), true);
 }
 
 // Called every frame
@@ -109,49 +96,43 @@ void ABaseWeapon::OnShoot()
 
 void ABaseWeapon::Reload()
 {
-	//if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOwner()))
-	//{
-		//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
+	{
+		if(ReserveAmmo > 0)
 		{
-			if(ReserveAmmo > 0)
+			GetWorldTimerManager().SetTimer(ReloadTimerHandle, this, &ABaseWeapon::OnReload, ReloadTime, false);
+			ReserveAmmo--;
+			if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(controller->GetCharacter()))
 			{
-				GetWorldTimerManager().SetTimer(ReloadTimerHandle, this, &ABaseWeapon::OnReload, ReloadTime, false);
-				ReserveAmmo--;
-				if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(controller->GetCharacter()))
-				{
-					C->AnimationInstance->bIsReloading = true;
-				}
-
-				// INFO: Play reload sound
-				UGameplayStatics::PlaySoundAtLocation(this, ReloadSound, GetActorLocation());	
-
-				// INFO: Spawn magazine
-				if (bHasMagazine)
-				{
-					if (MagazineOrigin && Magazine)
-					{
-						FActorSpawnParameters SpawnParams;
-						SpawnParams.Owner = this;
-						SpawnParams.Instigator = GetInstigator();
-	
-						FVector SpawnLocation = MagazineOrigin->GetComponentLocation();
-						FRotator SpawnRotation = MagazineOrigin->GetComponentRotation();
-
-						AActor* SpawnedMagazine = GetWorld()->SpawnActor<AActor>(Magazine, SpawnLocation, SpawnRotation, SpawnParams);
-						
-					}
-				}
+				C->AnimationInstance->bIsReloading = true;
 			}
-			else
+
+			// INFO: Play reload sound
+			UGameplayStatics::PlaySoundAtLocation(this, ReloadSound, GetActorLocation());	
+
+			// INFO: Spawn magazine
+			if (bHasMagazine)
 			{
-				// INFO: Play error sound
-				GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No reserve ammo"));
-				UGameplayStatics::PlaySoundAtLocation(this, EmptySound, GetActorLocation());
+				if (MagazineOrigin && Magazine)
+				{
+					FActorSpawnParameters SpawnParams;
+					SpawnParams.Owner = this;
+					SpawnParams.Instigator = GetInstigator();
+
+					FVector SpawnLocation = MagazineOrigin->GetComponentLocation();
+					FRotator SpawnRotation = MagazineOrigin->GetComponentRotation();
+
+					AActor* SpawnedMagazine = GetWorld()->SpawnActor<AActor>(Magazine, SpawnLocation, SpawnRotation, SpawnParams);
+				}
 			}
 		}
-	//}
-	
+		else
+		{
+			// INFO: Play error sound
+			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No reserve ammo"));
+			UGameplayStatics::PlaySoundAtLocation(this, EmptySound, GetActorLocation());
+		}
+	}
 }
 
 void ABaseWeapon::OnReload()

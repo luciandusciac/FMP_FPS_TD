@@ -19,13 +19,6 @@ AEnemyCharacter::AEnemyCharacter() : CurrentHealth(100.f)
 
 	this->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &AEnemyCharacter::OnComponentBeginOverlap);
 	
-	// Weapon = CreateDefaultSubobject<USceneComponent>(TEXT("Weapon"));
-	// Weapon->SetupAttachment(GetMesh(), TEXT("RightHand"));
-	// Weapon->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
-	// Weapon->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
-	// Weapon->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
-	// Weapon->SetMobility(EComponentMobility::Movable);
-	
 }
 
 UBehaviorTree* AEnemyCharacter::GetBehaviorTree() const
@@ -141,10 +134,3 @@ void AEnemyCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 	}
 }
 
-// void AEnemyCharacter::OnTargetDetected(AActor* Actor, FAIStimulus Stimulus)
-// {
-// 	if(Actor)
-// 	{
-// 		UE_LOG(LogTemp, Warning, TEXT("Target Detected"));
-// 	}
-// }

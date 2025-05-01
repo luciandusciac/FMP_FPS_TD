@@ -18,9 +18,6 @@ ABaseGrenade::ABaseGrenade()
 
 	ExplosionVFX = CreateDefaultSubobject<UNiagaraComponent>(TEXT("ExplosionVFX"));
 	ExplosionVFX->SetupAttachment(Root);
-
-	//bCanExplode = false;
-	//bMeshDisabled = false;
 	
 }
 
@@ -46,56 +43,18 @@ void ABaseGrenade::BeginPlay()
 void ABaseGrenade::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	// if (bMeshDisabled)
-	// {
-	// 	if (UStaticMeshComponent* MeshComp = this->FindComponentByClass<UStaticMeshComponent>())
-	// 	{
-	// 		MeshComp->SetSimulatePhysics(false);
-	// 		MeshComp->SetEnableGravity(false);
-	// 		
-	// 	}
-	// 	bMeshDisabled = false;
-	// }
 }
 
 void ABaseGrenade::Explode()
 {
-	//GetWorldTimerManager().SetTimer(ExplosionTimerHandle, this, &ABaseGrenade::OnExplode, ExplosionTime, false);
-	
-	//GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
-	//UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), GetActorLocation());
-	
 }
 
 void ABaseGrenade::OnExplode()
 {
-	//GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
-	//UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), GetActorLocation());
 }
 
 void ABaseGrenade::Use()
 {
-	//Super::Use();
-	//bCanExplode = true;
-	//Explode();
 }
 
-// void ABaseGrenade::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-// 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
-// {
-// 	if (Cast<AMyFPSCharacter>(OtherActor))
-// 	{
-// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Grenade added"));
-// 		if (UStaticMeshComponent* MeshComp = this->FindComponentByClass<UStaticMeshComponent>())
-// 		{
-// 			MeshComp->SetSimulatePhysics(false);
-// 			MeshComp->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-// 			MeshComp->SetMassScale(NAME_None, 0.0f);
-// 			MeshComp->SetEnableGravity(false);
-// 			MeshComp->WakeRigidBody();
-// 			GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Grenade mesh disabled"));
-// 		}
-// 	}
-// }
 

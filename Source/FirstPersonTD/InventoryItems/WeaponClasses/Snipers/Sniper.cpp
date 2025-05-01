@@ -26,16 +26,6 @@ void ASniper::BeginPlay()
 void ASniper::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	// if(CurrentFireRate>FireRate)
-	// {
-	// 	CurrentFireRate = 0;
-	// 	Shoot();
-	// }
-	// else
-	// {
-	// 	CurrentFireRate += DeltaTime;
-	// }
 }
 
 void ASniper::Shoot()
@@ -48,9 +38,7 @@ void ASniper::Shoot()
 			CurrentAmmo--;
 			
 			bIsShooting = true;
-
-
-
+			
 			if(AFPSPlayerController* PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
 			{
 				if (!PC) return;
@@ -81,17 +69,11 @@ void ASniper::Shoot()
 					}
 				}
 			}
-			// FActorSpawnParameters SpawnParams;
-			// SpawnParams.Owner = this;
-			// SpawnParams.Instigator = GetInstigator();
-			//
-			// GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), BulletOrigin->GetComponentRotation(), SpawnParams);
 			Super::Shoot();
 
 			
 			if (CurrentAmmo == 0)
 				Reload();
-
 			
 			GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
 		}

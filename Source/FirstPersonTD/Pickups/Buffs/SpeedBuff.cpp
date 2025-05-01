@@ -38,7 +38,6 @@ void ASpeedBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponen
 
 		if (Ch->HUD->SpedUpWidgetClass)
 		{
-			/*Ch->HUD->SpedUpWidget*/
 			UUserWidget* Widget = CreateWidget<UUserWidget>(GetWorld(), Ch->HUD->SpedUpWidgetClass);
 			Ch->HUD->SpedUpWidget = Widget;
 			if (Ch->HUD->SpedUpWidget)

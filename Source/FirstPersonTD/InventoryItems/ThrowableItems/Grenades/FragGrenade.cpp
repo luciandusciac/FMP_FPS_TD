@@ -16,15 +16,6 @@ AFragGrenade::AFragGrenade()
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	//SphereComponent = CreateDefaultSubobject<USphereComponent>(TEXT("SphereComponent"));
-	//SphereComponent->SetupAttachment(RootComponent);
-	//SphereComponent->Deactivate();
-
-	//SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-	//SphereComponent->SetCollisionResponseToAllChannels(ECR_Overlap);
-	//SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-	//SphereComponent->InitSphereRadius(10.f);
-
 	ExplosionTime = 3.0f;
 }
 
@@ -49,25 +40,7 @@ void AFragGrenade::Tick(float DeltaTime)
 
 void AFragGrenade::Explode()
 {
-	//Super::Explode();
-	//SphereComponent->SetActive(true);
-	//SphereComponent->Activate();
-
 	GetWorldTimerManager().SetTimer(ExplosionTimerHandle, this, &AFragGrenade::OnExplode, ExplosionTime, false);
-	
-	// TArray<AActor*> OverlappingActors;
-	//
-	// SphereComponent->GetOverlappingActors(OverlappingActors);
-	//
-	// UE_LOG(LogTemp, Warning, TEXT("Frag Explosion"));
-	//
-	// for (AActor* Actor : OverlappingActors)
-	// {
-	// 	if(Cast<AMyFPSCharacter>(Actor))
-	// 		UE_LOG(LogTemp, Warning, TEXT("Actor: %s"), *Actor->GetName());
-	// }
-
-	
 }
 
 void AFragGrenade::OnExplode()
@@ -92,23 +65,6 @@ void AFragGrenade::OnExplode()
 	
 		if (bHasHit)
 		{
-			// for (FOverlapResult Result : OverlapResults)
-			// {
-			// 	AActor* OverlappingActor = Result.GetActor();
-			// 	if (OverlappingActor && OverlappingActor != this)
-			// 	{
-			// 		UE_LOG(LogTemp, Warning, TEXT("Overlapping Actor: %s"), *OverlappingActor->GetName());
-			// 		if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(OverlappingActor))
-			// 		{
-			// 			C->TakeDamage(60.f);
-			// 		}
-			// 		else if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OverlappingActor))
-			// 		{
-			// 			Enemy->TakeDamage(60.f);
-			// 		}
-			// 	}
-			// }
-
 			TSet<AActor*> DamagedActors;
 
 			for (FOverlapResult Result : OverlapResults)
@@ -133,11 +89,9 @@ void AFragGrenade::OnExplode()
 		}
 	
 		GetWorldTimerManager().ClearTimer(ExplosionTimerHandle);
-
-		//if (UStaticMeshComponent* MeshComp = this->FindComponentByClass<UStaticMeshComponent>())
-		//{
-			UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), MeshComp->GetComponentLocation());
-		//}
+		
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), ExplosionVFX->GetAsset(), MeshComp->GetComponentLocation());
+		
 		UGameplayStatics::PlaySoundAtLocation(this, ExplosionSound, GetActorLocation());
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Frag grenade exploded!"));
 		this->Destroy();
@@ -147,6 +101,5 @@ void AFragGrenade::OnExplode()
 void AFragGrenade::Use()
 {
 	Super::Use();
-	//bCanExplode = true;
 }
 

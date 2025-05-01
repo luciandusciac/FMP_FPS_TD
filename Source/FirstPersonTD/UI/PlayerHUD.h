@@ -49,18 +49,11 @@ public:
 	UPROPERTY()
 	UUserWidget* DamageBuffWidget;
 
-	// INFO: Widget for primary weapon
-	//UPROPERTY(EditAnywhere)
-	//TSubclassOf<UUserWidget> PrimaryWeaponWidgetClass;
-
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<UPrimaryWeaponWidget> PrimaryWeaponWidgetClass;
 	
 	UPROPERTY()
 	UPrimaryWeaponWidget* PrimaryWeaponWidget;
-	
-	// UPROPERTY(meta = (BindWidget))
-	// UImage* WeaponImage;
 
 	UPROPERTY(EditAnywhere)
 	UTexture2D* AK47;
@@ -104,10 +97,6 @@ public:
 	
 	UPROPERTY()
 	UUserWidget* KnifeWidget;
-	
-
-	//UPROPERTY(EditAnywhere)
-	//TSubclassOf<UUserWidget> SniperScopeWidgetClass;
 
 	UPROPERTY(EditAnywhere, meta=(BindWidget))
 	UImage* SniperScopeWidget;

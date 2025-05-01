@@ -40,17 +40,13 @@ bool UInventory::AddItem(AInventoryItem* Item)
 	 * If item implements knife interface, add with key 3
 	 */
 
-	//TODO: Add more item types
-	//TODO: Add more inventory slots
-	//TODO: If weapon is dropped and another one equipped, make it the current item and swap to it
-
 	if (!Item)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Trying to add a NULL item to inventory!"));
 		return false;
 	}
 
-	if(Item->Implements<UPrimaryWeapon>() && !InventorySlots.Contains(0) /*&& !InventoryItems.Contains(Item)*/)
+	if(Item->Implements<UPrimaryWeapon>() && !InventorySlots.Contains(0))
 	{
 		//CheckEmptyInventory(0);
 		InventorySlots.Add(0, Item);
@@ -60,20 +56,6 @@ bool UInventory::AddItem(AInventoryItem* Item)
 		UE_LOG(LogTemp, Warning, TEXT("Item added to inventory: %s"), *Item->GetName());
 		//CurrentInventorySlot = 0; //???
 		CheckEmptyInventory(0);
-		
-		
-		// if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		// {
-		// 	//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-		// 	if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-		// 	{
-		// 		controller->AnimationIndex = CurrentInventorySlot;  //Animation is lined up with inventory slot
-		// 		controller->EquipWeapon(CurrentInventorySlot);  //Play the animation related to the weapon
-		// 		C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
-		// 		SortInventoryItems();
-		// 		
-		// 	}
-		// }
 	}
 	else if(Item->Implements<USecondaryWeapon>() && !InventorySlots.Contains(1))
 	{
@@ -147,52 +129,21 @@ void UInventory::ThrowItem()
 
 	if(InventorySlots.Num() > 0)
 	{
-		//CurrentItem->Destroy();
-		//InventorySlots[CurrentInventorySlot] = nullptr;
 		UE_LOG(LogTemp, Warning, TEXT("Item thrown: %s"), *CurrentItem->GetName());
 		InventorySlots.Remove(CurrentInventorySlot);
 		UE_LOG(LogTemp, Warning, TEXT("Inventory slot empty: %d"), InventorySlots.IsEmpty());
-		//CurrentItem = nullptr;
-	
 
-		//if(GetNumberOfItems() > 0)
-			NextItem();
-		// else
-		// {
-		// 	CurrentItem->Destroy();
-		// 	CurrentItem = nullptr;
-		// 	//CurrentInventorySlot = NULL;
-		// 	
-		// 	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		// 	{
-		// 		//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
-		// 		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
-		// 		{
-		// 			controller->AnimationIndex = 10;  //Animation is lined up with inventory slot
-		// 			controller->EquipWeapon(controller->AnimationIndex);  //Play the animation related to the weapon
-		// 			
-		// 			//C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
-		// 		}
-		// 	}
-		// }
-		// if(CurrentItem)
-		// 	UE_LOG(LogTemp, Warning, TEXT("Current item: %s"), *CurrentItem->GetName());
+		NextItem();
 	}
 }
 
 void UInventory::UseItem(AInventoryItem* Item)
 {
-	//Item->Use();
-
 	// If item is consumable, remove from inventory
 	if(Item && Item->bIsConsumable)
 	{
 		InventorySlots.Remove(CurrentInventorySlot);
-		//if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		//{
-		//	C->NextWeapon();
-		//}
-		//NextItem();
+
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, FString::Printf(TEXT("Item used! Items left: %d"), InventorySlots.Num()));
 
 		if (NextItem())
@@ -202,27 +153,6 @@ void UInventory::UseItem(AInventoryItem* Item)
 				C->SpawnCurrentWeaponInHands();
 			}
 		}
-		
-
-		
-		//if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
-		//{
-			//if (C->CurrentItemInHands)
-			//	C->CurrentItemInHands->Destroy();
-		
-			//if (InventorySlots.Num() == 1 && !NextItem())
-			//{
-			//	//C->SpawnCurrentWeaponInHands();
-			//	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Next item equipped!"));
-			//	//return;
-			//}
-			//else
-			//	NextItem();
-			//if (NextItem())
-			//{
-			//	
-			//}
-		//}	
 	}
 	
 }
@@ -231,7 +161,6 @@ bool UInventory::NextItem()
 {
 	if(InventorySlots.Num() == 0)
 	{
-		//CurrentItem = nullptr;
 		if (CurrentItem)
 			CurrentItem->Destroy();
 
@@ -244,26 +173,13 @@ bool UInventory::NextItem()
 			if (C->HUD->CrosshairWidget->IsVisible())
 				C->HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Hidden);
 		}
-		// if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(Controller->GetCharacter()))
-		// {
-		// 	C->CurrentItemInHands->Destroy();
-		// 	C->CurrentItemInHands = nullptr;
-		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No weapons in inventory!"));
-		// }
-		//
-		// CurrentInventorySlot = 10;
-		
 		return false;
 	}
 	if(InventorySlots.Num() == 1)
 	{
 		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
-		//CurrentItem = InventorySlots[CurrentInventorySlot];
+		
 		SetCurrentItemInHands();
-		// if (AMyFPSCharacter* C = Cast<AMyFPSCharacter>(Controller->GetCharacter()))
-		// {
-		// 	C->SpawnCurrentWeaponInHands();
-		// }
 		return true;
 	}
 	if(InventorySlots.Num() > 1)
@@ -285,7 +201,6 @@ bool UInventory::PreviousItem()
 {
 	if(InventorySlots.Num() == 0)
 	{
-		//CurrentItem = nullptr;
 		if (CurrentItem)
 			CurrentItem->Destroy();
 
@@ -298,8 +213,7 @@ bool UInventory::PreviousItem()
 	if(InventorySlots.Num() == 1)
 	{
 		CurrentInventorySlot = InventorySlots.CreateConstIterator()->Key;
-		//CurrentItem = InventorySlots[CurrentInventorySlot];
-		
+	
 		SetCurrentItemInHands();
 		return true;
 	}
@@ -341,38 +255,18 @@ void UInventory::CheckEmptyInventory(int Index)
 		CurrentInventorySlot = Index;
 		SetCurrentItemInHands();
 	}
-	//else if (InventorySlots.Num() == 1)
-	//{
-		//SetCurrentItemInHands();
-	//}
 }
 
 void UInventory::SetCurrentItemInHands()
 {
 	if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
 	{
-		//C->AnimationInstance->AnimationIndex = CurrentInventorySlot;
 		if(AFPSPlayerController* controller = Cast<AFPSPlayerController>(C->GetController()))
 		{
-			//if (InventorySlots.Contains(CurrentInventorySlot))
-			//{
-				controller->AnimationIndex = CurrentInventorySlot;  // Animation is lined up with inventory slot
-				controller->EquipWeapon(CurrentInventorySlot);  // Play the animation related to the weapon
-				C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
-				CurrentItem = InventorySlots[CurrentInventorySlot];
-
-			
-
-			//C->SpawnCurrentWeaponInHands();
-			
-				//SortInventoryItems();
-			// }
-			// else
-			// {
-			// 	UE_LOG(LogTemp, Error, TEXT("Invalid inventory slot: %d"), CurrentInventorySlot);
-			// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Invalid inventory slot!"));
-			// }
-				
+			controller->AnimationIndex = CurrentInventorySlot;  // Animation is lined up with inventory slot
+			controller->EquipWeapon(CurrentInventorySlot);  // Play the animation related to the weapon
+			C->CurrentItemInHands = InventorySlots[CurrentInventorySlot];
+			CurrentItem = InventorySlots[CurrentInventorySlot];
 		}
 	}
 }

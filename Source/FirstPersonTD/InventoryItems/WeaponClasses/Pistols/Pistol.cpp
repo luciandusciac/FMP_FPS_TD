@@ -24,23 +24,10 @@ void APistol::BeginPlay()
 void APistol::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	// if(CurrentFireRate>FireRate)
-	// {
-	// 	CurrentFireRate = 0;
-	// 	Shoot();
-	// }
-	// else
-	// {
-	// 	CurrentFireRate += DeltaTime;
-	// }
 }
 
 void APistol::Shoot()
 {
-	//Super::Shoot();
-
-
 	if (!bIsShooting)
 	{
 		if (CurrentAmmo > 0)
@@ -81,19 +68,6 @@ void APistol::Shoot()
 				}
 			}
 
-
-
-
-
-
-			
-	
-			// FActorSpawnParameters SpawnParams;
-			// SpawnParams.Owner = this;
-			// SpawnParams.Instigator = GetInstigator();
-			//
-			// GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), BulletOrigin->GetComponentRotation(), SpawnParams);
-			
 			Super::Shoot();
 
 			

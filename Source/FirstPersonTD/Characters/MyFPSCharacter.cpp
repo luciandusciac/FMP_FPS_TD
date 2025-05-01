@@ -61,7 +61,6 @@ AMyFPSCharacter::AMyFPSCharacter()
 	CurrentItemInHands = nullptr;
 
 	CurrentHealth = MaxHealth;
-	
 }
 
 // Called when the game starts or when spawned

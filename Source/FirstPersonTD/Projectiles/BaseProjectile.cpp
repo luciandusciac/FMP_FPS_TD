@@ -31,27 +31,6 @@ ABaseProjectile::ABaseProjectile()
 
 	BulletTrail = CreateDefaultSubobject<UNiagaraComponent>(TEXT("BulletTrail"));
 	BulletTrail->SetupAttachment(SphereComponent);
-
-	//BulletHoleDecal = LoadObject<UMaterialInterface>(nullptr, TEXT("Material'/FMP_FPS_TD/Content/VFX/Bullet/BulletImpact/M_BulletHole.uasset'"));
-	
-	
-	// SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
- //    SphereComponent->SetCollisionResponseToChannel(ECC_WorldDynamic, ECR_Block);
- //    SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
-
-	// ABaseWeapon* WeaponOwner = Cast<ABaseWeapon>(GetOwner());
-	// if(WeaponOwner)
-	// {
-	// 	SphereComponent->IgnoreActorWhenMoving(WeaponOwner, true);
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Warning, TEXT("No Weapon Owner"));
-	// }
-	// if(GetOwner())
-	// {
-	// 	SphereComponent->IgnoreActorWhenMoving(GetOwner(), true);
-	// }
 }
 
 
@@ -65,8 +44,7 @@ void ABaseProjectile::BeginPlay()
 	ProjectileMovementComponent->bRotationFollowsVelocity = true;
 	ProjectileMovementComponent->bShouldBounce = false;
 	ProjectileMovementComponent->ProjectileGravityScale = 0.1f;
-
-	//UNiagaraFunctionLibrary::SpawnSystemAtLocation(GetWorld(), BulletTrail->GetAsset(), GetActorLocation());
+	
 	UNiagaraFunctionLibrary::SpawnSystemAttached(
 		   BulletTrail->GetAsset(),
 		   RootComponent,
@@ -74,28 +52,9 @@ void ABaseProjectile::BeginPlay()
 		   FVector::ZeroVector,
 		   FRotator(0, 180.f, 0),
 		   EAttachLocation::Type::KeepRelativeOffset,
-		   true
-	   );
-
-	
-	// if (GetOwner())
-	// {
-	// 	//UE_LOG(LogTemp, Warning, TEXT("Projectile owner is: %s"), *GetOwner()->GetName());
-	// 	//SphereComponent->IgnoreActorWhenMoving(Cast<AActor>(GetOwner()), true);
-	// 	SphereComponent->MoveIgnoreActors.Add(GetOwner());
-	// }
-	// else
-	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("Projectile has NO owner!"));
-	// }
-	
-	//SphereComponent->OnComponentBeginOverlap.AddDynamic(this, &ABaseProjectile::OnComponentBeginOverlap);
+		   true);
 
 	SphereComponent->OnComponentHit.AddDynamic(this, &ABaseProjectile::OnComponentHit);
-	// if(GetOwner())
-	// {
-	// 	SphereComponent->IgnoreActorWhenMoving(GetOwner(), true);
-	// }
 }
 
 
@@ -103,8 +62,6 @@ void ABaseProjectile::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	
-	
-	//this->Destroy();
 }
 
 void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
@@ -115,19 +72,6 @@ void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 		if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
 		{
 			Ch->TakeDamage(DamageAmount);
-
-			// if (Ch->DamageEffectWidgetClass)
-			// {
-			// 	Ch->DamageEffectWidget = CreateWidget<UUserWidget>(GetWorld(), Ch->DamageEffectWidgetClass);
-			// 	if (Ch->DamageEffectWidget)
-			// 	{
-			// 		Ch->DamageEffectWidget->AddToViewport();
-			// 		//DamageEffectWidget->Destruct();
-			// 		GetWorldTimerManager().SetTimer(Ch->WidgetTimerHandle, [Ch]{Ch->DestroyWidget(Ch->DamageEffectWidget);}, 0.5f, false);
-			//
-			// 		//Ch->HUD->SetHealth(Ch->CurrentHealth, Ch->MaxHealth);
-			// 	}
-			// }
 		}
 		else if (AEnemyCharacter* En = Cast<AEnemyCharacter>(OtherActor))
 		{
@@ -142,6 +86,5 @@ void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 void ABaseProjectile::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	//BulletTrail->Activate();
 }
 

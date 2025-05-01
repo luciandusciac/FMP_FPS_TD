@@ -52,12 +52,10 @@ void ADamageBuff::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCompone
 						}
 					}
 
-					// Reset after 30 seconds
+					// INFO: Reset after 30 seconds
 					GetWorldTimerManager().SetTimer(Ch->AnimationTimerHandle, [DefaultBullet]
 					{
-						//Ch->ResetBulletDamage();
 						DefaultBullet->DamageAmount /= 1.1f;
-						//GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Bullet damage buff removed!"));
 					}, 30.f, false);
 				}
 			}

@@ -28,16 +28,6 @@ void ARifle::BeginPlay()
 void ARifle::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	// if(CurrentFireRate>FireRate)
-	// {
-	// 	CurrentFireRate = 0;
-	// 	Shoot();
-	// }
-	// else
-	// {
-	// 	CurrentFireRate += DeltaTime;
-	// }
 }
 
 void ARifle::Shoot()
@@ -50,11 +40,6 @@ void ARifle::Shoot()
 			CurrentAmmo--;
 
 			bIsShooting = true;
-
-			//
-			// AMyFPSCharacter* Player = Cast<AMyFPSCharacter>(GetOwner());
-			// if (!Player || !Player->GetController()) return;
-
 			
 			if(AFPSPlayerController* PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
 			{
@@ -97,11 +82,6 @@ void ARifle::Shoot()
 				}
 			}
 			
-			// FActorSpawnParameters SpawnParams;
-			// SpawnParams.Owner = this;
-			// SpawnParams.Instigator = GetInstigator();
-			//
-			// GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, BulletOrigin->GetComponentLocation(), BulletOrigin->GetComponentRotation(), SpawnParams);
 			Super::Shoot();
 			
 			if (CurrentAmmo == 0)

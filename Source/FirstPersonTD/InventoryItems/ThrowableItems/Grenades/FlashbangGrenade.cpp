@@ -91,22 +91,6 @@ void AFlashbangGrenade::OnExplode()
 							// INFO: Restart the AI behavior tree
 							AIController->GetBrainComponent()->RestartLogic();
 						}, 5.0f, false); 
-
-
-						
-						// BlackboardComp->SetValueAsBool(TEXT("CanSeePlayer"), false);
-						// GetWorldTimerManager().SetTimer(FlashbangTimer, [En]() 
-						// {
-						// 	//En->ResetCanSeePlayer();
-						// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Enemy can see player again!"));
-						// 	// if (AEnemyController* AIController = Cast<AEnemyController>(En->GetController()))
-						// 	// {
-						// 	// 	if (UBlackboardComponent* BlackboardComp = AIController->GetBlackboardComponent())
-						// 	// 	{
-						// 	// 		BlackboardComp->SetValueAsBool(TEXT("CanSeePlayer"), true);
-						// 	// 	}
-						// 	// }
-						// }, 5.0f, false);
 					}
 				}
 			}

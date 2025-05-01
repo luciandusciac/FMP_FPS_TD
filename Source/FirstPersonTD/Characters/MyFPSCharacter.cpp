@@ -389,13 +389,6 @@ void AMyFPSCharacter::OnGrenadeThrown()
 {
 	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
 	
-	// if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
-	// {
-	// 	AnimInstance->bIsThrowingGrenade = false;
-	// 	AnimInstance->bHasGrenade = false;
-	//
-	// }
-
 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
 	{
 		AnimInstance->bIsThrowingGrenade = false;
@@ -403,22 +396,6 @@ void AMyFPSCharacter::OnGrenadeThrown()
 	}
 
 	GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::CheckGrenadeInHand, 0.1f, false);
-	
-
-	// AFragGrenade* Gr = GetWorld()->SpawnActor<AFragGrenade>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
-	// UStaticMeshComponent* MeshComp = Gr->FindComponentByClass<UStaticMeshComponent>();
-	// if (MeshComp)
-	// {
-	// 	MeshComp->SetSimulatePhysics(true);
-	// 	MeshComp->SetCollisionEnabled(ECollisionEnabled::QueryAndPhysics);
-	// 	MeshComp->BodyInstance.SetUseCCD(true);
-	// 	MeshComp->AddImpulse(GetActorForwardVector() * 500.f + FVector(0.f, 0.f, 400.f));
-	// }
-	// Gr->bCanExplode = true;
-	
-
-	//AnimationInstance->bHasGrenade = false;
-	//Inventory->NextItem();
 }
 
 void AMyFPSCharacter::CheckGrenadeInHand()

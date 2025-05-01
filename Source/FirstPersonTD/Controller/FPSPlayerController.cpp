@@ -169,8 +169,8 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 	if (ACharacter* PlayerCharacter = Cast<ACharacter>(GetPawn()))
 	{
 		const FVector2D LookValue = Value.Get<FVector2D>();
-		PlayerCharacter->AddControllerYawInput(LookValue.X);
-		PlayerCharacter->AddControllerPitchInput(-LookValue.Y);
+		// PlayerCharacter->AddControllerYawInput(LookValue.X * 1.5f);
+		// PlayerCharacter->AddControllerPitchInput(-LookValue.Y * 1.5f);
 		
 		// if (UCameraComponent* Camera = PlayerCharacter->FindComponentByClass<UCameraComponent>())
 		// {
@@ -185,6 +185,18 @@ void AFPSPlayerController::LookAround(const FInputActionValue& Value)
 
 		if (AMyFPSCharacter* Pl = Cast<AMyFPSCharacter>(PlayerCharacter))
 		{
+			if (Pl->HUD->SniperScopeWidget->IsVisible())
+			{
+				PlayerCharacter->AddControllerYawInput(LookValue.X * 2.f);
+				PlayerCharacter->AddControllerPitchInput(-LookValue.Y * 2.f);
+			}
+			else
+			{
+				PlayerCharacter->AddControllerYawInput(LookValue.X * 1.5f);
+				PlayerCharacter->AddControllerPitchInput(-LookValue.Y * 1.5f);
+				
+			}
+			
 			if (Pl->Inventory->GetNumberOfItems() == 0)
 			{
 				if (UCameraComponent* Camera = PlayerCharacter->FindComponentByClass<UCameraComponent>())

@@ -30,68 +30,129 @@ void AShotgun::Tick(float DeltaTime)
 	Super::Tick(DeltaTime);
 }
 
+// void AShotgun::Shoot()
+// {
+// 	if (!bIsShooting)
+// 	{
+// 		if (CurrentAmmo > 0)
+// 		{
+// 			CurrentAmmo--;
+// 			bIsShooting = true;
+//
+// 			Super::Shoot();
+// 			
+// 			FActorSpawnParameters SpawnParams;
+// 			SpawnParams.Owner = this;
+// 			SpawnParams.Instigator = GetInstigator();
+//
+// 			APlayerController* PlayerController = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
+// 			if (!PlayerController) return;
+//
+// 			FVector CameraLocation;
+// 			FRotator CameraRotation;
+// 			PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);  // Get camera location & rotation
+//
+// 			FVector ShotDirection = CameraRotation.Vector();
+// 			FVector TraceEnd = CameraLocation + (ShotDirection * 10000.0f); // Long-range trace
+//
+// 			FHitResult Hit;
+// 			FVector TargetLocation = TraceEnd;
+//
+// 			// Perform line trace to determine where the crosshair is aiming
+// 			if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, TraceEnd, ECC_Visibility))
+// 			{
+// 				TargetLocation = Hit.ImpactPoint; // Set target to the actual hit location
+// 			}
+//
+// 			for (int i = 0; i < PelletCount; ++i)
+// 			{
+// 				// Calculate spread by randomly adjusting the direction
+// 				FVector ShotSpread = ShotDirection;
+// 				ShotSpread = FMath::VRandCone(ShotSpread, FMath::DegreesToRadians(Spread));
+//
+// 				FRotator FinalShotRotation = ShotSpread.Rotation();
+// 				FVector MuzzleLocation = BulletOrigin->GetComponentLocation();
+//
+// 				GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, MuzzleLocation, FinalShotRotation, SpawnParams);
+// 			}
+//
+// 			
+//
+// 			if (CurrentAmmo == 0)
+// 				Reload();
+//
+// 			GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
+// 		}
+// 		else
+// 		{
+// 			UGameplayStatics::PlaySoundAtLocation(this, EmptySound, GetActorLocation());
+// 		}
+// 	}
+// }
+
 void AShotgun::Shoot()
 {
-	if (!bIsShooting)
+	if (!bIsShooting && CurrentAmmo > 0)
 	{
-		if (CurrentAmmo > 0)
+		CurrentAmmo--;
+		bIsShooting = true;
+
+		Super::Shoot();
+
+		APlayerController* PlayerController = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
+		if (!PlayerController) return;
+
+		PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);
+		ShotDirection = CameraRotation.Vector();
+		TraceEnd = CameraLocation + (ShotDirection * 10000.0f);
+
+		FHitResult Hit;
+		if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, TraceEnd, ECC_Visibility))
 		{
-			CurrentAmmo--;
-			bIsShooting = true;
-
-			Super::Shoot();
-			
-			FActorSpawnParameters SpawnParams;
-			SpawnParams.Owner = this;
-			SpawnParams.Instigator = GetInstigator();
-
-			APlayerController* PlayerController = Cast<APlayerController>(GetWorld()->GetFirstPlayerController());
-			if (!PlayerController) return;
-
-			FVector CameraLocation;
-			FRotator CameraRotation;
-			PlayerController->GetPlayerViewPoint(CameraLocation, CameraRotation);  // Get camera location & rotation
-
-			FVector ShotDirection = CameraRotation.Vector();
-			FVector TraceEnd = CameraLocation + (ShotDirection * 10000.0f); // Long-range trace
-
-			FHitResult Hit;
-			FVector TargetLocation = TraceEnd;
-
-			// Perform line trace to determine where the crosshair is aiming
-			if (GetWorld()->LineTraceSingleByChannel(Hit, CameraLocation, TraceEnd, ECC_Visibility))
-			{
-				TargetLocation = Hit.ImpactPoint; // Set target to the actual hit location
-			}
-
-			for (int i = 0; i < PelletCount; ++i)
-			{
-				// Calculate spread by randomly adjusting the direction
-				FVector ShotSpread = ShotDirection;
-				ShotSpread = FMath::VRandCone(ShotSpread, FMath::DegreesToRadians(Spread));
-
-				FRotator FinalShotRotation = ShotSpread.Rotation();
-				FVector MuzzleLocation = BulletOrigin->GetComponentLocation();
-
-				GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, MuzzleLocation, FinalShotRotation, SpawnParams);
-			}
-
-			
-
-			if (CurrentAmmo == 0)
-				Reload();
-
-			GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
+			TargetLocation = Hit.ImpactPoint;
 		}
 		else
 		{
-			UGameplayStatics::PlaySoundAtLocation(this, EmptySound, GetActorLocation());
+			TargetLocation = TraceEnd;
 		}
+
+		PelletsFired = 0;
+		GetWorldTimerManager().SetTimer(PelletSpawnTimerHandle, this, &AShotgun::SpawnPellet, PelletSpawnInterval, true);
+
+		if (CurrentAmmo == 0)
+			Reload();
+
+		GetWorldTimerManager().SetTimer(ShootingTimerHandle, this, &ABaseWeapon::OnShoot, FireRate, false);
+	}
+	else if (CurrentAmmo <= 0)
+	{
+		UGameplayStatics::PlaySoundAtLocation(this, EmptySound, GetActorLocation());
 	}
 }
 
 void AShotgun::Reload()
 {
 	Super::Reload();
+}
+
+void AShotgun::SpawnPellet()
+{
+	if (PelletsFired >= PelletCount)
+	{
+		GetWorldTimerManager().ClearTimer(PelletSpawnTimerHandle);
+		return;
+	}
+
+	FVector ShotSpread = FMath::VRandCone(ShotDirection, FMath::DegreesToRadians(Spread));
+	FRotator FinalShotRotation = ShotSpread.Rotation();
+	FVector MuzzleLocation = BulletOrigin->GetComponentLocation();
+
+	FActorSpawnParameters SpawnParams;
+	SpawnParams.Owner = this;
+	SpawnParams.Instigator = GetInstigator();
+
+	GetWorld()->SpawnActor<ABaseProjectile>(WeaponBullet, MuzzleLocation, FinalShotRotation, SpawnParams);
+
+	PelletsFired++;
 }
 

@@ -5,6 +5,7 @@
 
 #include "Components/SphereComponent.h"
 //#include "FirstPersonTD/InventoryItems/WeaponClasses/BaseWeapon.h"
+#include "ShotgunBullet.h"
 #include "Engine/World.h"
 #include "FirstPersonTD/Characters/EnemyCharacter.h"
 #include "FirstPersonTD/Characters/MyFPSCharacter.h"
@@ -22,10 +23,10 @@ ABaseProjectile::ABaseProjectile()
 	SphereComponent->InitSphereRadius(5.0f);
 	//SphereComponent->SetCollisionProfileName("OverlapAll");
 	
-	SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
-        SphereComponent->SetCollisionObjectType(ECC_PhysicsBody);
-        SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
-        SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
+	//SphereComponent->SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+    //SphereComponent->SetCollisionObjectType(ECC_PhysicsBody);
+    //SphereComponent->SetCollisionResponseToAllChannels(ECR_Ignore);
+    //SphereComponent->SetCollisionResponseToChannel(ECC_Pawn, ECR_Overlap);
 	
 	ProjectileMovementComponent = CreateDefaultSubobject<UProjectileMovementComponent>(TEXT("ProjectileMovementComponent"));
 
@@ -67,6 +68,9 @@ void ABaseProjectile::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, FVector NormalImpulse, const FHitResult& Hit)
 {
+	if (OtherActor->IsA(ABaseProjectile::StaticClass()))
+		return;
+	
 	if(OtherActor != GetOwner())
 	{
 		if (AMyFPSCharacter* Ch = Cast<AMyFPSCharacter>(OtherActor))
@@ -78,9 +82,10 @@ void ABaseProjectile::OnComponentHit(UPrimitiveComponent* HitComponent, AActor* 
 			En->TakeDamage(DamageAmount);
 		}
 		
-		this->Destroy();
-		UGameplayStatics::SpawnDecalAtLocation(GetWorld(), BulletHoleDecal, FVector(10, 10, 10), Hit.ImpactPoint, Hit.ImpactNormal.Rotation(), 10.f);
 	}
+
+	this->Destroy();
+	UGameplayStatics::SpawnDecalAtLocation(GetWorld(), BulletHoleDecal, FVector(10, 10, 10), Hit.ImpactPoint, Hit.ImpactNormal.Rotation(), 10.f);
 }
 
 void ABaseProjectile::Tick(float DeltaTime)

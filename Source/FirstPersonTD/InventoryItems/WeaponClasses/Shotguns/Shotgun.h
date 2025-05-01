@@ -30,4 +30,17 @@ public:
 private:
 	int PelletCount = 8;
 	float Spread = 10;
+
+	FVector CameraLocation;
+	FRotator CameraRotation;
+	FVector ShotDirection;
+	FVector TraceEnd;
+	FVector TargetLocation;
+
+	int32 PelletsFired = 0;
+	
+	float PelletSpawnInterval = 0.015f; // time between each pellet
+	FTimerHandle PelletSpawnTimerHandle;
+
+	void SpawnPellet();
 };

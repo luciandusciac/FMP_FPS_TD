@@ -43,28 +43,14 @@ public:
 
 protected:
 	virtual void BeginPlay() override;
-
-	
-	// virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	//
-	// UPROPERTY(EditDefaultsOnly, Category = "Config")
-	// TArray<TSubclassOf<class ABaseWeapon>> DefaultWeapons;
-	//
-	// UFUNCTION()
-	// virtual void OnRep_CurrentWeapon(const class ABaseWeapon* LastWeapon);
-	//
-	// UFUNCTION(Server, Reliable)
-	// void Server_SetCurrentWeapon(class ABaseWeapon* Weapon);
-	// virtual void Server_SetCurrentWeapon_Implementation(class ABaseWeapon* NewWeapon);
 	
 public:
 	
 	virtual void Tick(float DeltaTime) override;
 
-	//virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-
 	FTimerHandle AnimationTimerHandle;
-	
+
+#pragma region Movement and Actions
 	void ThrowGrenade();
 	float GrenadeThrowTime;
 	void OnGrenadeThrown();
@@ -108,6 +94,8 @@ public:
 	void ResetWalkingSpeed();
 	void ResetBulletDamage();
 
+#pragma endregion
+
 	TMap<TSubclassOf<ABaseWeapon>, FAmmoData> AmmoDataMap;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
@@ -116,6 +104,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category = "Components")
 	USceneComponent* ADSPosComponent;
 
+#pragma region Animations
+	
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimSequence* ShootingAnimation;
 
@@ -137,17 +127,26 @@ public:
 	UPROPERTY(EditAnywhere, Category = "Animations")
 	UAnimSequence* PistolShootingAnimation;
 
+	UPROPERTY()
+	USWAT_AnimInstance* AnimationInstance;
+	
+#pragma endregion
+
+#pragma region Inventory
+
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	UInventory* Inventory;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "Inventory")
 	AInventoryItem* CurrentItemInHands;
 
+#pragma endregion
+
 	UFUNCTION()
 	void OnComponentBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult);
 	
-	UPROPERTY()
-	USWAT_AnimInstance* AnimationInstance;
+
+#pragma region Weapons
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Aiming")
 	FVector AimTransform;
@@ -163,6 +162,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Weapon Holding")
 	FTransform WeaponTransform;
+
+#pragma endregion
 
 #pragma region Sounds
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category = "Sounds")
@@ -235,22 +236,5 @@ public:
 	void TakeDamage(float Damage);
 	
 #pragma endregion 
-	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
-	// TArray<class ABaseWeapon*> Weapons;
-	//
-	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, Replicated, Category = "State")
-	// int32 CurrentWeaponIndex = 0;
-	//
-	// UPROPERTY(VisibleInstanceOnly, BlueprintReadWrite, ReplicatedUsing = OnRep_CurrentWeapon, Category = "State")
-	// class ABaseWeapon* CurrentWeapon;
-	//
-	// UFUNCTION(BlueprintCallable)
-	// virtual void SwapWeapon();
-	//
-	// UFUNCTION(BlueprintCallable)
-	// void EquipWeapon(const int32 Index);
-
-private:
-	FVector PreviousLocation;
-	FRotator PreviousRotation;
+	
 };

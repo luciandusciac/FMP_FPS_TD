@@ -43,7 +43,7 @@ class ABaseWeapon;
 // Sets default values
 AMyFPSCharacter::AMyFPSCharacter()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+	
 	PrimaryActorTick.bCanEverTick = true;
 
 	Camera = CreateDefaultSubobject<UCameraComponent>(TEXT("Camera"));
@@ -61,7 +61,7 @@ AMyFPSCharacter::AMyFPSCharacter()
 	CurrentItemInHands = nullptr;
 
 	CurrentHealth = MaxHealth;
-	//WeaponTransform = FTransform(FRotator(0, 0, 0));
+	
 }
 
 // Called when the game starts or when spawned
@@ -94,16 +94,6 @@ void AMyFPSCharacter::BeginPlay()
 				HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Hidden);
 			}
 		}
-
-		// if (HUD->SniperScopeWidgetClass)
-		// {
-		// 	HUD->SniperScopeWidget = CreateWidget<UUserWidget>(GetWorld(), HUD->SniperScopeWidgetClass);
-		// 	if (HUD->SniperScopeWidget)
-		// 	{
-		// 		HUD->SniperScopeWidget->AddToPlayerScreen(-1);
-		// 		HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Hidden);
-		// 	}
-		// }
 
 		if (HUD && HUD->CrosshairWidgetClass)
 		{
@@ -179,12 +169,6 @@ void AMyFPSCharacter::BeginPlay()
 
 	HUD->SetHealth(CurrentHealth, MaxHealth);
 
-	// if (IsPlayerControlled())
-	// {
-	// 	GetMesh()->SetOwnerNoSee(true);  // Hide full-body mesh in first-person
-	// 	//ArmsMesh->SetOnlyOwnerSee(true);   // Show only the arms
-	// }
-
 	if (GEngine)
 	{
 		GEngine->Exec(GetWorld(), TEXT("r.SetNearClipPlane 1"));
@@ -238,7 +222,7 @@ void AMyFPSCharacter::Tick(float DeltaTime)
 		//float Progress = FMath::Clamp(KnifeThrowElapsedTime / TotalTime, 0.f, 1.f);
 		HUD->SetKnifeThrowProgress(KnifeThrowElapsedTime, TotalTime);
 
-		// Hide progress bar when complete
+		// INFO: Hide progress bar when complete
 		if (KnifeThrowElapsedTime >= TotalTime)
 		{
 			HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Hidden);
@@ -278,26 +262,6 @@ void AMyFPSCharacter::Tick(float DeltaTime)
 			bIsDeathCameraMoving = false;
 		}
 	}
-
-	// if (bIsAiming && CurrentItemInHands)
-	// {
-	// 	if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
-	// 	{
-	// 		// Align the weapon to follow control rotation (not camera's up/down)
-	// 		FRotator ControlRot = GetActorRotation();
-	// 		ControlRot.Pitch = 0.f; // flatten out any up/down tilt
-	// 		W->Mesh->SetWorldRotation(ControlRot);
-	// 	}
-	// }
-
-	// if (CurrentItemInHands->IsA(ABaseGrenade::StaticClass()))
-	// {
-	// 	if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
-	// 	{
-	// 		//AnimInstance->bIsThrowingGrenade = true;
-	// 		AnimInstance->bHasGrenade = true;
-	// 	}
-	// }
 }
 
 
@@ -379,10 +343,6 @@ void AMyFPSCharacter::ThrowGrenade()
 	CurrentItemInHands->Destroy();
 	//CurrentItemInHands = nullptr;
 	Inventory->UseItem(Inventory->CurrentItem);
-
-	//if (CurrentItemInHands != nullptr)
-	//	SpawnCurrentWeaponInHands();
-	
 }
 
 void AMyFPSCharacter::OnGrenadeThrown()
@@ -419,22 +379,11 @@ void AMyFPSCharacter::CheckGrenadeInHand()
 
 void AMyFPSCharacter::ThrowKnife()
 {
-	// if (CurrentItemInHands->GetClass()->ImplementsInterface(UKnifeInterface::StaticClass()))
-	// {
-	// 	AKnife* Knife = GetWorld()->SpawnActor<AKnife>(CurrentItemInHands->GetClass(), GetActorLocation() + GetActorForwardVector() * 100.f, GetActorRotation());
-	// 	UStaticMeshComponent* MeshComp = Knife->FindComponentByClass<UStaticMeshComponent>();
-	// 	
-	// 	if (MeshComp)
-	// 	{
-	// 		MeshComp->AddImpulse(GetActorForwardVector() * 5000.f);
-	// 	}
-	// }
-
 	if (!CurrentItemInHands) return;
 
 	if (CurrentItemInHands->GetClass()->ImplementsInterface(UKnifeInterface::StaticClass()))
 	{
-		// Deproject screen center to world direction
+		// INFO: Deproject screen center to world direction
 		int32 ViewportX, ViewportY;
 
 		if(AFPSPlayerController* PC = Cast<AFPSPlayerController>(UGameplayStatics::GetPlayerController(GetWorld(), 0)))
@@ -445,7 +394,7 @@ void AMyFPSCharacter::ThrowKnife()
 			FVector WorldDirection;
 			PC->DeprojectScreenPositionToWorld(ViewportX / 2.0f, ViewportY / 2.0f, WorldLocation, WorldDirection);
 
-			// Spawn the knife slightly in front of the player
+			// INFO: Spawn the knife slightly in front of the player
 			FVector SpawnLocation = Camera->GetComponentLocation() + WorldDirection * 100.f;
 			FRotator SpawnRotation = WorldDirection.Rotation();
 
@@ -454,7 +403,7 @@ void AMyFPSCharacter::ThrowKnife()
 			{
 				if (UStaticMeshComponent* MeshComp = Knife->FindComponentByClass<UStaticMeshComponent>())
 				{
-					// Launch toward the center of screen
+					// INFO: Launch toward the center of screen
 					MeshComp->AddImpulse(WorldDirection * 5000.f);
 
 					// INFO: Play knife throw sound
@@ -476,12 +425,6 @@ void AMyFPSCharacter::ThrowKnife()
 
 void AMyFPSCharacter::UpdateKnifeThrowProgress()
 {
-	// if (!HUD || !HUD->KnifeThrowProgressBar || !KnifeThrowAnimation)
-	// {
-	// 	UE_LOG(LogTemp, Error, TEXT("HUD, ProgressBar, or KnifeThrowAnimation is NULL!"));
-	// 	return;
-	// }
-
 	float ElapsedTime = GetWorldTimerManager().GetTimerElapsed(KnifeProgressBarTimer);
 	float TotalTime = KnifeThrowAnimation->GetPlayLength();
 
@@ -490,7 +433,7 @@ void AMyFPSCharacter::UpdateKnifeThrowProgress()
 	float Progress = FMath::Clamp(ElapsedTime / TotalTime, 0.f, 1.f);
 	HUD->SetKnifeThrowProgress(Progress, TotalTime);
 
-	// If Progress is Complete, Hide the Progress Bar
+	// INFO: If progress is complete, hide the progress bar
 	if (Progress >= 1.f)
 	{
 		HUD->KnifeThrowProgressBar->SetVisibility(ESlateVisibility::Hidden);
@@ -514,7 +457,6 @@ void AMyFPSCharacter::OnKnifeThrown()
 
 void AMyFPSCharacter::Shoot()
 {
-	//GetMesh()->PlayAnimation(ShootingAnimation, false);
 	if (!Inventory->CurrentItem)
 		return;
 	
@@ -541,8 +483,6 @@ void AMyFPSCharacter::Shoot()
 			}
 		}
 	}
-	//if (!AnimationInstance->bIsReloading)
-	//	UpdateAmmoUI();
 }
 
 void AMyFPSCharacter::OnShoot()
@@ -556,69 +496,14 @@ void AMyFPSCharacter::OnShoot()
 	
 }
 
-// void AMyFPSCharacter::Aim()
-// {
-// 	if(Inventory->CurrentItem != nullptr)
-// 	{
-// 		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
-// 		{
-// 			AimTransform = W->AimOrigin->GetRelativeLocation();
-// 			//                                                                                                                   tweak the values here for camera position when aiming
-// 			Camera->SetRelativeLocation(FMath::VInterpTo(Camera->GetRelativeLocation(), /*AimTransform.GetLocation() +*/ AimTransform, GetWorld()->GetDeltaSeconds(), 100.0f));
-// 	
-// 			//Camera->SetFieldOfView(50.f);
-// 		}
-// 	}
-// }
-
-// void AMyFPSCharacter::Aim()
-// {
-// 	if (Inventory->CurrentItem != nullptr)
-// 	{
-// 		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
-// 		{
-// 			FVector TargetLocation = W->AimOrigin->GetComponentLocation(); // World space position
-//
-// 			// Interpolate smoothly
-// 			FVector NewCameraPosition = FMath::VInterpTo(
-// 				Camera->GetComponentLocation(),
-// 				TargetLocation,
-// 				GetWorld()->GetDeltaSeconds(),
-// 				5.0f // Adjust speed for smooth movement
-// 			);
-//
-// 			Camera->SetRelativeLocation(NewCameraPosition);
-//             
-// 			// Optional: Zoom in for aiming
-// 			Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 50.f, GetWorld()->GetDeltaSeconds(), 5.0f));
-// 		}
-// 	}
-// }
-
 void AMyFPSCharacter::Aim()
 {
 	if (Inventory->CurrentItem != nullptr)
 	{
 		if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
 		{
-			// Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-			//
-			// Camera->AttachToComponent(W->AimOrigin, FAttachmentTransformRules::SnapToTargetIncludingScale);
-			//
-			// Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
-			// Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
-
-
-			
-			
-
-			//W->Mesh->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
-
 			bIsAiming = true;
-			
-			
-			
-	
+
 			if (W->bHasScope)
 			{
 				if (HUD->SniperScopeWidget && !HUD->SniperScopeWidget->IsVisible())
@@ -661,19 +546,9 @@ void AMyFPSCharacter::Aim()
 
 void AMyFPSCharacter::StopAiming()
 {
-	// Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
-	//
-	// Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Head"));
-	// Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
-	// Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
-
-
 	if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
 	{
 		//W->Mesh->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
-
-		// W->Mesh->SetRelativeLocation(PreviousLocation);
-		// W->Mesh->SetRelativeRotation(PreviousRotation);
 
 		W->Mesh->AttachToComponent(
 			GetMesh(),
@@ -728,7 +603,6 @@ void AMyFPSCharacter::Die()
 	
 	FTimerHandle RespawnTimer;
 	GetWorldTimerManager().SetTimer(RespawnTimer, this, &AMyFPSCharacter::Respawn, 3.0f, false);
-	//GetMesh()->PlayAnimation(DeathAnimation, false);
 }
 
 void AMyFPSCharacter::OnDeath()
@@ -750,15 +624,6 @@ void AMyFPSCharacter::Reload()
 			W->Reload();
 		}
 	}
-	//UpdateAmmoUI();
-	
-	// if(USWAT_AnimInstance* AnimInstance = Cast<USWAT_AnimInstance>(GetMesh()->GetAnimInstance()))
-	// {
-	// 	AnimInstance->bIsReloading = true;
-	// }
-	//
-	// GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Character is reloading"));
-	// GetWorldTimerManager().SetTimer(AnimationTimerHandle, this, &AMyFPSCharacter::OnReload, ReloadingTime, false);
 }
 
 void AMyFPSCharacter::OnReload()
@@ -789,8 +654,6 @@ void AMyFPSCharacter::NextWeapon()
 		}
 		CurrentItemInHands->Destroy();
 	}
-		
-	//CurrentItemInHands->Destroy();
 
 	if (Inventory->NextItem())
 	{
@@ -884,37 +747,6 @@ void AMyFPSCharacter::NextWeapon()
 				HUD->SmokeGrenadeWidget->SetRenderOpacity(0.5f);
 			}
 		}
-
-		// AActor* WeaponToSpawn = Cast<AActor>(Inventory->CurrentItem);
-		//
-		// if (WeaponToSpawn)
-		// {
-		// 	FActorSpawnParameters SpawnParams;
-		// 	SpawnParams.Owner = this;
-		// 	AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(WeaponToSpawn->GetClass(), GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
-		// 	CurrentItemInHands = SpawnedWeapon;
-		// 	UStaticMeshComponent* MeshComponent = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
-		// 	if (MeshComponent)
-		// 	{
-		// 		MeshComponent->SetSimulatePhysics(false);
-		// 		MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-		// 		MeshComponent->SetMassScale(NAME_None, 0.0f);
-		// 		MeshComponent->SetEnableGravity(false);
-		// 		MeshComponent->WakeRigidBody();
-		// 		MeshComponent->AttachToComponent(
-		// 			GetMesh(),
-		// 			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true),
-		// 			FName("WeaponSocket")
-		// 		);
-		// 		MeshComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
-		// 		MeshComponent->SetRelativeLocation(WeaponLocation);
-		// 		MeshComponent->SetRelativeRotation(WeaponRotation);
-		// 	}
-		// }
-		// else
-		// {
-		// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No weapon to spawn!"));
-		// }
 	}
 
 	UpdateAmmoUI();
@@ -936,8 +768,6 @@ void AMyFPSCharacter::PreviousWeapon()
 		}
 		CurrentItemInHands->Destroy();
 	}
-		
-	//CurrentItemInHands->Destroy();
 
 	if (Inventory->PreviousItem())
 	{
@@ -1027,20 +857,6 @@ void AMyFPSCharacter::PreviousWeapon()
 	}
 
 	UpdateAmmoUI();
-
-
-
-
-
-	// if (Inventory->GetNumberOfItems() == 1 || Inventory->GetNumberOfItems() == 0)
-	// 	return;
-	//
-	// CurrentItemInHands->Destroy();
-	//
-	// if (Inventory->PreviousItem())
-	// {
-	// 	GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Item destroyed, previous weapon!"));
-	// }
 }
 
 void AMyFPSCharacter::ThrowWeapon()
@@ -1065,7 +881,6 @@ void AMyFPSCharacter::ThrowWeapon()
 	}
 
 	AInventoryItem* ItemToThrow = Inventory->CurrentItem;
-	//CurrentItemInHands = Cast<AActor>(ItemToThrow);
 
 	if (CurrentItemInHands)
 	{
@@ -1119,14 +934,7 @@ void AMyFPSCharacter::ThrowWeapon()
 		SpawnParams.Owner = this;
 		
 		AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(ItemToThrow->GetClass(), GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
-		//UStaticMeshComponent* MeshComp = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
-		//if (MeshComp)
-		//{
-			//MeshComp->SetSimulatePhysics(true);
-			//MeshComp->AddImpulse(GetActorForwardVector() * 5000.f + FVector(0.f, 0.f, 4000.f));
-			//TODO: Destroy item in hands
-			//CurrentItemInHands->Destroy();
-			//CurrentItemInHands->DetachFromActor(FDetachmentTransformRules::KeepRelativeTransform);
+
 		UStaticMeshComponent* MeshComponent = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
 		if (MeshComponent)
 		{
@@ -1187,64 +995,14 @@ void AMyFPSCharacter::ThrowWeapon()
 				HUD->KnifeWidget->SetRenderOpacity(1.f);
 			}
 		}
-			//CurrentItemInHands->SetActorLocation(GetActorLocation() + GetActorForwardVector() * 250.f);
-			//CurrentItemInHands->SetActorRotation(GetActorRotation());
-			
-		//}
-		//else
-		//{
-		//	UE_LOG(LogTemp, Error, TEXT("Failed to get mesh component!"));
-		//}
-
-		//if (!SpawnedWeapon)
-		//{
-		//	UE_LOG(LogTemp, Error, TEXT("Failed to spawn weapon!"));
-		//}
 
 		UpdateAmmoUI();
-
 	}
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("No weapon to throw!"));
 	}
-
-	
 }
-
-// void AMyFPSCharacter::SpawnCurrentWaponInHands()
-// {
-// 	AActor* WeaponToSpawn = Cast<AActor>(Inventory->CurrentItem);
-// 	
-// 	if (WeaponToSpawn)
-// 	{
-// 		FActorSpawnParameters SpawnParams;
-// 		SpawnParams.Owner = this;
-// 		AActor* SpawnedWeapon = GetWorld()->SpawnActor<AActor>(WeaponToSpawn->GetClass(), GetActorLocation() + GetActorForwardVector() * 250.f, GetActorRotation(), SpawnParams);
-// 		CurrentItemInHands = SpawnedWeapon;
-// 		UStaticMeshComponent* MeshComponent = SpawnedWeapon->FindComponentByClass<UStaticMeshComponent>();
-// 		if (MeshComponent)
-// 		{
-// 			MeshComponent->SetSimulatePhysics(false);
-// 			MeshComponent->SetCollisionEnabled(ECollisionEnabled::NoCollision);
-// 			MeshComponent->SetMassScale(NAME_None, 0.0f);
-// 			MeshComponent->SetEnableGravity(false);
-// 			MeshComponent->WakeRigidBody();
-// 			MeshComponent->AttachToComponent(
-// 				GetMesh(),
-// 				FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true),
-// 				FName("WeaponSocket")
-// 			);
-// 			MeshComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
-// 			MeshComponent->SetRelativeLocation(WeaponLocation);
-// 			MeshComponent->SetRelativeRotation(WeaponRotation);
-// 		}
-// 	}
-// 	else
-// 	{
-// 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("No weapon to spawn!"));
-// 	}
-// }
 
 void AMyFPSCharacter::SpawnCurrentWeaponInHands()
 {
@@ -1253,12 +1011,6 @@ void AMyFPSCharacter::SpawnCurrentWeaponInHands()
 		GEngine->AddOnScreenDebugMessage(-1, 5.f, FColor::Red, TEXT("Inventory or CurrentItem is null!"));
 		return;
 	}
-	
-	 // if (CurrentItemInHands)
-	 // {
-	 // 	CurrentItemInHands->Destroy();
-	 // 	CurrentItemInHands = nullptr;
-	 // }
 	
 	TSubclassOf<AActor> WeaponClass = CurrentItemInHands->GetClass();
 	if (!WeaponClass)
@@ -1298,12 +1050,6 @@ void AMyFPSCharacter::SpawnCurrentWeaponInHands()
 			FName("WeaponSocket")
 		);
 
-		//MeshComponent->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
-		
-		//MeshComponent->SetRelativeScale3D(WeaponScale);
-		//MeshComponent->SetRelativeLocation(WeaponLocation);
-		//MeshComponent->SetRelativeRotation(WeaponRotation);
-
 		MeshComponent->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
 	}
 
@@ -1314,9 +1060,6 @@ void AMyFPSCharacter::ResetWalkingSpeed()
 {
 	GetCharacterMovement()->MaxWalkSpeed /= 2.f;
 	GetWorldTimerManager().ClearTimer(AnimationTimerHandle);
-
-	//if (HUD->SpedUpWidget)
-	//	HUD->SpedUpWidget->RemoveFromParent();
 }
 
 void AMyFPSCharacter::ResetBulletDamage()
@@ -1351,9 +1094,8 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 	if(AInventoryItem* It = Cast<AInventoryItem>(OtherActor))
 	{
 			//INFO: Add weapon to inventory
-		if (/*(Inventory->CurrentItem == nullptr || CurrentItemInHands == nullptr)*/Inventory->GetNumberOfItems() == 0 && Inventory->AddItem(It))
+		if (Inventory->GetNumberOfItems() == 0 && Inventory->AddItem(It))
 		{
-			//SpawnCurrentWeaponInHands();
 			if (UStaticMeshComponent* MeshComp = OtherActor->FindComponentByClass<UStaticMeshComponent>())
 			{
 				MeshComp->SetSimulatePhysics(false);
@@ -1370,16 +1112,8 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 					FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, true),
 					FName("WeaponSocket")
 				);
-				//MeshComp->SetWorldLocationAndRotation(WeaponLocation, WeaponRotation);
-				//MeshComp->SetWorldScale3D(WeaponScale);
-				//MeshComp->SetRelativeScale3D(FVector(1.f, 1.f, 1.f));
-				
-				// MeshComp->SetRelativeScale3D(WeaponScale);
-				// MeshComp->SetRelativeLocation(WeaponLocation);
-				// MeshComp->SetRelativeRotation(WeaponRotation);
 			
 				MeshComp->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
-
 				OtherActor->SetOwner(this);
 
 				if (Cast<ABaseGrenade>(OtherActor))
@@ -1387,12 +1121,7 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 					HUD->CrosshairWidget->SetVisibility(ESlateVisibility::Visible);
 				}
 			}
-
-			//CurrentItemInHands = OtherActor;
-
-			// INFO: Load up the new weapon with the saved data if it exists
-			//if (CurrentItemInHands != nullptr)
-			//{
+			
 			if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
 			{
 				if (const FAmmoData* NewAmmoData = AmmoDataMap.Find(CurrentItemInHands->GetClass()))
@@ -1449,8 +1178,6 @@ void AMyFPSCharacter::OnComponentBeginOverlap(UPrimitiveComponent* OverlappedCom
 			{
 				HUD->KnifeWidget->SetVisibility(ESlateVisibility::Visible);
 			}
-			//}
-			
 		}
 		else if(Inventory->AddItem(It))
 		{
@@ -1564,13 +1291,11 @@ void AMyFPSCharacter::TakeDamage(float Damage)
 	if (CurrentHealth <= 0)
 	{
 		Die();
-		
 	}
 	else
 	{
 		UGameplayStatics::PlaySoundAtLocation(this, TakeDamageSound, GetActorLocation());
 	}
-
 	HUD->SetHealth(CurrentHealth, MaxHealth);
 
 	if (DamageEffectWidgetClass)
@@ -1579,10 +1304,8 @@ void AMyFPSCharacter::TakeDamage(float Damage)
 		if (DamageEffectWidget)
 		{
 			DamageEffectWidget->AddToViewport();
-			//DamageEffectWidget->Destruct();
+			
 			GetWorldTimerManager().SetTimer(WidgetTimerHandle, [this]{DestroyWidget(DamageEffectWidget);}, 0.5f, false);
-
-			//Ch->HUD->SetHealth(Ch->CurrentHealth, Ch->MaxHealth);
 		}
 	}
 }

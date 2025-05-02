@@ -202,6 +202,22 @@ void AMyFPSCharacter::BeginPlay()
 			InstructionsWidget->SetVisibility(ESlateVisibility::Hidden);
 		}
 	}
+
+
+	if (!Camera)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Camera is null in BeginPlay!"));
+	}
+
+	if (!HUD)
+	{
+		UE_LOG(LogTemp, Error, TEXT("HUD is null in BeginPlay!"));
+	}
+
+	if (!Inventory)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Inventory is null in BeginPlay!"));
+	}
 }
 
 void AMyFPSCharacter::Tick(float DeltaTime)
@@ -509,6 +525,7 @@ void AMyFPSCharacter::Aim()
 				{
 					// HUD->SniperScopeWidget->RemoveFromParent();
 					// HUD->SniperScopeWidget->AddToViewport(-1);
+					
 					HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Visible);
 
 					Camera->SetFieldOfView(50.f);
@@ -548,7 +565,7 @@ void AMyFPSCharacter::StopAiming()
 	if (ABaseWeapon* W = Cast<ABaseWeapon>(CurrentItemInHands))
 	{
 		//W->Mesh->SetRelativeTransform(Inventory->CurrentItem->AttachmentTransform);
-
+	
 		W->Mesh->AttachToComponent(
 			GetMesh(),
 			FAttachmentTransformRules(EAttachmentRule::SnapToTarget, EAttachmentRule::SnapToTarget, EAttachmentRule::KeepWorld, true),
@@ -559,20 +576,20 @@ void AMyFPSCharacter::StopAiming()
 	
 	//Camera->SetFieldOfView(FMath::FInterpTo(Camera->FieldOfView, 100.f, GetWorld()->GetDeltaSeconds(), 5.0f));
 	Camera->SetFieldOfView(90.f);
-
+	
 	bIsAiming = false;
-
+	
 	if (HUD->SniperScopeWidget && HUD->SniperScopeWidget->IsVisible())
 	{
 		HUD->SniperScopeWidget->SetVisibility(ESlateVisibility::Hidden);
-
+	
 		Camera->DetachFromComponent(FDetachmentTransformRules::KeepWorldTransform);
 		
 		Camera->AttachToComponent(GetMesh(), FAttachmentTransformRules::SnapToTargetIncludingScale, TEXT("Head"));
 		Camera->SetRelativeLocation(FVector(0.f, 0.f, 0.f));
 		Camera->SetRelativeRotation(FRotator(0.f, 0.f, 0.f));
 	}
-
+	
 	if (!(GetMesh()->IsVisible()))
 	{
 		GetMesh()->SetVisibility(true);

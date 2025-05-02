@@ -148,9 +148,10 @@ void UInventory::UseItem(AInventoryItem* Item)
 
 		if (NextItem())
 		{
-			if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter()))
+			if(AMyFPSCharacter* C = Cast<AMyFPSCharacter>(GetOuter())
 			{
-				C->SpawnCurrentWeaponInHands();
+				if (C->CurrentItemInHands)
+					C->SpawnCurrentWeaponInHands();
 			}
 		}
 	}
